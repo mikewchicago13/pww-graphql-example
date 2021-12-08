@@ -1,10 +1,10 @@
 import {buildSchema} from "graphql";
+import {readFileSync} from 'fs';
 
-const schema = buildSchema(`
-  type Query {
-    hello: String
-  }
-`);
+const buffer = readFileSync("./schema.graphql");
+const contents = buffer.toString();
+console.log(contents);
+const schema = buildSchema(contents);
 
 const rootValue = {
   hello: () => {
