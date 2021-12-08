@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js",
-    "build": "tsc -w server.ts"
+    "start": "nodemon ./build/server.js",
+    "build": "tsc --outDir ./build -w server.ts"
   },
   "keywords": [],
   "author": "",

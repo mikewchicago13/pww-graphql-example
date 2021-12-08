@@ -25,6 +25,5 @@
   },
   "exclude": ["node_modules"],
   "include": ["./src/**/*.ts"],
-  "outDir": "./build",
   "rootDir": "./",
 }
