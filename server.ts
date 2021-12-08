@@ -1,33 +1,22 @@
 import * as express from "express";
 import {Request, Response} from "express";
 import {graphqlHTTP} from "express-graphql";
-import {buildSchema} from "graphql";
+import graphqlOptions from "./graphqlOptions";
 
 const app = express();
 
 const PORT = 4000;
 
 app.get("/", (req: Request, res: Response) => {
+  console.log("originalUrl:" + req.originalUrl);
   res.send("Hello World!");
 });
-const schema = buildSchema(`
-  type Query {
-    hello: String
-  }
-`);
-
-const rootValue = {
-  hello: () => {
-    console.log("INSIDE_HELLO");
-    return 'Hello world!';
-  },
-};
 
 app.use(
   "/graphql",
   graphqlHTTP({
-    schema,
-    rootValue,
+    schema: graphqlOptions.schema,
+    rootValue: graphqlOptions.rootValue,
     graphiql: true
   })
 );
