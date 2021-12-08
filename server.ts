@@ -9,7 +9,7 @@ const PORT = 4000;
 
 app.get("/", (req: Request, res: Response) => {
   console.log("originalUrl:" + req.originalUrl);
-  res.send("Hello World!");
+  res.send('Hello world ' + new Date() +'!');
 });
 
 app.use(

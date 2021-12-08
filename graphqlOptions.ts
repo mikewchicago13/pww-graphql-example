@@ -9,7 +9,7 @@ const schema = buildSchema(contents);
 const rootValue = {
   hello: () => {
     console.log("INSIDE_HELLO");
-    return 'Hello world!';
+    return 'Hello world ' + new Date() +'!';
   },
 };
 
