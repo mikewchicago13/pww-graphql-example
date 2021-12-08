@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon ./build/server.js",
-    "build": "tsc --outDir ./build -w server.ts"
+    "dev": "nodemon ./build/server.js",
+    "prod": "npm run copyAssets && tsc --outDir ./build && cd build && node ./server.js",
+    "build": "tsc --outDir ./build -w",
+    "copyAssets":  "mkdir -p ./build && cp *.graphql ./build"
   },
   "keywords": [],
   "author": "",
