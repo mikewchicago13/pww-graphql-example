@@ -1,6 +1,6 @@
 import Response from "./response";
-import bookById from "./bookById";
-import authorById from "./author";
+import {BookRepository} from "./bookRepository";
+import {AuthorRepository} from "./authorRepository";
 
 export default {
   goodbye: (
@@ -14,6 +14,6 @@ export default {
     console.log("INSIDE_HELLO");
     return new Response('Hello world ' + new Date() + '!');
   },
-  bookById: bookById(),
-  authorById: authorById()
+  bookById: new BookRepository().bookById(),
+  authorById: new AuthorRepository().authorById()
 };

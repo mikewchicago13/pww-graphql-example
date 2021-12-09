@@ -44,21 +44,23 @@ const authors = [
 const map: Map<string, Author> = new Map<string, Author>();
 authors.forEach(value => map.set(value.id, value))
 
-export default function authorById():
-(
-  _: unknown,
-  {id}: { id: string }
-) => Author
-{
-  return (_, {id}: { id: string }): Author => {
-    console.log("INSIDE_AUTHOR_BY_ID " + id);
+export class AuthorRepository{
+  authorById():
+    (
+      _: unknown,
+      {id}: { id: string }
+    ) => Author
+  {
+    return (_, {id}: { id: string }): Author => {
+      console.log("INSIDE_AUTHOR_BY_ID " + id);
 
-    const author = map.get(id);
+      const author = map.get(id);
 
-    function blowUp(): Author {
-      throw new Error(id + " not found");
-    }
+      function blowUp(): Author {
+        throw new Error(id + " not found");
+      }
 
-    return author || blowUp();
-  };
+      return author || blowUp();
+    };
+  }
 }

@@ -47,6 +47,7 @@ export class Book {
     this._authorId = value;
   }
 }
+
 const books = [
   new Book("book-1", "title 1", 1, "author-1"),
   new Book("book-2", "title 2", 2, "author-2")
@@ -55,24 +56,25 @@ const books = [
 const map: Map<string, Book> = new Map<string, Book>();
 books.forEach(value => map.set(value.id, value));
 
-export function booksWrittenBy(authorId: string): Book[] {
-  console.log("INSIDE_BOOKS_WRITTEN_BY " + authorId);
-  return books
-    .filter(book => authorId == book.authorId)
-}
+export class BookRepository {
+  bookById(): (
+    _: unknown,
+    {id}: { id: string }
+  ) => Book {
+    return (_, {id}: { id: string }): Book => {
+      console.log("INSIDE_BOOK_BY_ID " + id);
+      const book = map.get(id);
 
-export default function bookById(): (
-  _: unknown,
-  {id}: { id: string }
-) => Book {
-  return (_, {id}: { id: string }): Book => {
-    console.log("INSIDE_BOOK_BY_ID " + id);
-    const book = map.get(id);
+      function blowUp(): Book {
+        throw new Error(id + " not found");
+      }
 
-    function blowUp(): Book {
-      throw new Error(id + " not found");
-    }
-
-    return book || blowUp();
-  };
+      return book || blowUp();
+    };
+  }
+  booksWrittenBy(authorId: string): Book[] {
+    console.log("INSIDE_BOOKS_WRITTEN_BY " + authorId);
+    return books
+      .filter(book => authorId == book.authorId)
+  }
 }

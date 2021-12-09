@@ -1,8 +1,8 @@
 import {GraphQLSchema} from "graphql/type/schema";
 import {makeExecutableSchema} from '@graphql-tools/schema'
 import Query from "./query";
-import {Book, booksWrittenBy} from "./bookById";
-import authorById, {Author} from "./author";
+import {Book, BookRepository} from "./bookRepository";
+import {Author, AuthorRepository} from "./authorRepository";
 
 export default function getSchema(): GraphQLSchema {
   const typeDefs = /* GraphQL */ `
@@ -34,12 +34,12 @@ export default function getSchema(): GraphQLSchema {
 
   function author(book: Book): Author {
     console.log(JSON.stringify(book));
-    return authorById()(undefined, {id: book.authorId});
+    return new AuthorRepository().authorById()(undefined, {id: book.authorId});
   }
 
   function books(author: Author): Book[]{
     console.log(JSON.stringify(author));
-    return booksWrittenBy(author.id);
+    return new BookRepository().booksWrittenBy(author.id);
   }
 
   const resolvers = {
