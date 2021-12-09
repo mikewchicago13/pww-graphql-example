@@ -1,7 +1,7 @@
 import express from "express";
 import {Request, Response} from "express";
 
-import graphqlHTTPServer from "./graphqlOptions";
+import graphqlHTTPServer from "./graphql/graphqlOptions";
 
 const app = express();
 
