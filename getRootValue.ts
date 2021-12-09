@@ -1,4 +1,5 @@
 import Response from "./response";
+import bookById from "./bookById";
 
 export default function getRootValue() {
   return {
@@ -10,5 +11,6 @@ export default function getRootValue() {
       console.log("INSIDE_HELLO");
       return new Response('Hello world ' + new Date() + '!');
     },
+    bookById: bookById()
   };
 }
