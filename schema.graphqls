@@ -1,4 +1,8 @@
 type Query {
-    hello: String
-    goodbye ( name: String! ) : String
+    hello: Response
+    goodbye ( name: String! ) : Response
+}
+
+type Response {
+    contents: String
 }

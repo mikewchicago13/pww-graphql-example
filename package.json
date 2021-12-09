@@ -5,9 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon ./build/server.js",
-    "prod": "npm run copyAssets && tsc --outDir ./build && cd build && node ./server.js",
-    "build": "tsc --outDir ./build -w",
+    "prod": "npm run copyAssets && npm run build && cd build && node ./server.js",
+    "build": "tsc --outDir ./build",
     "copyAssets": "mkdir -p ./build && cp *.graphqls ./build"
   },
   "keywords": [],

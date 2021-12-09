@@ -1,7 +1,7 @@
 import fetch from 'cross-fetch';
 
 describe('can connect to local graphql', () => {
-  const query = "{ goodbye( name: \"Dude\" ) }";
+  const query = "{ goodbye( name: \"Dude\" ) { contents } }";
   const body = JSON.stringify({
     query
   });
@@ -20,7 +20,7 @@ describe('can connect to local graphql', () => {
     const result = await foo.json();
     const actual = JSON.stringify(result);
     console.log(actual);
-    expect(actual).toContain("Goodbye");
-    expect(actual).toContain("Dude");
+    expect(actual).toContain("Goodbye ");
+    expect(actual).toContain("Dude ");
   });
 });
