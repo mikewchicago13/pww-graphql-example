@@ -8,7 +8,7 @@
     "dev": "nodemon ./build/server.js",
     "prod": "npm run copyAssets && tsc --outDir ./build && cd build && node ./server.js",
     "build": "tsc --outDir ./build -w",
-    "copyAssets": "mkdir -p ./build && cp *.graphql ./build"
+    "copyAssets": "mkdir -p ./build && cp *.graphqls ./build"
   },
   "keywords": [],
   "author": "",

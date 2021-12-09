@@ -1,7 +1,7 @@
 import express from "express";
 import {Request, Response} from "express";
-import {graphqlHTTP} from "express-graphql";
-import graphqlOptions from "./graphqlOptions";
+
+import graphqlHTTPServer from "./graphqlOptions";
 
 const app = express();
 
@@ -14,11 +14,7 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use(
   "/graphql",
-  graphqlHTTP({
-    schema: graphqlOptions.schema,
-    rootValue: graphqlOptions.rootValue,
-    graphiql: true
-  })
+  graphqlHTTPServer
 );
 
 app.listen(PORT, () => {
