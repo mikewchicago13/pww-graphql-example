@@ -1,7 +1,7 @@
 import {GraphQLSchema} from "graphql/type/schema";
 import {makeExecutableSchema} from '@graphql-tools/schema'
 import Query from "./query";
-import {Book} from "./bookById";
+import {Book, booksWrittenBy} from "./bookById";
 import authorById, {Author} from "./author";
 
 export default function getSchema(): GraphQLSchema {
@@ -10,6 +10,7 @@ export default function getSchema(): GraphQLSchema {
           hello: Response
           goodbye ( name: String! ) : Response
           bookById ( id: ID ): Book
+          authorById ( id: ID ): Author
       }
 
       type Response {
@@ -27,11 +28,18 @@ export default function getSchema(): GraphQLSchema {
           id: ID
           firstName: String
           lastName: String
+          books: [Book]
       }
   `
+
   function author(book: Book): Author {
     console.log(JSON.stringify(book));
     return authorById()(undefined, {id: book.authorId});
+  }
+
+  function books(author: Author): Book[]{
+    console.log(JSON.stringify(author));
+    return booksWrittenBy(author.id);
   }
 
   const resolvers = {
@@ -39,6 +47,10 @@ export default function getSchema(): GraphQLSchema {
 
     Book: {
       author: author
+    },
+
+    Author: {
+      books: books
     }
   }
   return makeExecutableSchema({

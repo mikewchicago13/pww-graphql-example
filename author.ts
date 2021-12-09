@@ -1,4 +1,3 @@
-
 export class Author {
   private _id: string;
   private _firstName: string;
@@ -37,6 +36,13 @@ export class Author {
     this._lastName = value;
   }
 }
+const authors = [
+  new Author("author-1", "Joe first", "Smith last"),
+  new Author("author-2", "Sally first", "Jones last")
+];
+
+const map: Map<string, Author> = new Map<string, Author>();
+authors.forEach(value => map.set(value.id, value))
 
 export default function authorById():
 (
@@ -45,15 +51,7 @@ export default function authorById():
 ) => Author
 {
   return (_, {id}: { id: string }): Author => {
-
     console.log("INSIDE_AUTHOR_BY_ID " + id);
-    const array = [
-      new Author("author-1", "Joe first", "Smith last"),
-      new Author("author-2", "Sally first", "Jones last")
-    ];
-
-    const map: Map<string, Author> = new Map<string, Author>();
-    array.forEach(value => map.set(value.id, value))
 
     const author = map.get(id);
 
