@@ -4,8 +4,8 @@ import Query from "./query";
 import {Book, BookRepository} from "./bookRepository";
 import {Author, AuthorRepository} from "./authorRepository";
 
-export default function getSchema(): GraphQLSchema {
-  const typeDefs = /* GraphQL */ `
+function getTypeDefs(): string {
+  return /* GraphQL */ `
       type Query {
           hello: Response
           goodbye ( name: String! ) : Response
@@ -30,31 +30,34 @@ export default function getSchema(): GraphQLSchema {
           lastName: String
           books: [Book]
       }
-  `
+  `;
+}
 
-  function author(book: Book): Author {
-    console.log(JSON.stringify(book));
-    return new AuthorRepository().authorById()(undefined, {id: book.authorId});
-  }
+function author(book: Book): Author {
+  console.log(JSON.stringify(book));
+  return new AuthorRepository().authorById()(undefined, {id: book.authorId});
+}
 
-  function books(author: Author): Book[]{
-    console.log(JSON.stringify(author));
-    return new BookRepository().booksWrittenBy(author.id);
-  }
+function books(author: Author): Book[] {
+  console.log(JSON.stringify(author));
+  return new BookRepository().booksWrittenBy(author.id);
+}
 
-  const resolvers = {
+function getResolvers(): any {
+  return {
     Query: Query,
-
     Book: {
-      author: author
+      author
     },
-
     Author: {
-      books: books
+      books
     }
-  }
+  };
+}
+
+export default function getSchema(): GraphQLSchema {
   return makeExecutableSchema({
-    typeDefs,
-    resolvers
+    typeDefs: getTypeDefs(),
+    resolvers: getResolvers()
   })
 }
