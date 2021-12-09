@@ -6,13 +6,14 @@ describe('can connect to local graphql', () => {
         id
         title
         pageCount
+        author {
+          firstName
+          lastName
+        }
     }
 }`;
 
-  // author {
-  //   firstName
-  //   lastName
-  // }
+
   const body = JSON.stringify({
     query
   });
@@ -36,7 +37,9 @@ describe('can connect to local graphql', () => {
     expect(bookById.id).toBe("book-1");
     expect(bookById.title).toContain("title");
     expect(bookById.pageCount).toBeGreaterThanOrEqual(0);
-    // expect(bookById.author.firstName).toContain("first");
-    // expect(bookById.author.lastName).toContain("last");
+    expect(bookById.author.firstName).toBeTruthy();
+    expect(bookById.author.firstName).toContain("first");
+    expect(bookById.author.lastName).toBeTruthy();
+    expect(bookById.author.lastName).toContain("last");
   });
 });
