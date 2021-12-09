@@ -52,7 +52,7 @@ describe('can connect to local graphql', () => {
   it('should have books with title', () => {
     expect(authorById.books[0].title).toContain("title ");
   });
-  it('should have books with pageCount', async () => {
+  it('should have books with pageCount',  () => {
     expect(authorById.books[0].pageCount).toBeGreaterThan(0);
   });
 });
