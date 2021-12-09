@@ -4,10 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "prod": "npm run copyAssets && npm run build && cd build && node ./server.js",
-    "build": "tsc --outDir ./build",
-    "copyAssets": "mkdir -p ./build && cp *.graphqls ./build"
+    "test": "jest",
+    "prod": "npm run build && cd build && node ./server.js",
+    "build": "mkdir -p ./build && cp *.graphqls ./build && tsc --outDir ./build"
   },
   "keywords": [],
   "author": "",

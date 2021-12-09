@@ -42,12 +42,7 @@ const options: OptionsData = {
   schema,
   graphiql: true,
   pretty: true,
-  rootValue,
-  extensions: info => {
-    const operationName = info.operationName;
-    console.log("operationName " + operationName)
-    return {}
-  }
+  rootValue
 };
 
 export default graphqlHTTP(options);
