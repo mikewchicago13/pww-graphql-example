@@ -27,18 +27,32 @@ describe('can connect to local graphql', () => {
     body: body
   };
 
-  it('should have a result', async () => {
-    const foo = await fetch("http://localhost:4000/graphql", options);
-    const result = await foo.json();
+  let authorById: any;
+  beforeAll(async () => {
+    const response = await fetch("http://localhost:4000/graphql", options);
+    const result = await response.json();
     const actual = JSON.stringify(result);
     console.log(actual);
     const parse = JSON.parse(actual);
-    const authorById = parse.data.authorById;
+    authorById = parse.data.authorById;
+  })
+
+  it('should have id', () => {
     expect(authorById.id).toBe("author-1");
+  });
+  it('should have firstName', () => {
     expect(authorById.firstName).toContain("first");
+  });
+  it('should have lastName', () => {
     expect(authorById.lastName).toContain("last");
+  });
+  it('should have books with id', () => {
     expect(authorById.books[0].id).toContain("book-");
+  });
+  it('should have books with title', () => {
     expect(authorById.books[0].title).toContain("title ");
+  });
+  it('should have books with pageCount', async () => {
     expect(authorById.books[0].pageCount).toBeGreaterThan(0);
   });
 });
