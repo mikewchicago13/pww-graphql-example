@@ -20,7 +20,6 @@ describe('can connect to local graphql', () => {
     const result = await foo.json();
     const actual = JSON.stringify(result);
     console.log(actual);
-    expect(actual).toContain("Goodbye ");
     expect(actual).toContain("Dude ");
   });
 });
