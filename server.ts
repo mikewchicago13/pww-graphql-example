@@ -10,8 +10,10 @@ const PORT = 4000;
 process.title = process.argv[2];
 
 app.get("/", (req: Request, res: Response) => {
-  console.log("originalUrl:" + req.originalUrl);
-  res.send('Hello world ' + new Date() +'!');
+  const now = new Date();
+  console.log("now: " + now);
+  console.log("headers", JSON.stringify(req.headers));
+  res.send('Hello world ' + now +'!');
 });
 
 app.use(
