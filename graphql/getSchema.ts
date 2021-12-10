@@ -35,7 +35,7 @@ function getTypeDefs(): string {
 
 function author(book: Book): Author {
   console.log(JSON.stringify(book));
-  return new AuthorRepository().authorById()(undefined, {id: book.authorId});
+  return new AuthorRepository().authorById()(book, {id: book.authorId});
 }
 
 function books(author: Author): Book[] {

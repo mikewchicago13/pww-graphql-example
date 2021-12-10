@@ -51,7 +51,8 @@ export class AuthorRepository{
       {id}: { id: string }
     ) => Author
   {
-    return (_, {id}: { id: string }): Author => {
+    return (_, {id}): Author => {
+      console.log("FIRST_PARAM_TO_AUTHOR_BY_ID "  + JSON.stringify(_));
       console.log("INSIDE_AUTHOR_BY_ID " + id);
 
       const author = map.get(id);
