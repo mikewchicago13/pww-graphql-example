@@ -1,4 +1,4 @@
-import fetch from 'cross-fetch';
+import graphqlClient from "./graphqlClient";
 
 describe('can connect to local graphql', () => {
   const query = `{
@@ -14,27 +14,10 @@ describe('can connect to local graphql', () => {
     }
 }`;
 
-  const body = JSON.stringify({
-    query
-  });
-  console.log(body);
-  const options = {
-    method: "post",
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-    },
-    body: body
-  };
-
   let authorById: any;
   beforeAll(async () => {
-    const response = await fetch("http://localhost:4000/graphql", options);
-    const result = await response.json();
-    const actual = JSON.stringify(result);
-    console.log(actual);
-    const parse = JSON.parse(actual);
-    authorById = parse.data.authorById;
+    const json = await graphqlClient({query});
+    authorById = json.data.authorById;
   })
 
   it('should have id', () => {

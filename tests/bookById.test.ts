@@ -1,4 +1,4 @@
-import fetch from 'cross-fetch';
+import graphqlClient from "./graphqlClient";
 
 describe('can connect to local graphql', () => {
   const query = `{
@@ -13,27 +13,10 @@ describe('can connect to local graphql', () => {
     }
 }`;
 
-
-  const body = JSON.stringify({
-    query
-  });
-  console.log(body);
-  const options = {
-    method: "post",
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-    },
-    body: body
-  };
   let bookById: any;
   beforeAll(async () => {
-    const response = await fetch("http://localhost:4000/graphql", options);
-    const result = await response.json();
-    const actual = JSON.stringify(result);
-    console.log(actual);
-    const parse = JSON.parse(actual);
-    bookById = parse.data.bookById;
+    const json = await graphqlClient({query});
+    bookById = json.data.bookById;
   });
 
   it('should have id', () => {
@@ -48,7 +31,7 @@ describe('can connect to local graphql', () => {
   it('should have author.firstName', () => {
     expect(bookById.author.firstName).toContain("first");
   });
-  it('should have author.lastName',  () => {
+  it('should have author.lastName', () => {
     expect(bookById.author.lastName).toContain("last");
   });
 });
