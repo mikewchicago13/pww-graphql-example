@@ -4,10 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npm run stop && npm run prod && wait-on http://localhost:4000 && jest",
-    "prod": "npm run build && cd build && node ./server.js graphql-example &",
+    "build": "mkdir -p ./build && tsc --outDir ./build",
+    "test": "npm run stop && npm run inTestMode && wait-on http://localhost:4000 && jest",
+    "inTestMode": "npm run local &",
     "stop": "killall -SIGINT graphql-example || echo Did_not_find_process_to_kill",
-    "build": "mkdir -p ./build && tsc --outDir ./build"
+    "local": "npm run build && cd build && node ./server.js graphql-example"
   },
   "keywords": [],
   "author": "",
