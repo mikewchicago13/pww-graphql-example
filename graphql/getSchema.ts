@@ -3,35 +3,7 @@ import {makeExecutableSchema} from '@graphql-tools/schema'
 import Query from "./query";
 import {Book, BookRepository} from "./bookRepository";
 import {Author, AuthorRepository} from "./authorRepository";
-
-function getTypeDefs(): string {
-  return /* GraphQL */ `
-      type Query {
-          hello: Response
-          goodbye ( name: String! ) : Response
-          bookById ( id: ID ): Book
-          authorById ( id: ID ): Author
-      }
-
-      type Response {
-          contents: String
-      }
-
-      type Book {
-          id: ID
-          title: String
-          pageCount: Int
-          author: Author
-      }
-
-      type Author {
-          id: ID
-          firstName: String
-          lastName: String
-          books: [Book]
-      }
-  `;
-}
+import getTypeDefs from "./getTypeDefs";
 
 function author(book: Book): Author {
   console.log(JSON.stringify(book));

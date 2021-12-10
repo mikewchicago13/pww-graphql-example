@@ -1,0 +1,24 @@
+type Query {
+    hello: Response
+    goodbye ( name: String! ) : Response
+    bookById ( id: ID ): Book
+    authorById ( id: ID ): Author
+}
+
+type Response {
+    contents: String
+}
+
+type Book {
+    id: ID
+    title: String
+    pageCount: Int
+    author: Author
+}
+
+type Author {
+    id: ID
+    firstName: String
+    lastName: String
+    books: [Book]
+}

@@ -1,7 +1,12 @@
 import graphqlClient from "./graphqlClient";
 
 describe('can connect to local graphql', () => {
-  const query = "{ goodbye( name: \"Dude\" ) { contents } }";
+  const query = /* GraphQL */
+      `{
+          goodbye( name: "Dude" ) {
+              contents
+          }
+      }`;
 
   let goodbye: any;
   beforeAll(async () => {

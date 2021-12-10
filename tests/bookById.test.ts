@@ -1,17 +1,18 @@
 import graphqlClient from "./graphqlClient";
 
 describe('can connect to local graphql', () => {
-  const query = `{
-    bookById(id: "book-1"){
-        id
-        title
-        pageCount
-        author {
-          firstName
-          lastName
-        }
-    }
-}`;
+  const query = /* GraphQL */
+      `{
+          bookById(id: "book-1"){
+              id
+              title
+              pageCount
+              author {
+                  firstName
+                  lastName
+              }
+          }
+      }`;
 
   let bookById: any;
   beforeAll(async () => {

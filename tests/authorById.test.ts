@@ -1,18 +1,19 @@
 import graphqlClient from "./graphqlClient";
 
 describe('can connect to local graphql', () => {
-  const query = `{
-    authorById(id: "author-1"){
-        id
-        firstName
-        lastName
-        books { 
-          id
-          title
-          pageCount
-        }
-    }
-}`;
+  const query = /* GraphQL */
+      `{
+          authorById(id: "author-1"){
+              id
+              firstName
+              lastName
+              books {
+                  id
+                  title
+                  pageCount
+              }
+          }
+      }`;
 
   let authorById: any;
   beforeAll(async () => {
@@ -35,7 +36,7 @@ describe('can connect to local graphql', () => {
   it('should have books with title', () => {
     expect(authorById.books[0].title).toContain("title ");
   });
-  it('should have books with pageCount',  () => {
+  it('should have books with pageCount', () => {
     expect(authorById.books[0].pageCount).toBeGreaterThan(0);
   });
 });

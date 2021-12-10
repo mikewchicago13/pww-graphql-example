@@ -1,7 +1,10 @@
 import graphqlClient from "./graphqlClient";
 
 describe('can connect to local graphql',  () => {
-  const query = "{ junk }";
+  const query = /* GraphQL */
+      `{ 
+          junk
+      }`;
   let errors: any;
   beforeAll(async () => {
     const json = await graphqlClient({query});
