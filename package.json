@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
-    "prod": "npm run build && cd build && node ./server.js",
+    "test": "npm run stop && npm run prod && wait-on http://localhost:4000 && jest",
+    "prod": "npm run build && cd build && node ./server.js graphql-example &",
+    "stop": "killall -SIGINT graphql-example || echo Did_not_find_process_to_kill",
     "build": "mkdir -p ./build && tsc --outDir ./build"
   },
   "keywords": [],
@@ -30,7 +31,8 @@
     "cross-fetch": "^3.1.4",
     "jest": "^27.4.3",
     "nodemon": "^2.0.15",
-    "typescript": "^4.5.2"
+    "typescript": "^4.5.2",
+    "wait-on": "^6.0.0"
   },
   "jest": {}
 }

@@ -7,6 +7,8 @@ const app = express();
 
 const PORT = 4000;
 
+process.title = process.argv[2];
+
 app.get("/", (req: Request, res: Response) => {
   console.log("originalUrl:" + req.originalUrl);
   res.send('Hello world ' + new Date() +'!');
