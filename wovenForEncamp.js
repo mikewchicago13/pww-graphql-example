@@ -1,11 +1,13 @@
 // assuming you've run the below to enable web requests
 // in both browser and test environment
-// npm install --save cross-fetch
+// npm install cross-fetch
 import fetch from "cross-fetch";
 
-export async function wovenForEncamp() {
+export async function wovenForEncamp(
+  path = "https://httpbin.org/post"
+) {
   const res = await fetch(
-    "https://httpbin.org/post?foo=bar",
+    path + "?queryParam1=queryVal1",
     {
       method: "post",
       headers: {

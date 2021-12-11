@@ -5,8 +5,9 @@ import {wovenForEncamp} from "../wovenForEncamp";
 import {rest} from 'msw';
 import {setupServer} from 'msw/node';
 
+const path = "https://httpbin.org/post";
 const server = setupServer(
-  rest.post("https://httpbin.org/post",
+  rest.post(path,
     (req,
      res,
      ctx) => {
@@ -25,7 +26,7 @@ const server = setupServer(
 let actual;
 beforeAll(async () => {
   server.listen();
-  actual = await wovenForEncamp();
+  actual = await wovenForEncamp(path);
 })
 afterEach(() => server.resetHandlers())
 afterAll(() => server.close())
@@ -35,7 +36,7 @@ describe('woven for encamp', () => {
     expect(actual).toBeTruthy();
   });
   it('should have query string contents', () => {
-    expect(actual.queryParams.foo).toBe("bar");
+    expect(actual.queryParams.queryParam1).toBe("queryVal1");
   });
   it('should have body contents: key1', () => {
     expect(actual.body.key1).toBe("val1");
