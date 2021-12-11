@@ -21,4 +21,11 @@ describe('bowling', () => {
     }
     expect(game.score).toBe(20);
   });
+  it('should pick up a spare', () => {
+    let game = bowling();
+    for (let i = 0; i < 3; i++) {
+      game = game.roll(5);
+    }
+    expect(game.score).toBe(20);
+  });
 });
