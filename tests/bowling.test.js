@@ -14,4 +14,11 @@ describe('bowling', () => {
       .roll(1)
       .score).toBe(1);
   });
+  it('should roll 20 straight 1s', () => {
+    let game = bowling();
+    for (let i = 0; i < 20; i++) {
+      game = game.roll(1);
+    }
+    expect(game.score).toBe(20);
+  });
 });
