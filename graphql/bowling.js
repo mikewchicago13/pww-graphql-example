@@ -5,17 +5,23 @@ class Game {
   get score() {
     let result = 0;
     for (let roll = 0; roll < 20; roll += 2) {
-      const firstBallOfFrame = this._pins(roll);
-      const frame = firstBallOfFrame + this._pins(roll + 1);
-      if (firstBallOfFrame === 10) {
-        result += firstBallOfFrame + this._nextTwoRolls(roll);
-      } else if (frame === 10) {
-        result += frame + this._pins(roll + 2);
+      if (this._isStrike(this._pins(roll))) {
+        result += this._pins(roll) + this._nextTwoRolls(roll);
+      } else if (this._isSpare(this._pins(roll), this._pins(roll + 1))) {
+        result += this._pins(roll) + this._pins(roll + 1) + this._pins(roll + 2);
       } else {
-        result += frame;
+        result += this._pins(roll) + this._pins(roll + 1);
       }
     }
     return result;
+  }
+
+  _isStrike(firstBallOfFrame) {
+    return firstBallOfFrame === 10;
+  }
+
+  _isSpare(firstBallOfFrame, secondBallOfFrame) {
+    return firstBallOfFrame + secondBallOfFrame === 10;
   }
 
   _pins(roll) {
@@ -24,7 +30,7 @@ class Game {
 
   roll(pins) {
     this._rolls[this._index] = pins;
-    if (pins === 10 && this._index < 18 && this._index % 2 === 0) {
+    if (this._isStrike(pins) && this._isFirstBallOf9thFrameOrEarlier()) {
       this._index += 2;
     } else {
       this._index++;
@@ -33,6 +39,9 @@ class Game {
   }
 
 
+  _isFirstBallOf9thFrameOrEarlier() {
+    return this._index < 18 && this._index % 2 === 0;
+  }
 
   toString() {
     return JSON.stringify(this);
