@@ -21,11 +21,50 @@ describe('bowling', () => {
     }
     expect(game.score).toBe(20);
   });
+  it('should roll 21 straight 5s', () => {
+    let game = bowling();
+    for (let i = 0; i < 21; i++) {
+      game = game.roll(5);
+    }
+    expect(game.score).toBe(150);
+  });
   it('should pick up a spare', () => {
     let game = bowling();
     for (let i = 0; i < 3; i++) {
       game = game.roll(5);
     }
     expect(game.score).toBe(20);
+  });
+  it('should pick up a strike', () => {
+    let game = bowling();
+    for (let i = 0; i < 2; i++) {
+      game = game.roll(10);
+    }
+    expect(game.score).toBe(30);
+  });
+  it('should roll a perfect game', () => {
+    let game = bowling();
+    for (let i = 0; i < 12; i++) {
+      game = game.roll(10);
+    }
+    expect(game.score).toBe(300);
+  });
+  it('should roll a 299', () => {
+    let game = bowling();
+    for (let i = 0; i < 11; i++) {
+      game = game.roll(10);
+    }
+    game = game.roll(9);
+    expect(game.score).toBe(299);
+  });
+  it('should gutter until 10th frame, then strike out', () => {
+    let game = bowling();
+    for (let i = 0; i < 18; i++) {
+      game = game.roll(0);
+    }
+    for (let i = 0; i < 3; i++) {
+      game = game.roll(10);
+    }
+    expect(game.score).toBe(30);
   });
 });
