@@ -15,10 +15,11 @@ const server = setupServer(
       req.url.searchParams.forEach((value, key) => {
         queryParams[key] = value;
       });
-      const body = req.body || {};
       const response = {
         queryParams,
-        body
+        body: req.body,
+        headers: req.headers.raw(),
+        url: req.url
       };
       return res(ctx.json(response));
     }),
@@ -43,5 +44,14 @@ describe('woven for encamp', () => {
   });
   it('should have body contents: key2', () => {
     expect(actual.body.key2).toBe("val2");
+  });
+  it('should have url', () => {
+    expect(actual.url).toContain(path);
+  });
+  it('should have headers: Accept', () => {
+    expect(actual.headers.accept).toBe("application/json");
+  });
+  it('should have headers: Content-Type', () => {
+    expect(actual.headers['content-type']).toBe("application/json");
   });
 });
