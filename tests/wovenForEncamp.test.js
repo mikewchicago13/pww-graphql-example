@@ -19,7 +19,11 @@ const server = setupServer(
         queryParams,
         body: req.body,
         headers: req.headers.raw(),
-        url: req.url
+        url: req.url,
+        mode: req.mode,
+        credentials: req.credentials,
+        cache: req.cache,
+        redirect: req.redirect
       };
       return res(ctx.json(response));
     }),
@@ -36,6 +40,9 @@ describe('woven for encamp', () => {
   it('should do something', async () => {
     expect(actual).toBeTruthy();
   });
+  it('should have url', () => {
+    expect(actual.url).toContain(path);
+  });
   it('should have query string contents', () => {
     expect(actual.queryParams.queryParam1).toBe("queryVal1");
   });
@@ -45,13 +52,24 @@ describe('woven for encamp', () => {
   it('should have body contents: key2', () => {
     expect(actual.body.key2).toBe("val2");
   });
-  it('should have url', () => {
-    expect(actual.url).toContain(path);
-  });
+
   it('should have headers: Accept', () => {
     expect(actual.headers.accept).toBe("application/json");
   });
   it('should have headers: Content-Type', () => {
     expect(actual.headers['content-type']).toBe("application/json");
+  });
+
+  it('should default value for mode', () => {
+    expect(actual.mode).toBe("cors");
+  });
+  it('should default value for credentials', () => {
+    expect(actual.credentials).toBe("same-origin");
+  });
+  it('should default value for cache', () => {
+    expect(actual.cache).toBe("default");
+  });
+  it('should default value for redirect', () => {
+    expect(actual.redirect).toBe("manual");
   });
 });
