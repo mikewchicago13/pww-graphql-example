@@ -39,39 +39,43 @@ afterEach(() => server.resetHandlers())
 afterAll(() => server.close())
 
 describe('woven for encamp', () => {
-  it('should do something', async () => {
-    expect(actual).toBeTruthy();
-  });
   it('should have url', () => {
     expect(actual.url).toContain(path);
   });
   it('should have query string contents', () => {
     expect(actual.queryParams.queryParam1).toBe("queryVal1");
   });
-  it('should have body contents: key1', () => {
-    expect(actual.body.key1).toBe("val1");
-  });
-  it('should have body contents: key2', () => {
-    expect(actual.body.key2).toBe("val2");
+
+  describe('should have body contents', () => {
+    it('key1', () => {
+      expect(actual.body.key1).toBe("val1");
+    });
+    it('key2', () => {
+      expect(actual.body.key2).toBe("val2");
+    });
   });
 
-  it('should have headers: Accept', () => {
-    expect(actual.headers.accept).toBe("application/json");
-  });
-  it('should have headers: Content-Type', () => {
-    expect(actual.headers['content-type']).toBe("application/json");
+  describe('should have headers', () => {
+    it('Accept', () => {
+      expect(actual.headers.accept).toBe("application/json");
+    });
+    it('Content-Type', () => {
+      expect(actual.headers['content-type']).toBe("application/json");
+    });
   });
 
-  it('should default value for mode', () => {
-    expect(actual.mode).toBe("cors");
-  });
-  it('should default value for credentials', () => {
-    expect(actual.credentials).toBe("same-origin");
-  });
-  it('should default value for cache', () => {
-    expect(actual.cache).toBe("default");
-  });
-  it('should default value for redirect', () => {
-    expect(actual.redirect).toBe("manual");
+  describe('should have default values', () => {
+    it('mode', () => {
+      expect(actual.mode).toBe("cors");
+    });
+    it('credentials', () => {
+      expect(actual.credentials).toBe("same-origin");
+    });
+    it('cache', () => {
+      expect(actual.cache).toBe("default");
+    });
+    it('redirect', () => {
+      expect(actual.redirect).toBe("manual");
+    });
   });
 });
