@@ -39,10 +39,13 @@ export class LineItem {
 }
 
 export class Invoice {
-  _lineItems: LineItem[]
-
+  private readonly _lineItems: LineItem[]
   constructor(lineItems: LineItem[]) {
     this._lineItems = lineItems;
+  }
+
+  get lineItems(): LineItem[] {
+    return this._lineItems;
   }
 
   get total(): Money{
