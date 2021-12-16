@@ -1,4 +1,4 @@
-// wovenForEncamp.test.js
+// invoice.test.ts
 
 import {Invoice, LineItem, Money} from "../invoice";
 
@@ -21,10 +21,10 @@ describe('Invoice', () => {
     const dates: Date[] = actual.lineItems
       .map(x => x.asOf);
     it('Feb 2 is first', () => {
-      expect(dates[0]).toBe(new Date(Date.parse("2021-02-02")));
+      expect(dates[0]).toStrictEqual(new Date(Date.parse("2021-02-02")));
     });
     it('Jan 1 is first', () => {
-      expect(dates[1]).toBe(new Date(Date.parse("2021-01-01")));
+      expect(dates[1]).toStrictEqual(new Date(Date.parse("2021-01-01")));
     });
   });
 });

@@ -14,7 +14,7 @@ export class LineItem {
   static create(
     asOf: string,
     dollars: number,
-    cents: number): LineItem{
+    cents: number): LineItem {
     return new LineItem(
       new Date(Date.parse(asOf)),
       new Money(dollars, cents));
@@ -28,6 +28,9 @@ export class LineItem {
     this._amount = amount;
   }
 
+  get asOfTime(): number {
+    return this.asOf.getTime();
+  }
 
   get asOf(): Date {
     return this._asOf;
@@ -40,15 +43,20 @@ export class LineItem {
 
 export class Invoice {
   private readonly _lineItems: LineItem[]
+
   constructor(lineItems: LineItem[]) {
     this._lineItems = lineItems;
   }
 
   get lineItems(): LineItem[] {
-    return this._lineItems;
+    const newestToOldest = (a: LineItem, b: LineItem) => {
+      return b.asOfTime - a.asOfTime;
+    };
+    return this._lineItems
+      .sort(newestToOldest);
   }
 
-  get total(): Money{
+  get total(): Money {
     return this._lineItems
       .map(x => x.amount)
       .reduce(
