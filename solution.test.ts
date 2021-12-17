@@ -105,30 +105,12 @@ describe("billFor", function () {
 
     describe('month bookends from yearMonth string', () => {
       const actual = getUserCalculations(new Date("2019-02-01"), null);
-      describe('timezones WEST of UTC', () => {
-        it('firstOfMonth', () => {
-          assert.isTrue(actual.isActiveOn(new Date("2019-02-01T00:00:00.000-01:00")));
-        });
-        it('lastOfMonth', () => {
-          assert.isTrue(actual.isActiveOn(new Date("2019-02-28T00:00:00.000-01:00")));
-        });
-      });
-
       describe('default timezone', () => {
         it('firstOfMonth', () => {
           assert.isTrue(actual.isActiveOn(new Date("2019-02-01")));
         });
         it('lastOfMonth', () => {
           assert.isTrue(actual.isActiveOn(new Date("2019-02-28")));
-        });
-      });
-
-      describe('timezones EAST of UTC', () => {
-        it('firstOfMonth', () => {
-          assert.isTrue(actual.isActiveOn(new Date("2019-02-01T00:00:00.000+01:00")));
-        });
-        it('lastOfMonth', () => {
-          assert.isTrue(actual.isActiveOn(new Date("2019-02-28T00:00:00.000+01:00")));
         });
       });
 
@@ -182,11 +164,11 @@ describe("billFor", function () {
       for (let i = firstOfMonth; i <= lastOfMonth; i = nextDay(i)) {
         dates[counter++] = actual.isActiveOn(i);
       }
-      it('lastOfMonth', () => {
-        assert.isTrue(dates[27]);
+      it('second to last day of month', () => {
+        assert.isFalse(actual.isActiveOn(new Date("2019-02-27")));
       });
       describe('all other days are not active', () => {
-        dates.slice(-27)
+        dates.slice(0, 27)
           .forEach((value, index) => {
             it("2019-02-" + String((index + 1)).padStart(2, "0"), () => {
               assert.isFalse(value);

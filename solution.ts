@@ -12,19 +12,6 @@ export interface Subscription {
   monthlyPriceInDollars: number;
 }
 
-export interface ActiveCalculations {
-  result: boolean;
-
-  _activatedDate: Date;
-  _activatedTime: number;
-  _comparisonDate: Date;
-  _comparisonTime: number;
-  _deactivatedDate: Date;
-  _deactivatedTime: number;
-  _activatedBeforeComparisonDate: boolean;
-  _comparisonBeforeDeactivated: boolean;
-}
-
 export class UserCalculations {
   private readonly _user: User;
 
@@ -32,32 +19,23 @@ export class UserCalculations {
     this._user = user;
   }
 
-  _isActive(date: Date): ActiveCalculations {
-    const activatedTime = this._user.activatedOn.getTime();
-    const comparisonTime = date.getTime();
-    const deactivatedDate = this._user.deactivatedOn || new Date("3000-01-01");
-    const deactivatedTime = deactivatedDate.getTime();
-
-    const activatedBeforeComparisonDate = activatedTime <= comparisonTime;
-    const comparisonBeforeDeactivated = comparisonTime <= deactivatedTime;
-    const result = activatedBeforeComparisonDate && comparisonBeforeDeactivated;
-    const calculationComponents: ActiveCalculations = {
-      result,
-      _activatedDate: this._user.activatedOn,
-      _activatedTime: activatedTime,
-      _comparisonDate: date,
-      _comparisonTime: comparisonTime,
-      _deactivatedDate: deactivatedDate,
-      _deactivatedTime: deactivatedTime,
-      _activatedBeforeComparisonDate: activatedBeforeComparisonDate,
-      _comparisonBeforeDeactivated: comparisonBeforeDeactivated
-    };
-    console.log(JSON.stringify(calculationComponents));
-    return calculationComponents
-  }
-
   isActiveOn(date: Date): boolean {
-    return this._isActive(date).result;
+    const datePart = (a: Date) :string => {
+      return a.toISOString().split("T")[0];
+    }
+
+    const activatedDate = datePart(this._user.activatedOn);
+    const comparisonDate = datePart(date);
+    const deactivateDate = datePart(this._user.deactivatedOn || new Date("3000-01-01"));
+
+    const activatedBeforeComparisonDate = activatedDate <= comparisonDate;
+    const comparisonBeforeDeactivated = comparisonDate <= deactivateDate;
+    const isFirstDayOfSubscription = activatedDate === comparisonDate;
+    const isLastDayOfSubscription = deactivateDate === comparisonDate;
+
+    return isFirstDayOfSubscription ||
+      isLastDayOfSubscription ||
+      activatedBeforeComparisonDate && comparisonBeforeDeactivated;
   }
 }
 
