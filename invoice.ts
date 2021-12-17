@@ -1,12 +1,20 @@
 export class Money {
   _cents: number;
 
+  private static readonly CENTS_PER_DOLLAR = 100;
+
   constructor(dollars: number, cents: number) {
-    this._cents = dollars * 100 + cents;
+    this._cents = dollars * Money.CENTS_PER_DOLLAR + cents;
   }
 
   add(money: Money): Money {
     return new Money(0, this._cents + money._cents);
+  }
+
+  toString(): string {
+    const wholeDollars = this._cents / Money.CENTS_PER_DOLLAR;
+    const remainingCents = this._cents % Money.CENTS_PER_DOLLAR;
+    return String(wholeDollars) + "." + String(remainingCents).padStart(2, "0");
   }
 }
 

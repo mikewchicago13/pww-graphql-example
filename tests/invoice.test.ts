@@ -28,3 +28,9 @@ describe('Invoice', () => {
     });
   });
 });
+
+describe('Money', () => {
+  it('should display zero', () => {
+    expect(new Money(0, 0).toString()).toBe("0.00");
+  });
+});
