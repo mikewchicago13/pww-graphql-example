@@ -14,7 +14,18 @@ export class Money {
   toString(): string {
     const wholeDollars = Math.trunc(this._cents / Money.CENTS_PER_DOLLAR);
     const remainingCents = this._cents % Money.CENTS_PER_DOLLAR;
-    return wholeDollars.toLocaleString() + "." + String(remainingCents).padStart(2, "0");
+    return wholeDollars.toLocaleString() +
+      this._getDecimalSeparator() +
+      String(remainingCents).padStart(2, "0");
+  }
+
+  _getDecimalSeparator(): string {
+    const numberFormat = Intl.NumberFormat(undefined);
+    const dateTimeFormatParts = numberFormat
+      .formatToParts(1.1);
+    const dateTimeFormatPart = dateTimeFormatParts
+      .find(part => part.type === 'decimal') || {value: "."};
+    return dateTimeFormatPart.value;
   }
 }
 
