@@ -20,9 +20,11 @@ class UserCalculations {
   }
 
   isActiveOn(date: Date): boolean {
-    return this._user.activatedOn.getTime() <= date.getTime() && (
-      date.getTime() <= (this._user.deactivatedOn || new Date("3000-01-01")).getTime()
-    );
+    const activatedOn = this._user.activatedOn;
+    const activated = activatedOn.getTime();
+    const comparison = date.getTime();
+    const deactivated = this._user.deactivatedOn || new Date("3000-01-01");
+    return activated <= comparison && comparison <= deactivated.getTime();
   }
 }
 
@@ -34,24 +36,26 @@ export function billFor(
   if (!activeSubscription) {
     return 0;
   }
-  const dateInMonth = new Date(yearMonth + "-01");
+  const dateInMonth = new Date(Date.parse(yearMonth + "-02T00:00:00Z"));
+  const firstOfMonth = firstDayOfMonth(dateInMonth);
   const lastOfMonth = lastDayOfMonth(dateInMonth);
   const numberOfDaysInMonth = lastOfMonth.getDate();
   const dailyRate = activeSubscription.monthlyPriceInDollars / numberOfDaysInMonth;
 
   let total = 0;
-  for (let i = 1; i <= numberOfDaysInMonth; i++) {
+  for (let i = firstOfMonth; i <= lastOfMonth; i = nextDay(i)) {
     total += users
-      .map(x => new UserCalculations(x))
+      .map((x:User) => new UserCalculations(x))
       .filter((value: UserCalculations) => {
-        return value.isActiveOn(new Date(yearMonth + "-" + String(i).padStart(2, "0")))
+        const activeOn = value.isActiveOn(i);
+        console.log("activeOn " + activeOn + " date " + i);
+        return activeOn;
       })
       .map(() => dailyRate)
       .reduce((a, b) => a + b, 0)
   }
 
-
-  return total;
+  return Number(total.toFixed(2));
 }
 
 /*******************

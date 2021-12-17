@@ -75,6 +75,18 @@ describe("billFor", function () {
         customerId: 1,
       }
     ];
-    assert.closeTo(billFor("2019-02", newPlan, userSignedUp), 4/28, 0.01);
+    assert.closeTo(billFor("2019-02", newPlan, userSignedUp), 0.14, 0.01);
+  });
+  it("works when a user is activated for last day during February", function () {
+    const userSignedUp: User[] = [
+      {
+        id: 1,
+        name: "Employee #1",
+        activatedOn: new Date("2019-02-28"),
+        deactivatedOn: new Date("2019-02-28"),
+        customerId: 1,
+      }
+    ];
+    assert.closeTo(billFor("2019-02", newPlan, userSignedUp), 0.14, 0.01);
   });
 });
