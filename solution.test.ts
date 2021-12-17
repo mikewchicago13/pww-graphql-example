@@ -107,10 +107,10 @@ describe("billFor", function () {
       const actual = getUserCalculations(new Date("2019-02-01"), null);
       describe('timezones WEST of UTC', () => {
         it('firstOfMonth', () => {
-          assert.isTrue(actual.isActiveOn(new Date(Date.parse("2019-02-01T00:00:00.000-01:00"))));
+          assert.isTrue(actual.isActiveOn(new Date("2019-02-01T00:00:00.000-01:00")));
         });
         it('lastOfMonth', () => {
-          assert.isTrue(actual.isActiveOn(new Date(Date.parse("2019-02-28T00:00:00.000-01:00"))));
+          assert.isTrue(actual.isActiveOn(new Date("2019-02-28T00:00:00.000-01:00")));
         });
       });
 
@@ -125,10 +125,10 @@ describe("billFor", function () {
 
       describe('timezones EAST of UTC', () => {
         it('firstOfMonth', () => {
-          assert.isTrue(actual.isActiveOn(new Date(Date.parse("2019-02-01T00:00:00.000+01:00"))));
+          assert.isTrue(actual.isActiveOn(new Date("2019-02-01T00:00:00.000+01:00")));
         });
         it('lastOfMonth', () => {
-          assert.isTrue(actual.isActiveOn(new Date(Date.parse("2019-02-28T00:00:00.000+01:00"))));
+          assert.isTrue(actual.isActiveOn(new Date("2019-02-28T00:00:00.000+01:00")));
         });
       });
 
@@ -143,6 +143,9 @@ describe("billFor", function () {
 
     describe('activated and deactivated on first of month', () => {
       const actual = getUserCalculations(new Date("2019-02-01"), new Date("2019-02-01"));
+      it('last of previous month', () => {
+        assert.isFalse(actual.isActiveOn(new Date("2019-01-31")));
+      });
       it('first of next month', () => {
         assert.isFalse(actual.isActiveOn(new Date("2019-03-01")));
       });
@@ -158,7 +161,7 @@ describe("billFor", function () {
       describe('all other days are not active', () => {
         dates.slice(1)
           .forEach((value, index) => {
-            it(index + "", () => {
+            it("2019-02-" + String((index + 1)).padStart(2, "0"), () => {
               assert.isFalse(value);
             });
           });
@@ -167,6 +170,9 @@ describe("billFor", function () {
 
     describe('activated and deactivated on last of month', () => {
       const actual = getUserCalculations(new Date("2019-02-28"), new Date("2019-02-28"));
+      it('last of previous month', () => {
+        assert.isFalse(actual.isActiveOn(new Date("2019-01-31")));
+      });
       it('first of next month', () => {
         assert.isFalse(actual.isActiveOn(new Date("2019-03-01")));
       });
@@ -182,7 +188,7 @@ describe("billFor", function () {
       describe('all other days are not active', () => {
         dates.slice(-27)
           .forEach((value, index) => {
-            it(index + "", () => {
+            it("2019-02-" + String((index + 1)).padStart(2, "0"), () => {
               assert.isFalse(value);
             });
           });

@@ -12,6 +12,19 @@ export interface Subscription {
   monthlyPriceInDollars: number;
 }
 
+export interface ActiveCalculations {
+  result: boolean;
+
+  _activatedDate: Date;
+  _activatedTime: number;
+  _comparisonDate: Date;
+  _comparisonTime: number;
+  _deactivatedDate: Date;
+  _deactivatedTime: number;
+  _activatedBeforeComparisonDate: boolean;
+  _comparisonBeforeDeactivated: boolean;
+}
+
 export class UserCalculations {
   private readonly _user: User;
 
@@ -19,12 +32,32 @@ export class UserCalculations {
     this._user = user;
   }
 
+  _isActive(date: Date): ActiveCalculations {
+    const activatedTime = this._user.activatedOn.getTime();
+    const comparisonTime = date.getTime();
+    const deactivatedDate = this._user.deactivatedOn || new Date("3000-01-01");
+    const deactivatedTime = deactivatedDate.getTime();
+
+    const activatedBeforeComparisonDate = activatedTime <= comparisonTime;
+    const comparisonBeforeDeactivated = comparisonTime <= deactivatedTime;
+    const result = activatedBeforeComparisonDate && comparisonBeforeDeactivated;
+    const calculationComponents: ActiveCalculations = {
+      result,
+      _activatedDate: this._user.activatedOn,
+      _activatedTime: activatedTime,
+      _comparisonDate: date,
+      _comparisonTime: comparisonTime,
+      _deactivatedDate: deactivatedDate,
+      _deactivatedTime: deactivatedTime,
+      _activatedBeforeComparisonDate: activatedBeforeComparisonDate,
+      _comparisonBeforeDeactivated: comparisonBeforeDeactivated
+    };
+    console.log(JSON.stringify(calculationComponents));
+    return calculationComponents
+  }
+
   isActiveOn(date: Date): boolean {
-    const activatedOn = this._user.activatedOn;
-    const activated = activatedOn.getTime();
-    const comparison = date.getTime();
-    const deactivated = this._user.deactivatedOn || new Date("3000-01-01");
-    return activated <= comparison && comparison <= deactivated.getTime();
+    return this._isActive(date).result;
   }
 }
 
