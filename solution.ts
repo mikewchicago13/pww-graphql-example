@@ -21,8 +21,6 @@ export interface ActiveCalculations {
   _comparisonTime: number;
   _deactivatedDate: Date;
   _deactivatedTime: number;
-  _effectiveDeactivationDate: Date;
-  _effectiveDeactivationTime: number;
   _activatedBeforeComparisonDate: boolean;
   _comparisonBeforeDeactivated: boolean;
 }
@@ -38,11 +36,10 @@ export class UserCalculations {
     const activatedTime = this._user.activatedOn.getTime();
     const comparisonTime = date.getTime();
     const deactivatedDate = this._user.deactivatedOn || new Date("3000-01-01");
-    const effectiveDeactivationDate = nextDay(deactivatedDate);
-    const effectiveDeactivatedTime = effectiveDeactivationDate.getTime();
+    const deactivatedTime = deactivatedDate.getTime();
 
     const activatedBeforeComparisonDate = activatedTime <= comparisonTime;
-    const comparisonBeforeDeactivated = comparisonTime < effectiveDeactivatedTime;
+    const comparisonBeforeDeactivated = comparisonTime <= deactivatedTime;
     const result = activatedBeforeComparisonDate && comparisonBeforeDeactivated;
     const calculationComponents: ActiveCalculations = {
       result,
@@ -51,9 +48,7 @@ export class UserCalculations {
       _comparisonDate: date,
       _comparisonTime: comparisonTime,
       _deactivatedDate: deactivatedDate,
-      _deactivatedTime: deactivatedDate.getTime(),
-      _effectiveDeactivationDate: effectiveDeactivationDate,
-      _effectiveDeactivationTime: effectiveDeactivatedTime,
+      _deactivatedTime: deactivatedTime,
       _activatedBeforeComparisonDate: activatedBeforeComparisonDate,
       _comparisonBeforeDeactivated: comparisonBeforeDeactivated
     };
@@ -68,7 +63,7 @@ export class UserCalculations {
 
 export function monthBookends(yearMonth: string):
   { firstOfMonth: Date, lastOfMonth: Date } {
-  const dateInMonth = new Date(yearMonth + "-02T00:00:00Z");
+  const dateInMonth = new Date(Date.parse(yearMonth + "-02T00:00:00Z"));
   return {
     firstOfMonth: firstDayOfMonth(dateInMonth),
     lastOfMonth: lastDayOfMonth(dateInMonth)
@@ -110,7 +105,7 @@ export function billFor(
  firstDayOfMonth(new Date(2019, 2, 7)) // => new Date(2019, 2, 1)
  **/
 function firstDayOfMonth(date: Date): Date {
-  return new Date(Date.UTC(date.getFullYear(), date.getMonth(), 1));
+  return new Date(date.getFullYear(), date.getMonth(), 1);
 }
 
 /**
@@ -120,7 +115,7 @@ function firstDayOfMonth(date: Date): Date {
  lastDayOfMonth(new Date(2019, 2, 7)) // => new Date(2019, 2, 28)
  **/
 function lastDayOfMonth(date: Date): Date {
-  return new Date(Date.UTC(date.getFullYear(), date.getMonth() + 1, 0));
+  return new Date(date.getFullYear(), date.getMonth() + 1, 0);
 }
 
 /**
