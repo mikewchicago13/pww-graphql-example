@@ -27,6 +27,10 @@ export class Money {
       .find(part => part.type === 'decimal') || {value: "."};
     return dateTimeFormatPart.value;
   }
+
+  multiplyBy(product: number): Money {
+    return new Money(0, this._cents * product);
+  }
 }
 
 export class LineItem {

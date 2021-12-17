@@ -30,16 +30,29 @@ describe('Invoice', () => {
 });
 
 describe('Money', () => {
-  it('should display zero', () => {
-    expect(new Money(0, 0).toString())
-      .toBe("0.00");
+  describe('display', () => {
+    it('zero', () => {
+      expect(new Money(0, 0).toString())
+        .toBe("0.00");
+    });
+    it('1000.01', () => {
+      expect(new Money(1_000, 1).toString())
+        .toBe("1,000.01");
+    });
+    it('123456789.99', () => {
+      expect(new Money(123_456_789, 99).toString())
+        .toBe("123,456,789.99");
+    });
   });
-  it('should display 1000.01', () => {
-    expect(new Money(1_000, 1).toString())
-      .toBe("1,000.01");
-  });
-  it('should display 123456789.99', () => {
-    expect(new Money(123_456_789, 99).toString())
-      .toBe("123,456,789.99");
+
+  describe('multiply', () => {
+    it('zero', () => {
+      expect(new Money(0, 0).multiplyBy(2))
+        .toStrictEqual(new Money(0, 0));
+    });
+    it('1x2', () => {
+      expect(new Money(0, 1).multiplyBy(2))
+        .toStrictEqual(new Money(0, 2));
+    });
   });
 });
