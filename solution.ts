@@ -12,7 +12,7 @@ export interface Subscription {
   monthlyPriceInDollars: number;
 }
 
-class UserCalculations {
+export class UserCalculations {
   private readonly _user: User;
 
   constructor(user: User) {
@@ -28,6 +28,15 @@ class UserCalculations {
   }
 }
 
+export function monthBookends(yearMonth: string):
+  { firstOfMonth: Date, lastOfMonth: Date } {
+  const dateInMonth = new Date(Date.parse(yearMonth + "-02T00:00:00Z"));
+  return {
+    firstOfMonth: firstDayOfMonth(dateInMonth),
+    lastOfMonth: lastDayOfMonth(dateInMonth)
+  };
+}
+
 export function billFor(
   yearMonth: string,
   activeSubscription: Subscription | null,
@@ -36,21 +45,15 @@ export function billFor(
   if (!activeSubscription) {
     return 0;
   }
-  const dateInMonth = new Date(Date.parse(yearMonth + "-02T00:00:00Z"));
-  const firstOfMonth = firstDayOfMonth(dateInMonth);
-  const lastOfMonth = lastDayOfMonth(dateInMonth);
+  const {firstOfMonth, lastOfMonth} = monthBookends(yearMonth);
   const numberOfDaysInMonth = lastOfMonth.getDate();
   const dailyRate = activeSubscription.monthlyPriceInDollars / numberOfDaysInMonth;
 
   let total = 0;
   for (let i = firstOfMonth; i <= lastOfMonth; i = nextDay(i)) {
     total += users
-      .map((x:User) => new UserCalculations(x))
-      .filter((value: UserCalculations) => {
-        const activeOn = value.isActiveOn(i);
-        console.log("activeOn " + activeOn + " date " + i);
-        return activeOn;
-      })
+      .map((x: User) => new UserCalculations(x))
+      .filter((x: UserCalculations) => x.isActiveOn(i))
       .map(() => dailyRate)
       .reduce((a, b) => a + b, 0)
   }
@@ -89,6 +92,6 @@ function lastDayOfMonth(date: Date): Date {
  nextDay(new Date(2019, 2, 7))  // => new Date(2019, 2, 8)
  nextDay(new Date(2019, 2, 28)) // => new Date(2019, 3, 1)
  **/
-function nextDay(date: Date): Date {
+export function nextDay(date: Date): Date {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
 }
