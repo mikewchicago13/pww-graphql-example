@@ -36,11 +36,10 @@ export class Money {
 export class LineItem {
   static create(
     asOf: string,
-    dollars: number,
-    cents: number): LineItem {
+    costPerItem: Money): LineItem {
     return new LineItem(
       new Date(Date.parse(asOf)),
-      new Money(dollars, cents));
+      costPerItem);
   }
 
   private readonly _asOf: Date;
