@@ -31,6 +31,15 @@ describe('Invoice', () => {
 
 describe('Money', () => {
   it('should display zero', () => {
-    expect(new Money(0, 0).toString()).toBe("0.00");
+    expect(new Money(0, 0).toString())
+      .toBe("0.00");
+  });
+  it('should display 1000.01', () => {
+    expect(new Money(1_000, 1).toString())
+      .toBe("1,000.01");
+  });
+  it('should display 123456789.99', () => {
+    expect(new Money(123_456_789, 99).toString())
+      .toBe("123,456,789.99");
   });
 });

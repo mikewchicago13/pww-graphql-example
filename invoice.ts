@@ -12,9 +12,9 @@ export class Money {
   }
 
   toString(): string {
-    const wholeDollars = this._cents / Money.CENTS_PER_DOLLAR;
+    const wholeDollars = Math.trunc(this._cents / Money.CENTS_PER_DOLLAR);
     const remainingCents = this._cents % Money.CENTS_PER_DOLLAR;
-    return String(wholeDollars) + "." + String(remainingCents).padStart(2, "0");
+    return wholeDollars.toLocaleString() + "." + String(remainingCents).padStart(2, "0");
   }
 }
 
