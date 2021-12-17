@@ -65,5 +65,9 @@ describe('Money', () => {
       assert.deepEqual(new Money(0, 1).multiplyBy(2),
         new Money(0, 2));
     });
+    it('0.55x2', () => {
+      assert.deepEqual(new Money(0, 55).multiplyBy(2),
+        new Money(1, 10));
+    });
   });
 });
