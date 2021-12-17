@@ -36,18 +36,26 @@ export class Money {
 export class LineItem {
   static create(
     asOf: string,
-    costPerItem: Money): LineItem {
+    costPerItem: Money,
+    quantity: number): LineItem {
     return new LineItem(
       new Date(Date.parse(asOf)),
-      costPerItem);
+      costPerItem,
+      quantity);
   }
 
   private readonly _asOf: Date;
-  private readonly _amount: Money;
+  private readonly _costPerItem: Money;
+  private readonly _quantity: number;
 
-  constructor(asOf: Date, amount: Money) {
+  constructor(
+    asOf: Date,
+    amount: Money,
+    quantity: number
+  ) {
     this._asOf = asOf;
-    this._amount = amount;
+    this._costPerItem = amount;
+    this._quantity = quantity;
   }
 
   get asOfTime(): number {
@@ -59,7 +67,7 @@ export class LineItem {
   }
 
   get amount(): Money {
-    return this._amount;
+    return this._costPerItem.multiplyBy(this._quantity);
   }
 }
 

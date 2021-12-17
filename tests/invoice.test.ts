@@ -7,8 +7,8 @@ import {Invoice, LineItem, Money} from "../invoice";
 describe('Invoice', () => {
   const actual = new Invoice(
     [
-      LineItem.create("2021-01-01", new Money( 1, 99)),
-      LineItem.create("2021-02-02", new Money( 2, 2)),
+      LineItem.create("2021-01-01", new Money( 1, 99), 1),
+      LineItem.create("2021-02-02", new Money( 2, 2), 1),
     ]
   );
   it('should have a total', () => {
@@ -23,6 +23,18 @@ describe('Invoice', () => {
     });
     it('Jan 1 is first', () => {
       assert.deepEqual(dates[1], new Date(Date.parse("2021-01-01")));
+    });
+  });
+
+  describe('multiple items', () => {
+    const actual = new Invoice(
+      [
+        LineItem.create("2021-01-01", new Money( 1, 0), 7),
+        LineItem.create("2021-02-02", new Money( 2, 0), 1),
+      ]
+    );
+    it('should have a total', () => {
+      assert.deepEqual(actual.total, new Money(9, 0));
     });
   });
 });
