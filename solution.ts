@@ -63,7 +63,7 @@ export class UserCalculations {
 
 export function monthBookends(yearMonth: string):
   { firstOfMonth: Date, lastOfMonth: Date } {
-  const dateInMonth = new Date(Date.parse(yearMonth + "-02T00:00:00Z"));
+  const dateInMonth = new Date(yearMonth + "-02");
   return {
     firstOfMonth: firstDayOfMonth(dateInMonth),
     lastOfMonth: lastDayOfMonth(dateInMonth)
