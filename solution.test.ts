@@ -1,23 +1,80 @@
-import chai from "chai";
-import sayHello from "./solution";
+import { assert } from "chai";
+import { billFor, User, Subscription } from "./solution";
 
-const {assert} = chai;
-chai.config.truncateThreshold = 0;
+const newPlan: Subscription = {
+  id: 1,
+  customerId: 1,
+  monthlyPriceInDollars: 4,
+};
 
-describe("sayHello", () => {
-  it("should say hello", () => {
-    assert.strictEqual(sayHello("Qualified"), "Hello, Qualified!");
+const constantUsers: User[] = [
+  {
+    id: 1,
+    name: "Employee #1",
+    activatedOn: new Date("2018-11-04"),
+    deactivatedOn: null,
+    customerId: 1,
+  },
+  {
+    id: 2,
+    name: "Employee #2",
+    activatedOn: new Date("2018-12-04"),
+    deactivatedOn: null,
+    customerId: 1,
+  },
+];
+
+const noUsers: User[] = [];
+
+describe("billFor", function () {
+  it("works when the customer has no active users during the month", function () {
+    assert.closeTo(billFor("2019-01", newPlan, noUsers), 0.0, 0.01);
   });
 
-  it("should say hello with no arguments", () => {
-    assert.strictEqual(sayHello(), "Hello there!");
+  it("works when the customer has no subscription", function () {
+    assert.closeTo(billFor("2019-01", null, constantUsers), 0.0, 0.01);
   });
 
-  it("should say hello with blank", () => {
-    assert.strictEqual(sayHello(""), "Hello there!");
+  it("works when everything stays the same for a month", function () {
+    assert.closeTo(billFor("2019-01", newPlan, constantUsers), 8.0, 0.01);
   });
 
-  it("should say hello with undefined", () => {
-    assert.strictEqual(sayHello(undefined), "Hello there!");
+  it("works when a user is activated during the month", function () {
+    const userSignedUp: User[] = [
+      {
+        id: 1,
+        name: "Employee #1",
+        activatedOn: new Date("2018-11-04"),
+        deactivatedOn: null,
+        customerId: 1,
+      },
+      {
+        id: 2,
+        name: "Employee #2",
+        activatedOn: new Date("2018-12-04"),
+        deactivatedOn: null,
+        customerId: 1,
+      },
+      {
+        id: 3,
+        name: "Employee #3",
+        activatedOn: new Date("2019-01-10"),
+        deactivatedOn: null,
+        customerId: 1,
+      },
+    ];
+    assert.closeTo(billFor("2019-01", newPlan, userSignedUp), 10.84, 0.01);
+  });
+  it("works when a user is activated for one day during February", function () {
+    const userSignedUp: User[] = [
+      {
+        id: 1,
+        name: "Employee #1",
+        activatedOn: new Date("2019-02-01"),
+        deactivatedOn: new Date("2019-02-01"),
+        customerId: 1,
+      }
+    ];
+    assert.closeTo(billFor("2019-02", newPlan, userSignedUp), 4/28, 0.01);
   });
 });
