@@ -11,6 +11,9 @@ describe('scoreSheet', () => {
       it('frame ' + i + ' should have zero balls thrown', () => {
         expect(actual.frames[i].ballsThrown).toHaveLength(0);
       });
+      it('frame ' + i + ' should have running score of undefined', () => {
+        expect(actual.frames[i].runningScore).toBeUndefined();
+      });
     }
   });
 });
