@@ -83,6 +83,6 @@ export class BookRepository {
   booksWrittenBy(authorId: string): Book[] {
     console.log("INSIDE_BOOKS_WRITTEN_BY " + authorId);
     return books
-      .filter(book => authorId == book.authorId)
+      .filter(book => authorId === book.authorId)
   }
 }
