@@ -49,10 +49,10 @@ export class DateUtilities{
     return new Date(yearMonth + "-" + String(dayOfMonth).padStart(2, "0"));
   }
   static allDatesInMonth(yearMonth: string): Date[] {
-    return new Array(DateUtilities.daysInMonth(yearMonth)).fill(1)
+    return new Array(DateUtilities.numberOfDaysIn(yearMonth)).fill(1)
       .map((_, index) => DateUtilities._dateFrom(yearMonth, index + 1));
   }
-  static daysInMonth(yearMonth: string): number {
+  static numberOfDaysIn(yearMonth: string): number {
     const date = DateUtilities._dateFrom(yearMonth, 2);
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
   }
@@ -83,9 +83,8 @@ export function billFor(
   if (!activeSubscription) {
     return 0;
   }
-  const numberOfDaysInMonth = DateUtilities.daysInMonth(yearMonth);
   const customer = new Customer(users,
-    activeSubscription.monthlyPriceInDollars / numberOfDaysInMonth);
+    activeSubscription.monthlyPriceInDollars / DateUtilities.numberOfDaysIn(yearMonth));
 
   const total = DateUtilities.allDatesInMonth(yearMonth)
     .map(dateInMonth => customer.totalForDay(dateInMonth))
