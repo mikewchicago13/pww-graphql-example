@@ -25,11 +25,9 @@ class Game {
   }
 
   get score() {
-    let result = 0;
-    for (let roll = 0; roll < 20; roll += 2) {
-      result += this._countPinsFor(roll);
-    }
-    return result;
+    return new Array(10).fill(0)
+      .map((_, frame) => this._countPinsFor(frame * 2))
+      .reduce((a, b) => a + b, 0);
   }
 
   _isStrike(firstBallOfFrame) {
