@@ -60,7 +60,7 @@ class Customer {
       .map(x => new UserCalculations(x))
       .filter(x => x.isActiveOn(dateInMonth))
       .map(() => this._dailyRate)
-      .reduce((a: number, b: number): number => a + b, 0)
+      .reduce((a, b) => a + b, 0)
   }
 }
 
@@ -77,7 +77,7 @@ export function billFor(
 
   const total = Date.allDatesInMonth(yearMonth)
     .map(dateInMonth => customer.totalForDay(dateInMonth))
-    .reduce((a: number, b: number): number => a + b, 0);
+    .reduce((a, b) => a + b, 0);
 
   return Number(total.toFixed(2));
 }
