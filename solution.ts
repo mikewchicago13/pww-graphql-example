@@ -1,4 +1,4 @@
-import "./index.d.ts"
+import "./dateExtensions"
 
 export interface User {
   id: number;
