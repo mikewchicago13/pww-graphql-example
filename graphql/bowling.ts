@@ -2,7 +2,7 @@ class Game {
   _rolls = new Array(21).fill(undefined);
   _index = 0;
 
-  roll(pins) {
+  roll(pins: number): Game {
     this._rolls[this._index] = pins;
     if (this._isStrike(pins) && this._isFirstBallOf9thFrameOrEarlier()) {
       this._index += 2;
@@ -12,8 +12,8 @@ class Game {
     return this;
   }
 
-  _countPinsFor(roll){
-    const _pins = (roll) => {
+  _countPinsFor(roll: number){
+    const _pins = (roll: number) => {
       return this._rolls[roll] || 0;
     }
     if (this._isStrike(_pins(roll))) {
@@ -30,15 +30,15 @@ class Game {
       .reduce((a, b) => a + b, 0);
   }
 
-  _isStrike(firstBallOfFrame) {
+  _isStrike(firstBallOfFrame: number) {
     return this._didAllThePinsFall(firstBallOfFrame);
   }
 
-  _isSpare(...rolls) {
+  _isSpare(...rolls: number[]) {
     return this._didAllThePinsFall(...rolls);
   }
 
-  _didAllThePinsFall(...rolls) {
+  _didAllThePinsFall(...rolls: number[]) {
     return rolls.reduce((a, b) => a + b, 0) === 10;
   }
 
@@ -46,7 +46,7 @@ class Game {
     return this._index < 18 && this._index % 2 === 0;
   }
 
-  _nextTwoRolls(index) {
+  _nextTwoRolls(index: number) {
     return this._rolls.slice(index + 1)
       .filter(value => value !== undefined)
       .slice(0, 2)
