@@ -19,14 +19,16 @@ export class UserCalculations {
     this._user = user;
   }
 
-  isActiveOn(date: Date): boolean {
-    const datePart = (a: Date) :string => {
-      return a.toISOString().split("T")[0];
-    }
+  static _datePart(a: Date): string {
+    return a.toISOString().split("T")[0];
+  }
 
-    const activatedDate = datePart(this._user.activatedOn);
-    const comparisonDate = datePart(date);
-    const deactivateDate = datePart(this._user.deactivatedOn || new Date("3000-01-01"));
+  static readonly _positiveInfinity: Date = new Date("3000-01-01");
+
+  isActiveOn(date: Date): boolean {
+    const activatedDate = UserCalculations._datePart(this._user.activatedOn);
+    const comparisonDate = UserCalculations._datePart(date);
+    const deactivateDate = UserCalculations._datePart(this._user.deactivatedOn || UserCalculations._positiveInfinity);
 
     const activatedBeforeComparisonDate = activatedDate <= comparisonDate;
     const comparisonBeforeDeactivated = comparisonDate <= deactivateDate;
