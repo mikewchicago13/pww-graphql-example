@@ -13,10 +13,12 @@ export interface Subscription {
 }
 
 export class UserCalculations {
-  private readonly _user: User;
+  private readonly _activatedDate: string;
+  private readonly _deactivateDate: string;
 
   constructor(user: User) {
-    this._user = user;
+    this._activatedDate = UserCalculations._datePart(user.activatedOn);
+    this._deactivateDate = UserCalculations._datePart(user.deactivatedOn || UserCalculations._positiveInfinity);
   }
 
   static _datePart(a: Date): string {
@@ -26,18 +28,16 @@ export class UserCalculations {
   static readonly _positiveInfinity: Date = new Date("3000-01-01");
 
   isActiveOn(date: Date): boolean {
-    const activatedDate = UserCalculations._datePart(this._user.activatedOn);
     const comparisonDate = UserCalculations._datePart(date);
-    const deactivateDate = UserCalculations._datePart(this._user.deactivatedOn || UserCalculations._positiveInfinity);
 
-    const activatedBeforeComparisonDate = activatedDate <= comparisonDate;
-    const comparisonBeforeDeactivated = comparisonDate <= deactivateDate;
-    const isFirstDayOfSubscription = activatedDate === comparisonDate;
-    const isLastDayOfSubscription = deactivateDate === comparisonDate;
+    const activatedBeforeComparisonDate = this._activatedDate <= comparisonDate;
+    const comparisonBeforeDeactivated = comparisonDate <= this._deactivateDate;
+    const isFirstDayOfSubscription = this._activatedDate === comparisonDate;
+    const isLastDayOfSubscription = this._deactivateDate === comparisonDate;
 
     return isFirstDayOfSubscription ||
       isLastDayOfSubscription ||
-      activatedBeforeComparisonDate && comparisonBeforeDeactivated;
+      (activatedBeforeComparisonDate && comparisonBeforeDeactivated);
   }
 }
 
