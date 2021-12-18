@@ -1,5 +1,5 @@
 import {assert} from "chai";
-import {allDatesInMonth, billFor, Subscription, User, UserCalculations} from "./solution";
+import {billFor, DateUtilities, Subscription, User, UserCalculations} from "./solution";
 
 const newPlan: Subscription = {
   id: 1,
@@ -118,7 +118,7 @@ describe("billFor", function () {
         assert.isFalse(actual.isActiveOn(new Date("2019-03-01")));
       });
 
-      const dates = allDatesInMonth("2019-02")
+      const dates = DateUtilities.allDatesInMonth("2019-02")
         .map(value => actual.isActiveOn(value))
 
       it('firstOfMonth', () => {
@@ -146,7 +146,7 @@ describe("billFor", function () {
         assert.isFalse(actual.isActiveOn(new Date("2019-03-01")));
       });
 
-      const dates = allDatesInMonth("2019-02")
+      const dates = DateUtilities.allDatesInMonth("2019-02")
         .map(value => actual.isActiveOn(value))
 
       it('lastOfMonth', () => {

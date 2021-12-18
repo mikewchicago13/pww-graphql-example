@@ -44,16 +44,19 @@ export class UserCalculations {
   }
 }
 
-function dateFrom(yearMonth: string, dayOfMonth: number): Date {
-  return new Date(yearMonth + "-" + String(dayOfMonth).padStart(2, "0"));
+export class DateUtilities{
+  static _dateFrom(yearMonth: string, dayOfMonth: number): Date {
+    return new Date(yearMonth + "-" + String(dayOfMonth).padStart(2, "0"));
+  }
+  static allDatesInMonth(yearMonth: string): Date[] {
+    return new Array(DateUtilities.daysInMonth(yearMonth)).fill(1)
+      .map((_, index) => DateUtilities._dateFrom(yearMonth, index + 1));
+  }
+  static daysInMonth(yearMonth: string): number {
+    const date = DateUtilities._dateFrom(yearMonth, 2);
+    return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+  }
 }
-
-export function allDatesInMonth(yearMonth: string): Date[] {
-  return new Array(daysInMonth(yearMonth)).fill(1)
-    .map((_, index) => dateFrom(yearMonth, index + 1));
-}
-
-const add = (a: number, b: number): number => a + b;
 
 class Customer {
   private _users: User[] | [];
@@ -68,7 +71,7 @@ class Customer {
       .map(x => new UserCalculations(x))
       .filter(x => x.isActiveOn(dateInMonth))
       .map(() => this._dailyRate)
-      .reduce(add, 0)
+      .reduce((a: number, b: number): number => a + b, 0)
   }
 }
 
@@ -80,18 +83,13 @@ export function billFor(
   if (!activeSubscription) {
     return 0;
   }
-  const numberOfDaysInMonth = daysInMonth(yearMonth);
+  const numberOfDaysInMonth = DateUtilities.daysInMonth(yearMonth);
   const customer = new Customer(users,
     activeSubscription.monthlyPriceInDollars / numberOfDaysInMonth);
 
-  const total = allDatesInMonth(yearMonth)
+  const total = DateUtilities.allDatesInMonth(yearMonth)
     .map(dateInMonth => customer.totalForDay(dateInMonth))
-    .reduce(add, 0);
+    .reduce((a: number, b: number): number => a + b, 0);
 
   return Number(total.toFixed(2));
-}
-
-function daysInMonth(yearMonth: string): number {
-  const date = dateFrom(yearMonth, 2);
-  return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
 }
