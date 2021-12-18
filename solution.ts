@@ -45,8 +45,8 @@ function dateFrom(yearMonth: string, dayOfMonth: number): Date {
   return new Date(yearMonth + "-" + String(dayOfMonth).padStart(2, "0"));
 }
 
-export function allDatesInMonth(yearMonth: string, numberOfDaysInMonth: number): Date[] {
-  return new Array(numberOfDaysInMonth).fill(1)
+export function allDatesInMonth(yearMonth: string): Date[] {
+  return new Array(daysInMonth(yearMonth)).fill(1)
     .map((_, index) => dateFrom(yearMonth, index + 1));
 }
 
@@ -77,18 +77,18 @@ export function billFor(
   if (!activeSubscription) {
     return 0;
   }
-  const lastOfMonth = lastDayOfMonth(dateFrom(yearMonth, 2));
-  const numberOfDaysInMonth = lastOfMonth.getDate();
+  const numberOfDaysInMonth = daysInMonth(yearMonth);
   const customer = new Customer(users,
     activeSubscription.monthlyPriceInDollars / numberOfDaysInMonth);
 
-  const total = allDatesInMonth(yearMonth, numberOfDaysInMonth)
+  const total = allDatesInMonth(yearMonth)
     .map(dateInMonth => customer.totalForDay(dateInMonth))
     .reduce(add, 0);
 
   return Number(total.toFixed(2));
 }
 
-function lastDayOfMonth(date: Date): Date {
-  return new Date(date.getFullYear(), date.getMonth() + 1, 0);
+function daysInMonth(yearMonth: string): number {
+  const date = dateFrom(yearMonth, 2);
+  return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
 }

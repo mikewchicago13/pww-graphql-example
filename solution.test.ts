@@ -128,7 +128,7 @@ describe("billFor", function () {
         assert.isFalse(actual.isActiveOn(new Date("2019-03-01")));
       });
 
-      const dates = allDatesInMonth("2019-02", 28)
+      const dates = allDatesInMonth("2019-02")
         .map(value => actual.isActiveOn(value))
 
       it('firstOfMonth', () => {
@@ -153,7 +153,7 @@ describe("billFor", function () {
         assert.isFalse(actual.isActiveOn(new Date("2019-03-01")));
       });
 
-      const dates = allDatesInMonth("2019-02", 28)
+      const dates = allDatesInMonth("2019-02")
         .map(value => actual.isActiveOn(value))
 
       it('lastOfMonth', () => {
