@@ -52,12 +52,21 @@ export function allDatesInMonth(yearMonth: string, numberOfDaysInMonth: number):
 
 const add = (a: number, b: number): number => a + b;
 
-function totalForDay(users: User[] | [], dateInMonth: Date, dailyRate: number) : number {
-  return users
-    .map((x: User) => new UserCalculations(x))
-    .filter((x: UserCalculations) => x.isActiveOn(dateInMonth))
-    .map(() => dailyRate)
-    .reduce(add, 0)
+class Customer {
+  private _users: User[] | [];
+  private _dailyRate: number;
+  constructor(users: User[] | [], dailyRate: number) {
+    this._users = users;
+    this._dailyRate = dailyRate;
+  }
+
+  totalForDay(dateInMonth: Date) : number {
+    return this._users
+      .map(x => new UserCalculations(x))
+      .filter(x => x.isActiveOn(dateInMonth))
+      .map(() => this._dailyRate)
+      .reduce(add, 0)
+  }
 }
 
 export function billFor(
@@ -70,10 +79,11 @@ export function billFor(
   }
   const lastOfMonth = lastDayOfMonth(dateFrom(yearMonth, 2));
   const numberOfDaysInMonth = lastOfMonth.getDate();
-  const dailyRate = activeSubscription.monthlyPriceInDollars / numberOfDaysInMonth;
+  const customer = new Customer(users,
+    activeSubscription.monthlyPriceInDollars / numberOfDaysInMonth);
 
   const total = allDatesInMonth(yearMonth, numberOfDaysInMonth)
-    .map(dateInMonth => totalForDay(users, dateInMonth, dailyRate))
+    .map(dateInMonth => customer.totalForDay(dateInMonth))
     .reduce(add, 0);
 
   return Number(total.toFixed(2));
