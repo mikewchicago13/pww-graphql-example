@@ -12,20 +12,22 @@ class Game {
     return this;
   }
 
-  get score() {
+  _countPinsFor(roll){
     const _pins = (roll) => {
       return this._rolls[roll] || 0;
     }
+    if (this._isStrike(_pins(roll))) {
+      return _pins(roll) + this._nextTwoRolls(roll);
+    } else if (this._isSpare(_pins(roll), _pins(roll + 1))) {
+      return _pins(roll) + _pins(roll + 1) + _pins(roll + 2);
+    }
+    return _pins(roll) + _pins(roll + 1);
+  }
 
+  get score() {
     let result = 0;
     for (let roll = 0; roll < 20; roll += 2) {
-      if (this._isStrike(_pins(roll))) {
-        result += _pins(roll) + this._nextTwoRolls(roll);
-      } else if (this._isSpare(_pins(roll), _pins(roll + 1))) {
-        result += _pins(roll) + _pins(roll + 1) + _pins(roll + 2);
-      } else {
-        result += _pins(roll) + _pins(roll + 1);
-      }
+      result += this._countPinsFor(roll);
     }
     return result;
   }
