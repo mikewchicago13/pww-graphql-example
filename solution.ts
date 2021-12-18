@@ -41,25 +41,24 @@ export class UserCalculations {
   }
 }
 
-function dateFrom(yearMonth: string, dayOfMonth: number) {
+function dateFrom(yearMonth: string, dayOfMonth: number): Date {
   return new Date(yearMonth + "-" + String(dayOfMonth).padStart(2, "0"));
 }
 
-export function allDatesInMonth(yearMonth: string, numberOfDaysInMonth: number) {
+export function allDatesInMonth(yearMonth: string, numberOfDaysInMonth: number): Date[] {
   return new Array(numberOfDaysInMonth).fill(1)
     .map((_, index) => dateFrom(yearMonth, index + 1));
 }
 
-const add = (a: number, b: number) => a + b;
+const add = (a: number, b: number): number => a + b;
 
-function totalForDay(users: User[] | [], dateInMonth: Date, dailyRate: number) {
+function totalForDay(users: User[] | [], dateInMonth: Date, dailyRate: number) : number {
   return users
     .map((x: User) => new UserCalculations(x))
     .filter((x: UserCalculations) => x.isActiveOn(dateInMonth))
     .map(() => dailyRate)
     .reduce(add, 0)
 }
-
 
 export function billFor(
   yearMonth: string,

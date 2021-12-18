@@ -156,8 +156,8 @@ describe("billFor", function () {
       const dates = allDatesInMonth("2019-02", 28)
         .map(value => actual.isActiveOn(value))
 
-      it('second to last day of month', () => {
-        assert.isFalse(actual.isActiveOn(new Date("2019-02-27")));
+      it('lastOfMonth', () => {
+        assert.isTrue(dates[27]);
       });
       describe('all other days are not active', () => {
         dates.slice(0, 27)
