@@ -3,6 +3,11 @@ type Query {
     goodbye ( name: String! ) : Response
     bookById ( id: ID ): Book
     authorById ( id: ID ): Author
+    bowling ( rolls: [Int]! ): Game
+}
+
+type Game {
+    score: Int
 }
 
 type Response {
