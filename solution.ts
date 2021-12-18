@@ -62,6 +62,12 @@ class Customer {
       .map(() => this._dailyRate)
       .reduce((a, b) => a + b, 0)
   }
+
+  totalFor(yearMonth: string): number{
+    return Date.allDatesInMonth(yearMonth)
+      .map(dateInMonth => this.totalForDay(dateInMonth))
+      .reduce((a, b) => a + b, 0);
+  }
 }
 
 export function billFor(
@@ -75,9 +81,7 @@ export function billFor(
   const customer = new Customer(users,
     activeSubscription.monthlyPriceInDollars / Date.numberOfDaysIn(yearMonth));
 
-  const total = Date.allDatesInMonth(yearMonth)
-    .map(dateInMonth => customer.totalForDay(dateInMonth))
-    .reduce((a, b) => a + b, 0);
+  const total = customer.totalFor(yearMonth);
 
   return Number(total.toFixed(2));
 }
