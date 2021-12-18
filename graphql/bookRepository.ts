@@ -46,6 +46,12 @@ export class Book {
   set authorId(value: string) {
     this._authorId = value;
   }
+
+  methodOnEntity({param1}: { param1: string }) {
+    const result = "Method on entity called with " + param1;
+    console.log(result);
+    return result;
+  }
 }
 
 const books = [
@@ -62,7 +68,7 @@ export class BookRepository {
     {id}: { id: string }
   ) => Book {
     return (_, {id}): Book => {
-      console.log("FIRST_PARAM_TO_BOOK_BY_ID "  + JSON.stringify(_));
+      console.log("FIRST_PARAM_TO_BOOK_BY_ID " + JSON.stringify(_));
       console.log("INSIDE_BOOK_BY_ID " + id);
       const book = map.get(id);
 
@@ -73,6 +79,7 @@ export class BookRepository {
       return book || blowUp();
     };
   }
+
   booksWrittenBy(authorId: string): Book[] {
     console.log("INSIDE_BOOKS_WRITTEN_BY " + authorId);
     return books
