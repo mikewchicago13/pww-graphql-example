@@ -1,5 +1,7 @@
+import {ScoreSheet} from "./scoreSheet";
+
 export class Game {
-  _rolls = new Array(21).fill(undefined);
+  _rolls: number[] = new Array(21).fill(undefined);
   _index = 0;
 
   roll(pins: number): Game {
@@ -28,6 +30,10 @@ export class Game {
     return new Array(10).fill(0)
       .map((_, frame) => this._countPinsFor(frame * 2))
       .reduce((a, b) => a + b, 0);
+  }
+
+  get scoreSheet(): ScoreSheet {
+    return new ScoreSheet(this._rolls)
   }
 
   _isStrike(firstBallOfFrame: number): boolean {
