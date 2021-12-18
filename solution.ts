@@ -1,3 +1,5 @@
+import "./index.d.ts"
+
 export interface User {
   id: number;
   name: string;
@@ -44,29 +46,16 @@ export class UserCalculations {
   }
 }
 
-export class DateUtilities{
-  static _dateFrom(yearMonth: string, dayOfMonth: number): Date {
-    return new Date(yearMonth + "-" + String(dayOfMonth).padStart(2, "0"));
-  }
-  static allDatesInMonth(yearMonth: string): Date[] {
-    return new Array(DateUtilities.numberOfDaysIn(yearMonth)).fill(1)
-      .map((_, index) => DateUtilities._dateFrom(yearMonth, index + 1));
-  }
-  static numberOfDaysIn(yearMonth: string): number {
-    const date = DateUtilities._dateFrom(yearMonth, 2);
-    return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-  }
-}
-
 class Customer {
   private _users: User[] | [];
   private _dailyRate: number;
+
   constructor(users: User[] | [], dailyRate: number) {
     this._users = users;
     this._dailyRate = dailyRate;
   }
 
-  totalForDay(dateInMonth: Date) : number {
+  totalForDay(dateInMonth: Date): number {
     return this._users
       .map(x => new UserCalculations(x))
       .filter(x => x.isActiveOn(dateInMonth))
@@ -84,9 +73,9 @@ export function billFor(
     return 0;
   }
   const customer = new Customer(users,
-    activeSubscription.monthlyPriceInDollars / DateUtilities.numberOfDaysIn(yearMonth));
+    activeSubscription.monthlyPriceInDollars / Date.numberOfDaysIn(yearMonth));
 
-  const total = DateUtilities.allDatesInMonth(yearMonth)
+  const total = Date.allDatesInMonth(yearMonth)
     .map(dateInMonth => customer.totalForDay(dateInMonth))
     .reduce((a: number, b: number): number => a + b, 0);
 
