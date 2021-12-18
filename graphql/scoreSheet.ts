@@ -1,4 +1,7 @@
 class Frame {
+  get ballsThrown(): number[] {
+    return [];
+  }
 }
 
 export class ScoreSheet {
@@ -9,6 +12,6 @@ export class ScoreSheet {
   }
 
   get frames(): Frame[] {
-    return new Array(10);
+    return new Array(10).fill(new Frame());
   }
 }
