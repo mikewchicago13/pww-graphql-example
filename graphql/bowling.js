@@ -19,7 +19,7 @@ class Game {
     if (this._isStrike(_pins(roll))) {
       return _pins(roll) + this._nextTwoRolls(roll);
     } else if (this._isSpare(_pins(roll), _pins(roll + 1))) {
-      return _pins(roll) + _pins(roll + 1) + _pins(roll + 2);
+      return _pins(roll) + this._nextTwoRolls(roll);
     }
     return _pins(roll) + _pins(roll + 1);
   }
