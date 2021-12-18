@@ -67,4 +67,13 @@ describe('bowling', () => {
     }
     expect(game.score).toBe(30);
   });
+  it('should gutter, spare, strike, one to prove that only first ball 10s are counted as strike', () => {
+    let game = bowling()
+      .roll(0)
+      .roll(10)
+      .roll(10)
+      .roll(1)
+    ;
+    expect(game.score).toBe(32);
+  });
 });
