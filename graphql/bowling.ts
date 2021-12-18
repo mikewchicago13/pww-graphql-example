@@ -1,4 +1,4 @@
-class Game {
+export class Game {
   _rolls = new Array(21).fill(undefined);
   _index = 0;
 
