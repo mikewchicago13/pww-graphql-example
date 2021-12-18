@@ -1,5 +1,11 @@
 import {assert} from "chai";
-import {billFor, User, Subscription, UserCalculations, monthBookends, nextDay} from "./solution";
+import {
+  billFor,
+  User,
+  Subscription,
+  UserCalculations,
+  allDatesInMonth
+} from "./solution";
 
 const newPlan: Subscription = {
   id: 1,
@@ -101,8 +107,6 @@ describe("billFor", function () {
       });
     }
 
-    const {firstOfMonth, lastOfMonth} = monthBookends("2019-02");
-
     describe('month bookends from yearMonth string', () => {
       const actual = getUserCalculations(new Date("2019-02-01"), null);
       describe('default timezone', () => {
@@ -112,14 +116,6 @@ describe("billFor", function () {
         it('lastOfMonth', () => {
           assert.isTrue(actual.isActiveOn(new Date("2019-02-28")));
         });
-      });
-
-      it('iterates through every day', () => {
-        let counter = 0;
-        for (let i = firstOfMonth; i <= lastOfMonth; i = nextDay(i)) {
-          counter++;
-        }
-        assert.equal(counter, 28);
       });
     });
 
@@ -132,11 +128,9 @@ describe("billFor", function () {
         assert.isFalse(actual.isActiveOn(new Date("2019-03-01")));
       });
 
-      const dates = new Array(28);
-      let counter = 0;
-      for (let i = firstOfMonth; i <= lastOfMonth; i = nextDay(i)) {
-        dates[counter++] = actual.isActiveOn(i);
-      }
+      const dates = allDatesInMonth("2019-02", 28)
+        .map(value => actual.isActiveOn(value))
+
       it('firstOfMonth', () => {
         assert.isTrue(dates[0]);
       });
@@ -159,11 +153,9 @@ describe("billFor", function () {
         assert.isFalse(actual.isActiveOn(new Date("2019-03-01")));
       });
 
-      const dates = new Array(28);
-      let counter = 0;
-      for (let i = firstOfMonth; i <= lastOfMonth; i = nextDay(i)) {
-        dates[counter++] = actual.isActiveOn(i);
-      }
+      const dates = allDatesInMonth("2019-02", 28)
+        .map(value => actual.isActiveOn(value))
+
       it('second to last day of month', () => {
         assert.isFalse(actual.isActiveOn(new Date("2019-02-27")));
       });

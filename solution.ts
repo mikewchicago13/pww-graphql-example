@@ -41,14 +41,25 @@ export class UserCalculations {
   }
 }
 
-export function monthBookends(yearMonth: string):
-  { firstOfMonth: Date, lastOfMonth: Date } {
-  const dateInMonth = new Date(yearMonth + "-02");
-  return {
-    firstOfMonth: firstDayOfMonth(dateInMonth),
-    lastOfMonth: lastDayOfMonth(dateInMonth)
-  };
+function dateFrom(yearMonth: string, dayOfMonth: number) {
+  return new Date(yearMonth + "-" + String(dayOfMonth).padStart(2, "0"));
 }
+
+export function allDatesInMonth(yearMonth: string, numberOfDaysInMonth: number) {
+  return new Array(numberOfDaysInMonth).fill(1)
+    .map((_, index) => dateFrom(yearMonth, index + 1));
+}
+
+const add = (a: number, b: number) => a + b;
+
+function totalForDay(users: User[] | [], dateInMonth: Date, dailyRate: number) {
+  return users
+    .map((x: User) => new UserCalculations(x))
+    .filter((x: UserCalculations) => x.isActiveOn(dateInMonth))
+    .map(() => dailyRate)
+    .reduce(add, 0)
+}
+
 
 export function billFor(
   yearMonth: string,
@@ -58,53 +69,17 @@ export function billFor(
   if (!activeSubscription) {
     return 0;
   }
-  const {firstOfMonth, lastOfMonth} = monthBookends(yearMonth);
+  const lastOfMonth = lastDayOfMonth(dateFrom(yearMonth, 2));
   const numberOfDaysInMonth = lastOfMonth.getDate();
   const dailyRate = activeSubscription.monthlyPriceInDollars / numberOfDaysInMonth;
 
-  let total = 0;
-  for (let i = firstOfMonth; i <= lastOfMonth; i = nextDay(i)) {
-    total += users
-      .map((x: User) => new UserCalculations(x))
-      .filter((x: UserCalculations) => x.isActiveOn(i))
-      .map(() => dailyRate)
-      .reduce((a, b) => a + b, 0)
-  }
+  const total = allDatesInMonth(yearMonth, numberOfDaysInMonth)
+    .map(dateInMonth => totalForDay(users, dateInMonth, dailyRate))
+    .reduce(add, 0);
 
   return Number(total.toFixed(2));
 }
 
-/*******************
- * Helper functions *
- *******************/
-
-/**
- Takes a Date object and returns a Date which is the first day
- of that month. For example:
-
- firstDayOfMonth(new Date(2019, 2, 7)) // => new Date(2019, 2, 1)
- **/
-function firstDayOfMonth(date: Date): Date {
-  return new Date(date.getFullYear(), date.getMonth(), 1);
-}
-
-/**
- Takes a Date object and returns a Date which is the last day
- of that month. For example:
-
- lastDayOfMonth(new Date(2019, 2, 7)) // => new Date(2019, 2, 28)
- **/
 function lastDayOfMonth(date: Date): Date {
   return new Date(date.getFullYear(), date.getMonth() + 1, 0);
-}
-
-/**
- Takes a Date object and returns a Date which is the next day.
- For example:
-
- nextDay(new Date(2019, 2, 7))  // => new Date(2019, 2, 8)
- nextDay(new Date(2019, 2, 28)) // => new Date(2019, 3, 1)
- **/
-export function nextDay(date: Date): Date {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
 }
