@@ -16,7 +16,10 @@ export class UserCalculations {
   private readonly _activatedDate: string;
   private readonly _deactivateDate: string;
 
-  constructor(user: User) {
+  constructor(user: {
+    activatedOn: Date,
+    deactivatedOn: Date | null
+  }) {
     this._activatedDate = UserCalculations._datePart(user.activatedOn);
     this._deactivateDate = UserCalculations._datePart(user.deactivatedOn || UserCalculations._positiveInfinity);
   }

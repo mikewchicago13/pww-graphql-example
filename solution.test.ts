@@ -1,11 +1,5 @@
 import {assert} from "chai";
-import {
-  billFor,
-  User,
-  Subscription,
-  UserCalculations,
-  allDatesInMonth
-} from "./solution";
+import {allDatesInMonth, billFor, Subscription, User, UserCalculations} from "./solution";
 
 const newPlan: Subscription = {
   id: 1,
@@ -97,18 +91,11 @@ describe("billFor", function () {
   });
 
   describe('isActiveOn', () => {
-    function getUserCalculations(activatedOn: Date, deactivatedOn: Date | null): UserCalculations {
-      return new UserCalculations({
-        id: 1,
-        name: "dude",
-        activatedOn,
-        deactivatedOn,
-        customerId: 1
-      });
-    }
-
     describe('month bookends from yearMonth string', () => {
-      const actual = getUserCalculations(new Date("2019-02-01"), null);
+      const actual = new UserCalculations({
+        activatedOn: new Date("2019-02-01"),
+        deactivatedOn: null
+      });
       describe('default timezone', () => {
         it('firstOfMonth', () => {
           assert.isTrue(actual.isActiveOn(new Date("2019-02-01")));
@@ -120,7 +107,10 @@ describe("billFor", function () {
     });
 
     describe('activated and deactivated on first of month', () => {
-      const actual = getUserCalculations(new Date("2019-02-01"), new Date("2019-02-01"));
+      const actual = new UserCalculations({
+        activatedOn: new Date("2019-02-01"),
+        deactivatedOn: new Date("2019-02-01")
+      });
       it('last of previous month', () => {
         assert.isFalse(actual.isActiveOn(new Date("2019-01-31")));
       });
@@ -145,7 +135,10 @@ describe("billFor", function () {
     });
 
     describe('activated and deactivated on last of month', () => {
-      const actual = getUserCalculations(new Date("2019-02-28"), new Date("2019-02-28"));
+      const actual = new UserCalculations({
+        activatedOn: new Date("2019-02-28"),
+        deactivatedOn: new Date("2019-02-28")
+      });
       it('last of previous month', () => {
         assert.isFalse(actual.isActiveOn(new Date("2019-01-31")));
       });
