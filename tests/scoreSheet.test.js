@@ -50,6 +50,10 @@ describe('scoreSheet', () => {
     for (let i = 0; i < 12; i++) {
       game = game.roll(10);
     }
+    it('frame 1 should have running score of 30 per frame', () => {
+      expect(game.scoreSheet.frames[0].runningScore).toBe( 30);
+    });
+
     for (let i = 0; i < 9; i++) {
       it('frame ' + (i + 1) + ' should have one strike and empty fill', () => {
         expect(game.scoreSheet.frames[i].ballsThrown).toStrictEqual(["X", undefined]);

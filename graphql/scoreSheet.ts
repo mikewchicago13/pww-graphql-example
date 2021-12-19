@@ -37,13 +37,12 @@ class Frame {
     return undefined;
   }
 
-  protected _isStrike(index: number, value: number) {
-    return index === 0 && value === 10;
+  protected _isStrike(indexWithinFrame: number, value: number) {
+    return indexWithinFrame === 0 && Frame._sumsToTen([value]);
   }
 
   protected _isSpare(indexWithinFrame: number, ballsThrown: number[]) {
-    return indexWithinFrame === 1 &&
-      Frame._sumsToTen(ballsThrown);
+    return indexWithinFrame === 1 && Frame._sumsToTen(ballsThrown);
   }
 
   private static _sumsToTen(ballsThrown: number[]) {
@@ -82,8 +81,7 @@ class Frame {
     if (ballsThrown.length < 2) {
       return false;
     }
-    return Frame._sumsToTen(ballsThrown) &&
-      this._rolls[startRoll + 2] !== undefined;
+    return Frame._sumsToTen(ballsThrown) && this._rolls[startRoll + 2] !== undefined;
   }
 
   private _isStrikeFilledIn(): boolean {
@@ -91,32 +89,38 @@ class Frame {
     const ballsThrown = this._rolls
       .slice(startRoll, startRoll + 1)
       .filter(value => value !== undefined);
+
     if (ballsThrown.length < 1) {
       return false;
     }
 
-    const hasTwoBallsAfterThis =
-      this._rolls
-        .slice(startRoll + 2)
-        .filter(value => value !== undefined)
-        .length >= 2;
+    if(!Frame._sumsToTen(ballsThrown)){
+      return false;
+    }
 
-    return Frame._sumsToTen(ballsThrown) && hasTwoBallsAfterThis;
+    return this._rolls
+      .slice(startRoll + 2)
+      .filter(value => value !== undefined)
+      .length >= 2;
   }
 
   private _next(forwardLookingRolls: number): number {
-    return this._rolls.slice((this._frameIndex * 2) + 2)
+    const next = this._rolls.slice((this._frameIndex * 2) + this._allowedNumberOfBallsThrown)
       .filter(value => value !== undefined)
-      .slice(0, forwardLookingRolls + 1)
+      .slice(0, forwardLookingRolls)
       .reduce((a, b) => a + b, 0);
+    console.log("next " + next);
+    return next;
   }
 
   private _scoreUpToThisFrame(): number {
     const game = new Game();
-    this._rolls.slice(0, (this._frameIndex * 2) + 2)
+    this._rolls.slice(0, (this._frameIndex * 2) + this._allowedNumberOfBallsThrown)
       .filter(value => value !== undefined)
       .forEach(pins => game.roll(pins));
-    return game.score;
+    const score = game.score;
+    console.log("score " + score);
+    return score;
   }
 }
 
