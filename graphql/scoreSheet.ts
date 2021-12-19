@@ -15,12 +15,19 @@ class Frame {
     const start = this._frameIndex * 2;
     return this._rolls
       .slice(start, start + this._allowedNumberOfBallsThrown)
-      .map(value => {
+      .map((value, index) => {
         if (value !== undefined) {
+          if(Frame._isStrike(index, value)){
+            return "X";
+          }
           return String(value)
         }
         return undefined;
       });
+  }
+
+  private static _isStrike(index: number, value: number) {
+    return index === 0 && value === 10;
   }
 
   get runningScore(): number | undefined {
