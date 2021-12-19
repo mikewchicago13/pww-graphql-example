@@ -2,7 +2,7 @@ class Frame {
   private readonly _rolls: number[];
 
   constructor(rolls: number[]) {
-    this._rolls = rolls.filter(value => value !== undefined);
+    this._rolls = rolls;
   }
 
   get ballsThrown(): number[] {
@@ -10,8 +10,10 @@ class Frame {
   }
 
   get runningScore(): number | undefined {
-    if (this._rolls.length) {
-      return this._rolls.reduce((a, b) => a + b, 0);
+    const actualRolls = this._rolls
+      .filter(value => value !== undefined);
+    if (actualRolls.length) {
+      return actualRolls.reduce((a, b) => a + b, 0);
     }
     return undefined;
   }
@@ -28,10 +30,9 @@ export class ScoreSheet {
     return new Array(10).fill(0)
       .map((_, frameIndex) => {
         const rollIndex = frameIndex * 2;
-
-        return new Frame(frameIndex === 9 ?
-          this.getRollsInTenthFrame() :
-          this.getRollsInFirstNineFrames(rollIndex));
+        return frameIndex === 9 ?
+          new Frame(this.getRollsInTenthFrame()) :
+          new Frame(this.getRollsInFirstNineFrames(rollIndex));
       });
   }
 
