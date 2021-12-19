@@ -8,7 +8,7 @@ describe('can connect to local graphql', () => {
               score
               scoreSheet {
                   frames {
-                      ballsThrown
+                      marks
                       runningScore
                   }
               }

@@ -8,7 +8,7 @@ describe('can connect to local graphql', () => {
               roll0: rollPins(pins: 5) {
                   scoreSheet {
                       frames {
-                          ballsThrown
+                          marks
                           runningScore
                       }
                   }
@@ -16,7 +16,7 @@ describe('can connect to local graphql', () => {
               roll1: rollPins(pins: 5) {
                   scoreSheet {
                       frames {
-                          ballsThrown
+                          marks
                           runningScore
                       }
                   }
@@ -24,7 +24,7 @@ describe('can connect to local graphql', () => {
               roll2: rollPins(pins: 5) {
                   scoreSheet {
                       frames {
-                          ballsThrown
+                          marks
                           runningScore
                       }
                   }

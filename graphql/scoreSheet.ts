@@ -208,11 +208,6 @@ class Frame {
     return this._components.marks.toArray;
   }
 
-  /// for backwards compatibility in GraphQL API
-  get ballsThrown(): (string | undefined)[] {
-    return this.marks;
-  }
-
   get runningScore(): number | undefined {
     return this._components.runningScore.toNumber;
   }
