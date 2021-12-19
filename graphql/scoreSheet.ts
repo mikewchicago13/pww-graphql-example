@@ -9,16 +9,16 @@ class Frame {
     this._frameIndex = frameIndex;
   }
 
-  get _allowedNumberOfBallsThrown(): number {
-    return 2;
-  }
-
   get ballsThrown(): (string | undefined)[] {
     const start = this._frameIndex * 2;
     return this._rolls
       .slice(start, start + this._allowedNumberOfBallsThrown)
       .map((value, index, array) =>
         this._stringRepresentation(value, index, array));
+  }
+
+  protected get _allowedNumberOfBallsThrown(): number {
+    return 2;
   }
 
   private _stringRepresentation(value: number, index: number, array: number[]): string | undefined {
@@ -50,17 +50,13 @@ class Frame {
   }
 
   get runningScore(): number | undefined {
-    return [
-      this._isStrikeFilledIn,
-      this._isSpareFilledIn,
-      this._isOpenFrame
-    ]
-      .filter(x => x)
-      .slice(0, 1)
-      .map(() => this._scoreUpToThisFrame())[0];
+    if (this._isOpenFrame || this._isStrikeFilledIn || this._isSpareFilledIn) {
+      return this._scoreUpToThisFrame;
+    }
+    return undefined;
   }
 
-  get _isOpenFrame(): boolean {
+  private get _isOpenFrame(): boolean {
     const startRoll = this._frameIndex * 2;
     const ballsThrown = this._rolls
       .slice(startRoll, startRoll + 2)
@@ -71,7 +67,7 @@ class Frame {
     return ballsThrown.length === 2 && pinsKnockedDown < 10;
   }
 
-  get _isSpareFilledIn(): boolean {
+  protected get _isSpareFilledIn(): boolean {
     const startRoll = this._frameIndex * 2;
     const ballsThrown = this._rolls
       .slice(startRoll, startRoll + 2)
@@ -88,7 +84,7 @@ class Frame {
     return fillBall !== undefined;
   }
 
-  get _isStrikeFilledIn(): boolean {
+  protected get _isStrikeFilledIn(): boolean {
     const startRoll = this._frameIndex * 2;
     const ballsThrown = this._rolls
       .slice(startRoll, startRoll + 1)
@@ -110,7 +106,7 @@ class Frame {
     return fillBalls.length === 2;
   }
 
-  private _scoreUpToThisFrame(): number {
+  private get _scoreUpToThisFrame(): number {
     const game = new Game();
     this._rolls.forEach(pins => game.roll(pins))
     return game.scoreUpToFrame(this._frameIndex);
@@ -159,7 +155,6 @@ class TenthFrame extends Frame {
   get _isStrikeFilledIn(): boolean {
     return this._isFrameFilled;
   }
-
 }
 
 export class ScoreSheet {

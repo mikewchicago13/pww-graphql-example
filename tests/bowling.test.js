@@ -20,6 +20,9 @@ describe('bowling', () => {
       game = game.roll(1);
     }
     expect(game.score).toBe(20);
+    for (let i = 0; i < 10; i++) {
+      expect(game.scoreUpToFrame(i)).toBe((i + 1) * 2);
+    }
   });
   it('should roll 21 straight 5s', () => {
     let game = bowling();
@@ -27,6 +30,10 @@ describe('bowling', () => {
       game = game.roll(5);
     }
     expect(game.score).toBe(150);
+
+    for (let i = 0; i < 10; i++) {
+      expect(game.scoreUpToFrame(i)).toBe((i + 1) * 15);
+    }
   });
   it('should pick up a spare', () => {
     let game = bowling();
@@ -65,6 +72,7 @@ describe('bowling', () => {
     let game = bowling();
     for (let i = 0; i < 18; i++) {
       game = game.roll(0);
+      expect(game.scoreUpToFrame(Math.trunc(i / 2))).toBe(0);
     }
     for (let i = 0; i < 3; i++) {
       game = game.roll(10);
