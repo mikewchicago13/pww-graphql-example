@@ -1,4 +1,4 @@
-import {Game} from "./bowling";
+import {IndexedGame} from "./bowling";
 
 class Frame {
   protected readonly _rolls: number[];
@@ -155,9 +155,9 @@ class TenthFrame extends Frame {
 
 export class ScoreSheet {
   private readonly _rolls: number[];
-  private readonly _game: Game;
+  private readonly _game: IndexedGame;
 
-  constructor(rolls: number[], game: Game) {
+  constructor(rolls: number[], game: IndexedGame) {
     this._rolls = rolls;
     this._game = game;
   }

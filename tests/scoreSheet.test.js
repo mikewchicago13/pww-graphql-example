@@ -59,7 +59,6 @@ describe('scoreSheet', () => {
       for (let i = 0; i < 12; i++) {
         game = game.roll(10);
       }
-      console.log(JSON.stringify(game))
       return game;
     }
 

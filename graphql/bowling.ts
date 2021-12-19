@@ -1,12 +1,22 @@
 import {ScoreSheet} from "./scoreSheet";
 
-export class Game {
+export interface IndexedGame {
+  scoreUpToFrame(frameIndex: number): number;
+}
+
+export interface IGame {
+  roll(pins: number): IGame;
+  get score(): number;
+  get scoreSheet(): ScoreSheet;
+}
+
+export class Game implements IndexedGame, IGame {
   _rolls: number[] = new Array(21).fill(undefined);
   _index = 0;
 
-  roll(pins: number): Game {
+  roll(pins: number): IGame {
     this._rolls[this._index] = pins;
-    if (this._isStrike(pins) && this._isFirstBallOf9thFrameOrEarlier()) {
+    if (Game._isStrike(pins) && this._isFirstBallOf9thFrameOrEarlier()) {
       this._index += 2;
     } else {
       this._index++;
@@ -14,13 +24,13 @@ export class Game {
     return this;
   }
 
-  _countPinsFor(roll: number): number {
+  private _countPinsFor(roll: number): number {
     const _pins = (roll: number) => {
       return this._rolls[roll] || 0;
     }
-    if (this._isStrike(_pins(roll))) {
+    if (Game._isStrike(_pins(roll))) {
       return _pins(roll) + this._nextTwoRolls(roll);
-    } else if (this._isSpare(_pins(roll), _pins(roll + 1))) {
+    } else if (Game._isSpare(_pins(roll), _pins(roll + 1))) {
       return _pins(roll) + this._nextTwoRolls(roll);
     }
     return _pins(roll) + _pins(roll + 1);
@@ -45,23 +55,23 @@ export class Game {
     return new ScoreSheet(this._rolls, this);
   }
 
-  _isStrike(firstBallOfFrame: number): boolean {
-    return this._didAllThePinsFall(firstBallOfFrame);
+  private static _isStrike(firstBallOfFrame: number): boolean {
+    return Game._didAllThePinsFall(firstBallOfFrame);
   }
 
-  _isSpare(...rolls: number[]): boolean {
-    return this._didAllThePinsFall(...rolls);
+  private static _isSpare(...rolls: number[]): boolean {
+    return Game._didAllThePinsFall(...rolls);
   }
 
-  _didAllThePinsFall(...rolls: number[]): boolean {
+  private static _didAllThePinsFall(...rolls: number[]): boolean {
     return rolls.reduce((a, b) => a + b, 0) === 10;
   }
 
-  _isFirstBallOf9thFrameOrEarlier(): boolean {
+  private _isFirstBallOf9thFrameOrEarlier(): boolean {
     return this._index < 18 && this._index % 2 === 0;
   }
 
-  _nextTwoRolls(index: number): number {
+  private _nextTwoRolls(index: number): number {
     return this._rolls.slice(index + 1)
       .filter(value => value !== undefined)
       .slice(0, 2)

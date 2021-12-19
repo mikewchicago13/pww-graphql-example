@@ -1,11 +1,11 @@
-import {Game} from './bowling';
+import {Game, IGame} from './bowling';
 
 export class BowlingAdapter {
   create() {
     return (
       _: unknown,
       {rolls}: { rolls: number[] }
-    ): Game => {
+    ): IGame => {
       console.log("rolls " + rolls);
       const game = new Game();
       rolls.forEach(value => game.roll(value));
