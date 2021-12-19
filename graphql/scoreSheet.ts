@@ -62,10 +62,19 @@ class TenthFrame extends Frame {
   }
 
   protected _isSpare(index: number, ballsThrown: number[]): boolean {
-    return index > 0 &&
-      ballsThrown
-        .slice(index, index + 2)
-        .reduce((a, b) => a + b) === 10;
+    const areBallsStartingAtIndexASpare = (start: number) => ballsThrown
+      .slice(start, start + 2)
+      .reduce((a, b) => a + b) === 10;
+
+    const areFirstTwoBallsASpare = areBallsStartingAtIndexASpare(0);
+    if (index === 1) {
+      return areFirstTwoBallsASpare;
+    }
+
+    if (!areFirstTwoBallsASpare && index === 2) {
+      return areBallsStartingAtIndexASpare(1);
+    }
+    return false;
   }
 }
 

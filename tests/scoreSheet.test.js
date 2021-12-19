@@ -92,6 +92,21 @@ describe('scoreSheet', () => {
       expect(actual.frames[9].runningScore).toBe(150);
     });
   });
+
+  describe('spare on fill ball in the tenth', () => {
+    let game = bowling();
+    for (let i = 0; i < 18; i++) {
+      game = game.roll(0);
+    }
+    game = game.roll(10);
+    game = game.roll(5);
+    game = game.roll(5);
+    const actual = game.scoreSheet;
+
+    it('frame ' + 10 + ' should have "X 5 /"', () => {
+      expect(actual.frames[9].ballsThrown).toStrictEqual(["X", "5", "/"]);
+    });
+  });
 });
 
 function timeBomb(name, fn) {
