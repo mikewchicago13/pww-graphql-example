@@ -23,6 +23,9 @@ class Frame {
           if (this._isSpare(index, array)) {
             return "/";
           }
+          if (value === 0) {
+            return "-";
+          }
           return String(value)
         }
         return undefined;
