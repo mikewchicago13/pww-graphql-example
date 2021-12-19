@@ -17,7 +17,7 @@ class Frame {
       .slice(start, start + this._allowedNumberOfBallsThrown)
       .map((value, index) => {
         if (value !== undefined) {
-          if(Frame._isStrike(index, value)){
+          if(this._isStrike(index, value)){
             return "X";
           }
           return String(value)
@@ -26,7 +26,7 @@ class Frame {
       });
   }
 
-  private static _isStrike(index: number, value: number) {
+  protected _isStrike(index: number, value: number) {
     return index === 0 && value === 10;
   }
 
@@ -47,6 +47,10 @@ class TenthFrame extends Frame {
 
   get _allowedNumberOfBallsThrown(): number {
     return 3;
+  }
+
+  protected _isStrike(_: number, value: number): boolean {
+    return value === 10;
   }
 }
 
