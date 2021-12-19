@@ -1,7 +1,7 @@
 import {Game} from "./bowling";
 
 class Frame {
-  private readonly _rolls: number[];
+  protected readonly _rolls: number[];
   private readonly _frameIndex: number;
 
   constructor(rolls: number[], frameIndex: number) {
@@ -45,24 +45,22 @@ class Frame {
     return indexWithinFrame === 1 && Frame._sumsToTen(ballsThrown);
   }
 
-  private static _sumsToTen(ballsThrown: number[]) {
+  protected static _sumsToTen(ballsThrown: number[]) {
     return ballsThrown.reduce((a, b) => a + b) === 10;
   }
 
   get runningScore(): number | undefined {
-    if (this._isStrikeFilledIn()) {
-      return this._scoreUpToThisFrame() + this._next(2);
-    }
-    if (this._isSpareFilledIn()) {
-      return this._scoreUpToThisFrame() + this._next(1);
-    }
-    if (this._isOpenFrame()) {
-      return this._scoreUpToThisFrame();
-    }
-    return undefined;
+    return [
+      this._isStrikeFilledIn,
+      this._isSpareFilledIn,
+      this._isOpenFrame
+    ]
+      .filter(x => x)
+      .slice(0, 1)
+      .map(() => this._scoreUpToThisFrame())[0];
   }
 
-  private _isOpenFrame(): boolean {
+  get _isOpenFrame(): boolean {
     const startRoll = this._frameIndex * 2;
     const ballsThrown = this._rolls
       .slice(startRoll, startRoll + 2)
@@ -73,7 +71,7 @@ class Frame {
     return ballsThrown.length === 2 && pinsKnockedDown < 10;
   }
 
-  private _isSpareFilledIn(): boolean {
+  get _isSpareFilledIn(): boolean {
     const startRoll = this._frameIndex * 2;
     const ballsThrown = this._rolls
       .slice(startRoll, startRoll + 2)
@@ -81,10 +79,16 @@ class Frame {
     if (ballsThrown.length < 2) {
       return false;
     }
-    return Frame._sumsToTen(ballsThrown) && this._rolls[startRoll + 2] !== undefined;
+
+    if (!Frame._sumsToTen(ballsThrown)) {
+      return false;
+    }
+
+    const fillBall = this._rolls[startRoll + 2];
+    return fillBall !== undefined;
   }
 
-  private _isStrikeFilledIn(): boolean {
+  get _isStrikeFilledIn(): boolean {
     const startRoll = this._frameIndex * 2;
     const ballsThrown = this._rolls
       .slice(startRoll, startRoll + 1)
@@ -94,33 +98,20 @@ class Frame {
       return false;
     }
 
-    if(!Frame._sumsToTen(ballsThrown)){
+    if (!Frame._sumsToTen(ballsThrown)) {
       return false;
     }
 
-    return this._rolls
+    const fillBalls = this._rolls
       .slice(startRoll + 2)
       .filter(value => value !== undefined)
-      .length >= 2;
-  }
+      .slice(0, 2);
 
-  private _next(forwardLookingRolls: number): number {
-    const next = this._rolls.slice((this._frameIndex * 2) + this._allowedNumberOfBallsThrown)
-      .filter(value => value !== undefined)
-      .slice(0, forwardLookingRolls)
-      .reduce((a, b) => a + b, 0);
-    console.log("next " + next);
-    return next;
+    return fillBalls.length === 2;
   }
 
   private _scoreUpToThisFrame(): number {
-    const game = new Game();
-    this._rolls.slice(0, (this._frameIndex * 2) + this._allowedNumberOfBallsThrown)
-      .filter(value => value !== undefined)
-      .forEach(pins => game.roll(pins));
-    const score = game.score;
-    console.log("score " + score);
-    return score;
+    return 0;
   }
 }
 
@@ -137,20 +128,34 @@ class TenthFrame extends Frame {
     return value === 10;
   }
 
-  protected _isSpare(indexWithinFrame: number, ballsThrown: number[]): boolean {
-    const areBallsStartingAtIndexASpare = (start: number) => ballsThrown
-      .slice(start, start + 2)
-      .reduce((a, b) => a + b) === 10;
+  private static areBallsStartingAtIndexASpare(start: number, ballsThrown: number[]) {
+    return Frame._sumsToTen(ballsThrown.slice(start, start + 2));
+  }
 
-    const areFirstTwoBallsASpare = areBallsStartingAtIndexASpare(0);
+  protected _isSpare(indexWithinFrame: number, ballsThrown: number[]): boolean {
+    const areFirstTwoBallsASpare = TenthFrame.areBallsStartingAtIndexASpare(0,  ballsThrown);
     if (indexWithinFrame === 1) {
       return areFirstTwoBallsASpare;
     }
 
     if (!areFirstTwoBallsASpare && indexWithinFrame === 2) {
-      return areBallsStartingAtIndexASpare(1);
+      return TenthFrame.areBallsStartingAtIndexASpare(1, ballsThrown);
     }
     return false;
+  }
+
+  get _isSpareFilledIn(): boolean {
+    throw new Error("not supported");
+  }
+
+  get _isStrikeFilledIn(): boolean {
+    throw new Error("not supported");
+  }
+
+  get runningScore(): number | undefined {
+    const game = new Game();
+    this._rolls.forEach(pins => game.roll(pins))
+    return game.score;
   }
 }
 
