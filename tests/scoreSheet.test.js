@@ -12,15 +12,6 @@ describe('scoreSheet', () => {
       it('frame ' + (i + 1) + ' should have running score of undefined', () => {
         expect(bowling().scoreSheet.frames[i].runningScore).toBeUndefined();
       });
-      it('frame' + (i + 1) + ' should not be a strike filled in', () => {
-        expect(bowling().scoreSheet.frames[i]._isStrikeFilledIn).toBeFalsy();
-      });
-      it('frame' + (i + 1) + ' should not be a spare filled in', () => {
-        expect(bowling().scoreSheet.frames[i]._isSpareFilledIn).toBeFalsy();
-      });
-      it('frame' + (i + 1) + ' should not be a open frame', () => {
-        expect(bowling().scoreSheet.frames[i]._isOpenFrame).toBeFalsy();
-      });
     }
 
     it('frame 10 should have three undefined balls thrown', () => {
@@ -68,23 +59,9 @@ describe('scoreSheet', () => {
       for (let i = 0; i < 12; i++) {
         game = game.roll(10);
       }
+      console.log(JSON.stringify(game))
       return game;
     }
-
-    describe('WTF', () => {
-      it('should keep state between rolls', () => {
-        expect(perfectGame().score).toBe(300);
-      });
-      it('score in frame 1', () => {
-        expect(perfectGame().scoreUpToFrame(0)).toBe(30);
-      });
-      it('score in frame 5', () => {
-        expect(perfectGame().scoreUpToFrame(4)).toBe(150);
-      });
-      it('score in frame 10', () => {
-        expect(perfectGame().scoreUpToFrame(9)).toBe(300);
-      });
-    });
 
     it('frame 1 should have running score of 30 per frame', () => {
       expect(perfectGame().scoreSheet.frames[0].runningScore).toBe(30);
@@ -102,15 +79,6 @@ describe('scoreSheet', () => {
       });
       it('frame ' + (i + 1) + ' should have running score of 30 per frame', () => {
         expect(perfectGame().scoreSheet.frames[i].runningScore).toBe((i + 1) * 30);
-      });
-      it('frame ' + (i + 1) + ' should be a strike filled in', () => {
-        expect(perfectGame().scoreSheet.frames[i]._isStrikeFilledIn).toBeTruthy();
-      });
-      it('frame ' + (i + 1) + ' should not be a spare filled in', () => {
-        expect(perfectGame().scoreSheet.frames[i]._isSpareFilledIn).toBeFalsy();
-      });
-      it('frame ' + (i + 1) + ' should not be a open frame', () => {
-        expect(perfectGame().scoreSheet.frames[i]._isOpenFrame).toBeFalsy();
       });
     }
 
@@ -133,18 +101,6 @@ describe('scoreSheet', () => {
       expect(bowling().roll(10).roll(5).roll(3).scoreSheet.frames[0].runningScore)
         .toBe(18);
     });
-    it('frame 1 should be strike filled in', () => {
-      expect(bowling().roll(10).roll(5).roll(3).scoreSheet.frames[0]._isStrikeFilledIn)
-        .toBeTruthy();
-    });
-    it('frame 1 should not be spare filled in', () => {
-      expect(bowling().roll(10).roll(5).roll(3).scoreSheet.frames[0]._isSpareFilledIn)
-        .toBeFalsy();
-    });
-    it('frame 1 should not be open', () => {
-      expect(bowling().roll(10).roll(5).roll(3).scoreSheet.frames[0]._isOpenFrame)
-        .toBeFalsy();
-    });
   });
 
   describe('first frame spare', () => {
@@ -157,37 +113,11 @@ describe('scoreSheet', () => {
     it('frame 1 should have running score of 17 because frame is done counting', () => {
       expect(bowling().roll(0).roll(10).roll(7).scoreSheet.frames[0].runningScore).toBe(17);
     });
-
-    it('frame 1 should not be strike filled in', () => {
-      expect(bowling().roll(0).roll(10).roll(7).scoreSheet.frames[0]._isStrikeFilledIn)
-        .toBeFalsy();
-    });
-    it('frame 1 should be spare filled in', () => {
-      expect(bowling().roll(0).roll(10).roll(7).scoreSheet.frames[0]._isSpareFilledIn)
-        .toBeTruthy();
-    });
-    it('frame 1 should not be open', () => {
-      expect(bowling().roll(0).roll(10).roll(7).scoreSheet.frames[0]._isOpenFrame)
-        .toBeFalsy();
-    });
   });
 
   describe('first frame open', () => {
     it('frame 1 should have running score of 9 because frame is done counting', () => {
       expect(bowling().roll(5).roll(4).scoreSheet.frames[0].runningScore).toBe(9);
-    });
-
-    it('frame 1 should not be strike filled in', () => {
-      expect(bowling().roll(5).roll(4).scoreSheet.frames[0]._isStrikeFilledIn)
-        .toBeFalsy();
-    });
-    it('frame 1 should not be spare filled in', () => {
-      expect(bowling().roll(5).roll(4).scoreSheet.frames[0]._isSpareFilledIn)
-        .toBeFalsy();
-    });
-    it('frame 1 should be open', () => {
-      expect(bowling().roll(5).roll(4).scoreSheet.frames[0]._isOpenFrame)
-        .toBeTruthy();
     });
   });
 
@@ -206,15 +136,6 @@ describe('scoreSheet', () => {
       });
       it('frame ' + (i + 1) + ' should have running score of 15 per frame', () => {
         expect(allFives().scoreSheet.frames[i].runningScore).toBe((i + 1) * 15);
-      });
-      it('frame ' + (i + 1) + ' should not be a strike filled in', () => {
-        expect(allFives().scoreSheet.frames[i]._isStrikeFilledIn).toBeFalsy();
-      });
-      it('frame ' + (i + 1) + ' should be a spare filled in', () => {
-        expect(allFives().scoreSheet.frames[i]._isSpareFilledIn).toBeTruthy();
-      });
-      it('frame ' + (i + 1) + ' should not be a open frame', () => {
-        expect(allFives().scoreSheet.frames[i]._isOpenFrame).toBeFalsy();
       });
     }
 

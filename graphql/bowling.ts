@@ -42,7 +42,7 @@ export class Game {
   }
 
   get scoreSheet(): ScoreSheet {
-    return new ScoreSheet(this._rolls);
+    return new ScoreSheet(this._rolls, this);
   }
 
   _isStrike(firstBallOfFrame: number): boolean {

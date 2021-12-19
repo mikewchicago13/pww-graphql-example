@@ -3,10 +3,12 @@ import {Game} from "./bowling";
 class Frame {
   protected readonly _rolls: number[];
   private readonly _frameIndex: number;
+  private readonly _scoreUpToFrame: number;
 
-  constructor(rolls: number[], frameIndex: number) {
+  constructor(rolls: number[], frameIndex: number, scoreUpToFrame: number) {
     this._rolls = rolls;
     this._frameIndex = frameIndex;
+    this._scoreUpToFrame = scoreUpToFrame;
   }
 
   get ballsThrown(): (string | undefined)[] {
@@ -51,7 +53,7 @@ class Frame {
 
   get runningScore(): number | undefined {
     if (this._isOpenFrame || this._isStrikeFilledIn || this._isSpareFilledIn) {
-      return this._scoreUpToThisFrame;
+      return this._scoreUpToFrame;
     }
     return undefined;
   }
@@ -105,17 +107,11 @@ class Frame {
 
     return fillBalls.length === 2;
   }
-
-  private get _scoreUpToThisFrame(): number {
-    const game = new Game();
-    this._rolls.forEach(pins => game.roll(pins))
-    return game.scoreUpToFrame(this._frameIndex);
-  }
 }
 
 class TenthFrame extends Frame {
-  constructor(_rolls: number[]) {
-    super(_rolls, 9);
+  constructor(_rolls: number[], scoreUpToFrame: number) {
+    super(_rolls, 9, scoreUpToFrame);
   }
 
   get _allowedNumberOfBallsThrown(): number {
@@ -159,17 +155,20 @@ class TenthFrame extends Frame {
 
 export class ScoreSheet {
   private readonly _rolls: number[];
+  private readonly _game: Game;
 
-  constructor(rolls: number[]) {
+  constructor(rolls: number[], game: Game) {
     this._rolls = rolls;
+    this._game = game;
   }
 
   get frames(): Frame[] {
     return new Array(10).fill(0)
       .map((_, frameIndex) => {
+        const scoreUpToFrame = this._game.scoreUpToFrame(frameIndex);
         return frameIndex === 9 ?
-          new TenthFrame(this._rolls) :
-          new Frame(this._rolls, frameIndex);
+          new TenthFrame(this._rolls, scoreUpToFrame) :
+          new Frame(this._rolls, frameIndex, scoreUpToFrame);
       });
   }
 }
