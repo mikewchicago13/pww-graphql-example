@@ -1,17 +1,26 @@
 class Frame {
-  private readonly _rolls: (string | undefined)[];
+  private readonly _rolls: number[];
+  private readonly _frameIndex: number;
 
-  constructor(rolls: number[]) {
-    this._rolls = rolls.map(value => {
-      if(value !== undefined){
-        return String(value)
-      }
-      return undefined;
-    });
+  constructor(rolls: number[], frameIndex: number) {
+    this._rolls = rolls;
+    this._frameIndex = frameIndex;
+  }
+
+  get _allowedNumberOfBallsThrown(): number {
+    return 2;
   }
 
   get ballsThrown(): (string | undefined)[] {
-    return this._rolls;
+    const start = this._frameIndex * 2;
+    return this._rolls
+      .slice(start, start + this._allowedNumberOfBallsThrown)
+      .map(value => {
+        if (value !== undefined) {
+          return String(value)
+        }
+        return undefined;
+      });
   }
 
   get runningScore(): number | undefined {
@@ -21,6 +30,16 @@ class Frame {
       return 0;
     }
     return undefined;
+  }
+}
+
+class TenthFrame extends Frame {
+  constructor(_rolls: number[]) {
+    super(_rolls, 9);
+  }
+
+  get _allowedNumberOfBallsThrown(): number {
+    return 3;
   }
 }
 
@@ -34,18 +53,9 @@ export class ScoreSheet {
   get frames(): Frame[] {
     return new Array(10).fill(0)
       .map((_, frameIndex) => {
-        const rollIndex = frameIndex * 2;
         return frameIndex === 9 ?
-          new Frame(this.getRollsInTenthFrame()) :
-          new Frame(this.getRollsInFirstNineFrames(rollIndex));
+          new TenthFrame(this._rolls) :
+          new Frame(this._rolls, frameIndex);
       });
-  }
-
-  private getRollsInFirstNineFrames(rollIndex: number): number[] {
-    return [this._rolls[rollIndex], this._rolls[rollIndex + 1]];
-  }
-
-  private getRollsInTenthFrame(): number[] {
-    return [this._rolls[18], this._rolls[19], this._rolls[20]];
   }
 }

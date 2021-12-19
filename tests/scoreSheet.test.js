@@ -47,7 +47,7 @@ describe('scoreSheet', () => {
     });
   });
 
-  xdescribe('perfect game', () => {
+  describe('perfect game', () => {
     let game = bowling();
     for (let i = 0; i < 12; i++) {
       game = game.roll(10);
