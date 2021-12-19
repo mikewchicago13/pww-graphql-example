@@ -34,15 +34,6 @@ describe('scoreSheet', () => {
       it('frame ' + (i + 1) + ' should have running score of 0', () => {
         expect(game.scoreSheet.frames[i].runningScore).toBe(0);
       });
-      it('frame' + (i + 1) + ' should not be a strike filled in', () => {
-        expect(game.scoreSheet.frames[i]._isStrikeFilledIn).toBeFalsy();
-      });
-      it('frame' + (i + 1) + ' should not be a spare filled in', () => {
-        expect(game.scoreSheet.frames[i]._isSpareFilledIn).toBeFalsy();
-      });
-      it('frame' + (i + 1) + ' should be a open frame', () => {
-        expect(game.scoreSheet.frames[i]._isOpenFrame).toBeTruthy();
-      });
     }
 
     it('frame 10 should have two balls thrown', () => {

@@ -1,17 +1,21 @@
 import {IndexedGame} from "./bowling";
 
-class Frame {
+class FrameUtilities {
+  static sumsToTen(ballsThrown: number[]): boolean {
+    return ballsThrown.reduce((a, b) => a + b) === 10;
+  }
+}
+
+class Marks {
   protected readonly _rolls: number[];
   private readonly _frameIndex: number;
-  private readonly _scoreUpToFrame: number;
 
-  constructor(rolls: number[], frameIndex: number, scoreUpToFrame: number) {
+  constructor(rolls: number[], frameIndex: number) {
     this._rolls = rolls;
     this._frameIndex = frameIndex;
-    this._scoreUpToFrame = scoreUpToFrame;
   }
 
-  get ballsThrown(): (string | undefined)[] {
+  get toArray(): (string | undefined)[] {
     const start = this._frameIndex * 2;
     return this._rolls
       .slice(start, start + this._allowedNumberOfBallsThrown)
@@ -40,18 +44,62 @@ class Frame {
   }
 
   protected _isStrike(indexWithinFrame: number, value: number) {
-    return indexWithinFrame === 0 && Frame._sumsToTen([value]);
+    return indexWithinFrame === 0 && FrameUtilities.sumsToTen([value]);
   }
 
   protected _isSpare(indexWithinFrame: number, ballsThrown: number[]) {
-    return indexWithinFrame === 1 && Frame._sumsToTen(ballsThrown);
+    return indexWithinFrame === 1 && FrameUtilities.sumsToTen(ballsThrown);
+  }
+}
+
+class TenthFrameMarks extends Marks {
+  constructor(rolls: number[], frameIndex: number) {
+    super(rolls, frameIndex);
   }
 
-  protected static _sumsToTen(ballsThrown: number[]) {
-    return ballsThrown.reduce((a, b) => a + b) === 10;
+  get _allowedNumberOfBallsThrown(): number {
+    return 3;
   }
 
-  get runningScore(): number | undefined {
+  protected _isStrike(_: number, value: number): boolean {
+    return FrameUtilities.sumsToTen([value]);
+  }
+
+  private static areBallsStartingAtIndexASpare(start: number, ballsThrown: number[]) {
+    return FrameUtilities.sumsToTen(ballsThrown.slice(start, start + 2));
+  }
+
+  protected _isSpare(indexWithinFrame: number, ballsThrown: number[]): boolean {
+    const areFirstTwoBallsASpare = TenthFrameMarks.areBallsStartingAtIndexASpare(0, ballsThrown);
+    if (indexWithinFrame === 1) {
+      return areFirstTwoBallsASpare;
+    }
+
+    if (!areFirstTwoBallsASpare && indexWithinFrame === 2) {
+      return TenthFrameMarks.areBallsStartingAtIndexASpare(1, ballsThrown);
+    }
+    return false;
+  }
+}
+
+interface ConstructorParams {
+  rolls: number[];
+  frameIndex: number;
+  scoreUpToFrame: number;
+}
+
+class RunningScore {
+  protected readonly _rolls: number[];
+  private readonly _frameIndex: number;
+  private readonly _scoreUpToFrame: number;
+
+  constructor({rolls, frameIndex, scoreUpToFrame}: ConstructorParams) {
+    this._rolls = rolls;
+    this._frameIndex = frameIndex;
+    this._scoreUpToFrame = scoreUpToFrame;
+  }
+
+  get toNumber(): number | undefined {
     if (this._isOpenFrame || this._isStrikeFilledIn || this._isSpareFilledIn) {
       return this._scoreUpToFrame;
     }
@@ -78,7 +126,7 @@ class Frame {
       return false;
     }
 
-    if (!Frame._sumsToTen(ballsThrown)) {
+    if (!FrameUtilities.sumsToTen(ballsThrown)) {
       return false;
     }
 
@@ -96,7 +144,7 @@ class Frame {
       return false;
     }
 
-    if (!Frame._sumsToTen(ballsThrown)) {
+    if (!FrameUtilities.sumsToTen(ballsThrown)) {
       return false;
     }
 
@@ -109,35 +157,7 @@ class Frame {
   }
 }
 
-class TenthFrame extends Frame {
-  constructor(_rolls: number[], scoreUpToFrame: number) {
-    super(_rolls, 9, scoreUpToFrame);
-  }
-
-  get _allowedNumberOfBallsThrown(): number {
-    return 3;
-  }
-
-  protected _isStrike(_: number, value: number): boolean {
-    return value === 10;
-  }
-
-  private static areBallsStartingAtIndexASpare(start: number, ballsThrown: number[]) {
-    return Frame._sumsToTen(ballsThrown.slice(start, start + 2));
-  }
-
-  protected _isSpare(indexWithinFrame: number, ballsThrown: number[]): boolean {
-    const areFirstTwoBallsASpare = TenthFrame.areBallsStartingAtIndexASpare(0, ballsThrown);
-    if (indexWithinFrame === 1) {
-      return areFirstTwoBallsASpare;
-    }
-
-    if (!areFirstTwoBallsASpare && indexWithinFrame === 2) {
-      return TenthFrame.areBallsStartingAtIndexASpare(1, ballsThrown);
-    }
-    return false;
-  }
-
+class TenthFrameRunningScore extends RunningScore {
   private get _isFrameFilled(): boolean {
     return this._rolls.slice(18, 21)
       .filter(value => value !== undefined)
@@ -150,6 +170,57 @@ class TenthFrame extends Frame {
 
   get _isStrikeFilledIn(): boolean {
     return this._isFrameFilled;
+  }
+}
+
+interface FrameComponents {
+  marks: Marks;
+  runningScore: RunningScore;
+}
+
+class DefaultFrameComponents implements FrameComponents{
+  constructor(params: ConstructorParams) {
+    this.marks = new Marks(params.rolls, params.frameIndex);
+    this.runningScore = new RunningScore(params);
+  }
+
+  marks: Marks;
+  runningScore: RunningScore;
+}
+
+class TenthFrameComponents implements FrameComponents{
+  constructor(params: ConstructorParams) {
+    this.marks = new TenthFrameMarks(params.rolls, params.frameIndex);
+    this.runningScore = new TenthFrameRunningScore(params);
+  }
+
+  marks: Marks;
+  runningScore: RunningScore;
+}
+
+class Frame {
+  private readonly _components: FrameComponents;
+  constructor(frameComponents: FrameComponents) {
+    this._components = frameComponents;
+  }
+
+  get ballsThrown(): (string | undefined)[] {
+    return this._components.marks.toArray;
+  }
+
+  get runningScore(): number | undefined {
+    return this._components.runningScore.toNumber;
+  }
+}
+
+class FrameFactory {
+  static create(params: ConstructorParams) : Frame{
+    const {frameIndex} = params;
+
+    const isTenthFrame = frameIndex === 9;
+    return new Frame(isTenthFrame ?
+      new TenthFrameComponents(params):
+      new DefaultFrameComponents(params));
   }
 }
 
@@ -166,9 +237,11 @@ export class ScoreSheet {
     return new Array(10).fill(0)
       .map((_, frameIndex) => {
         const scoreUpToFrame = this._game.scoreUpToFrame(frameIndex);
-        return frameIndex === 9 ?
-          new TenthFrame(this._rolls, scoreUpToFrame) :
-          new Frame(this._rolls, frameIndex, scoreUpToFrame);
+        return FrameFactory.create({
+          rolls: this._rolls,
+          frameIndex,
+          scoreUpToFrame
+        });
       });
   }
 }
