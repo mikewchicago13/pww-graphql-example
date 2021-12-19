@@ -113,7 +113,7 @@ class Frame {
 
   private _scoreUpToThisFrame(): number {
     const game = new Game();
-    this._rolls.slice(0, (this._frameIndex * 2) + 1)
+    this._rolls.slice(0, (this._frameIndex * 2) + 2)
       .filter(value => value !== undefined)
       .forEach(pins => game.roll(pins));
     return game.score;
