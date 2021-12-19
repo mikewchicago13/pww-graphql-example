@@ -110,7 +110,7 @@ class Frame {
     return fillBalls.length === 2;
   }
 
-  private _scoreUpToThisFrame(): number {
+  protected _scoreUpToThisFrame(): number {
     return 0;
   }
 }
@@ -144,15 +144,7 @@ class TenthFrame extends Frame {
     return false;
   }
 
-  get _isSpareFilledIn(): boolean {
-    throw new Error("not supported");
-  }
-
-  get _isStrikeFilledIn(): boolean {
-    throw new Error("not supported");
-  }
-
-  get runningScore(): number | undefined {
+  protected _scoreUpToThisFrame(): number {
     const game = new Game();
     this._rolls.forEach(pins => game.roll(pins))
     return game.score;
