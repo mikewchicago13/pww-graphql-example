@@ -48,6 +48,10 @@ describe('bowling', () => {
       game = game.roll(10);
     }
     expect(game.score).toBe(300);
+
+    for (let i = 0; i < 10; i++) {
+      expect(game.scoreUpToFrame(i)).toBe((i + 1) * 30);
+    }
   });
   it('should roll a 299', () => {
     let game = bowling();
@@ -68,7 +72,7 @@ describe('bowling', () => {
     expect(game.score).toBe(30);
   });
   it('should gutter, spare, strike, one to prove that only first ball 10s are counted as strike', () => {
-    let game = bowling()
+    const game = bowling()
       .roll(0)
       .roll(10)
       .roll(10)

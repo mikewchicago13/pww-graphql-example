@@ -110,8 +110,10 @@ class Frame {
     return fillBalls.length === 2;
   }
 
-  protected _scoreUpToThisFrame(): number {
-    return 0;
+  private _scoreUpToThisFrame(): number {
+    const game = new Game();
+    this._rolls.forEach(pins => game.roll(pins))
+    return game.scoreUpToFrame(this._frameIndex);
   }
 }
 
@@ -133,7 +135,7 @@ class TenthFrame extends Frame {
   }
 
   protected _isSpare(indexWithinFrame: number, ballsThrown: number[]): boolean {
-    const areFirstTwoBallsASpare = TenthFrame.areBallsStartingAtIndexASpare(0,  ballsThrown);
+    const areFirstTwoBallsASpare = TenthFrame.areBallsStartingAtIndexASpare(0, ballsThrown);
     if (indexWithinFrame === 1) {
       return areFirstTwoBallsASpare;
     }
@@ -144,11 +146,20 @@ class TenthFrame extends Frame {
     return false;
   }
 
-  protected _scoreUpToThisFrame(): number {
-    const game = new Game();
-    this._rolls.forEach(pins => game.roll(pins))
-    return game.score;
+  private get _isFrameFilled(): boolean {
+    return this._rolls.slice(18, 21)
+      .filter(value => value !== undefined)
+      .length === 3;
   }
+
+  get _isSpareFilledIn(): boolean {
+    return this._isFrameFilled;
+  }
+
+  get _isStrikeFilledIn(): boolean {
+    return this._isFrameFilled;
+  }
+
 }
 
 export class ScoreSheet {

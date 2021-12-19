@@ -26,14 +26,23 @@ export class Game {
     return _pins(roll) + _pins(roll + 1);
   }
 
-  get score(): number {
+  private _getCounts(): number[] {
     return new Array(10).fill(0)
-      .map((_, frame) => this._countPinsFor(frame * 2))
-      .reduce((a, b) => a + b, 0);
+      .map((_, frame) => this._countPinsFor(frame * 2));
+  }
+
+  get score(): number {
+    return this.scoreUpToFrame(10);
+  }
+
+  scoreUpToFrame(frameIndex: number): number {
+    return this._getCounts()
+      .slice(0, frameIndex + 1)
+      .reduce((a, b) => a + b);
   }
 
   get scoreSheet(): ScoreSheet {
-    return new ScoreSheet(this._rolls)
+    return new ScoreSheet(this._rolls);
   }
 
   _isStrike(firstBallOfFrame: number): boolean {
