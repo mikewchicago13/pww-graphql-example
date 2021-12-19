@@ -42,12 +42,31 @@ class Frame {
   }
 
   get runningScore(): number | undefined {
-    const actualRolls = this._rolls
-      .filter(value => value !== undefined);
-    if (actualRolls.length) {
+    if (this._isDoneCounting()) {
       return 0;
     }
     return undefined;
+  }
+
+  private _isDoneCounting(): boolean {
+    if (this._isOpenFrame()) {
+      return true;
+    }
+    return false;
+  }
+
+  private _isOpenFrame(): boolean {
+    const startRoll = this._frameIndex * 2;
+    const ballsThrown = this._rolls
+      .slice(startRoll, startRoll + 2)
+      .filter(value => value !== undefined);
+
+    const numberOfBallsThrownInFrame = ballsThrown.length;
+
+    const pinsKnockedDown = ballsThrown
+      .reduce((a, b) => a + b, 0);
+
+    return numberOfBallsThrownInFrame === 2 && pinsKnockedDown < 10;
   }
 }
 
