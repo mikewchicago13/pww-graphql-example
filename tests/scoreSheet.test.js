@@ -77,7 +77,7 @@ describe('scoreSheet', () => {
     }
     const actual = game.scoreSheet;
     for (let i = 0; i < 9; i++) {
-      it('frame ' + (i + 1) + ' should have one strike and empty fill', () => {
+      it('frame ' + (i + 1) + ' should have "5 /"', () => {
         expect(actual.frames[i].ballsThrown).toStrictEqual(["5", "/"]);
       });
       timeBomb('frame ' + (i + 1) + ' should have running score of 15 per frame', () => {
@@ -85,7 +85,7 @@ describe('scoreSheet', () => {
       });
     }
 
-    it('frame ' + 10 + ' should have three strikes', () => {
+    it('frame ' + 10 + ' should have "5 / 5"', () => {
       expect(actual.frames[9].ballsThrown).toStrictEqual(["5", "/", "5"]);
     });
     timeBomb('frame ' + 10 + ' should have running score of 150', () => {

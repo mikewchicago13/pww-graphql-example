@@ -15,10 +15,13 @@ class Frame {
     const start = this._frameIndex * 2;
     return this._rolls
       .slice(start, start + this._allowedNumberOfBallsThrown)
-      .map((value, index) => {
+      .map((value, index, array) => {
         if (value !== undefined) {
-          if(this._isStrike(index, value)){
+          if (this._isStrike(index, value)) {
             return "X";
+          }
+          if (this._isSpare(index, array)) {
+            return "/";
           }
           return String(value)
         }
@@ -28,6 +31,11 @@ class Frame {
 
   protected _isStrike(index: number, value: number) {
     return index === 0 && value === 10;
+  }
+
+  protected _isSpare(index: number, ballsThrown: number[]) {
+    return index === 1 &&
+      ballsThrown.reduce((a, b) => a + b) === 10;
   }
 
   get runningScore(): number | undefined {
@@ -51,6 +59,13 @@ class TenthFrame extends Frame {
 
   protected _isStrike(_: number, value: number): boolean {
     return value === 10;
+  }
+
+  protected _isSpare(index: number, ballsThrown: number[]): boolean {
+    return index > 0 &&
+      ballsThrown
+        .slice(index, index + 2)
+        .reduce((a, b) => a + b) === 10;
   }
 }
 
