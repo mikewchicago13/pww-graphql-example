@@ -2,33 +2,29 @@ import graphqlClient from "./graphqlClient";
 import {ConsoleDisplayFrame} from "./consoleDisplayFrame";
 
 describe('can connect to local graphql', () => {
-  const query = /* GraphQL */
+  const rollsTaken = 21;
+
+  function concatenateRolls() {
+    return new Array(rollsTaken).fill(1)
+      .map((_, index) => {
+        return `
+              roll${index}: rollPins(pins: 5) {
+                  scoreSheet {
+                      frames {
+                          marks
+                          runningScore
+                      }
+                  }
+              }`;
+      })
+      .join();
+  }
+
+  const query =
       `{
-          liveBowling {
-              roll0: rollPins(pins: 5) {
-                  scoreSheet {
-                      frames {
-                          marks
-                          runningScore
-                      }
-                  }
-              }
-              roll1: rollPins(pins: 5) {
-                  scoreSheet {
-                      frames {
-                          marks
-                          runningScore
-                      }
-                  }
-              }
-              roll2: rollPins(pins: 5) {
-                  scoreSheet {
-                      frames {
-                          marks
-                          runningScore
-                      }
-                  }
-              }
+          liveBowling {` +
+    concatenateRolls() +
+    `
           } 
       }`;
 
@@ -44,8 +40,7 @@ describe('can connect to local graphql', () => {
     expect(errors).toBeFalsy();
   });
 
-  it('should print scoreSheet', () => {
-    const rollsTaken = 3;
+  it('should print scoreSheets for each roll', () => {
     for (let i = 0; i < rollsTaken; i++) {
       ConsoleDisplayFrame.print(liveBowling['roll' + i].scoreSheet.frames);
     }
