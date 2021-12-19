@@ -11,8 +11,8 @@ export interface IGame {
 }
 
 export class Game implements IndexedGame, IGame {
-  _rolls: number[] = new Array(21).fill(undefined);
-  _index = 0;
+  private readonly _rolls: number[] = new Array(21).fill(undefined);
+  private _index = 0;
 
   roll(pins: number): IGame {
     this._rolls[this._index] = pins;
