@@ -17,21 +17,24 @@ class Frame {
     const start = this._frameIndex * 2;
     return this._rolls
       .slice(start, start + this._allowedNumberOfBallsThrown)
-      .map((value, index, array) => {
-        if (value !== undefined) {
-          if (this._isStrike(index, value)) {
-            return "X";
-          }
-          if (this._isSpare(index, array)) {
-            return "/";
-          }
-          if (value === 0) {
-            return "-";
-          }
-          return String(value)
-        }
-        return undefined;
-      });
+      .map((value, index, array) =>
+        this._stringRepresentation(value, index, array));
+  }
+
+  private _stringRepresentation(value: number, index: number, array: number[]): string | undefined {
+    if (value !== undefined) {
+      if (this._isStrike(index, value)) {
+        return "X";
+      }
+      if (this._isSpare(index, array)) {
+        return "/";
+      }
+      if (value === 0) {
+        return "-";
+      }
+      return String(value)
+    }
+    return undefined;
   }
 
   protected _isStrike(index: number, value: number) {
@@ -39,7 +42,7 @@ class Frame {
   }
 
   protected _isSpare(indexWithinFrame: number, ballsThrown: number[]) {
-    return indexWithinFrame % 2 === 1 &&
+    return indexWithinFrame === 1 &&
       Frame._sumsToTen(ballsThrown);
   }
 
@@ -48,29 +51,16 @@ class Frame {
   }
 
   get runningScore(): number | undefined {
-    const reasonThisIsDoneCounting = this._reasonThisIsDoneCounting();
-    if (reasonThisIsDoneCounting.isOpenFrame) {
-      return this._scoreUpToThisFrame();
-    }
-    if (reasonThisIsDoneCounting.isStrikeFilledIn) {
+    if (this._isStrikeFilledIn()) {
       return this._scoreUpToThisFrame() + this._next(2);
     }
-    if (reasonThisIsDoneCounting.isSpareFilledIn) {
+    if (this._isSpareFilledIn()) {
       return this._scoreUpToThisFrame() + this._next(1);
     }
-    return undefined;
-  }
-
-  private _reasonThisIsDoneCounting(): {
-    isOpenFrame: boolean,
-    isSpareFilledIn: boolean,
-    isStrikeFilledIn: boolean
-  } {
-    return {
-      isOpenFrame: this._isOpenFrame(),
-      isSpareFilledIn: this._isSpareFilledIn(),
-      isStrikeFilledIn: this._isStrikeFilledIn()
+    if (this._isOpenFrame()) {
+      return this._scoreUpToThisFrame();
     }
+    return undefined;
   }
 
   private _isOpenFrame(): boolean {
@@ -79,11 +69,9 @@ class Frame {
       .slice(startRoll, startRoll + 2)
       .filter(value => value !== undefined);
 
-    const numberOfBallsThrownInFrame = ballsThrown.length;
-    const pinsKnockedDown = ballsThrown
-      .reduce((a, b) => a + b, 0);
+    const pinsKnockedDown = ballsThrown.reduce((a, b) => a + b, 0);
 
-    return numberOfBallsThrownInFrame === 2 && pinsKnockedDown < 10;
+    return ballsThrown.length === 2 && pinsKnockedDown < 10;
   }
 
   private _isSpareFilledIn(): boolean {
@@ -111,19 +99,19 @@ class Frame {
       this._rolls
         .slice(startRoll + 2)
         .filter(value => value !== undefined)
-        .length > 0;
+        .length >= 2;
 
     return Frame._sumsToTen(ballsThrown) && hasTwoBallsAfterThis;
   }
 
-  private _next(forwardLookingRolls: number) : number {
+  private _next(forwardLookingRolls: number): number {
     return this._rolls.slice((this._frameIndex * 2) + 2)
       .filter(value => value !== undefined)
-      .slice(0, forwardLookingRolls)
+      .slice(0, forwardLookingRolls + 1)
       .reduce((a, b) => a + b, 0);
   }
 
-  private _scoreUpToThisFrame() : number {
+  private _scoreUpToThisFrame(): number {
     const game = new Game();
     this._rolls.slice(0, (this._frameIndex * 2) + 2)
       .filter(value => value !== undefined)

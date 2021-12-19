@@ -29,21 +29,20 @@ describe('scoreSheet', () => {
     for (let i = 0; i < 20; i++) {
       game = game.roll(0);
     }
-    const actual = game.scoreSheet;
     for (let i = 0; i < 9; i++) {
       it('frame ' + (i + 1) + ' should have two balls thrown', () => {
-        expect(actual.frames[i].ballsThrown).toStrictEqual(["-", "-"]);
+        expect(game.scoreSheet.frames[i].ballsThrown).toStrictEqual(["-", "-"]);
       });
       it('frame ' + (i + 1) + ' should have running score of 0', () => {
-        expect(actual.frames[i].runningScore).toBe(0);
+        expect(game.scoreSheet.frames[i].runningScore).toBe(0);
       });
     }
 
     it('frame ' + 10 + ' should have two balls thrown', () => {
-      expect(actual.frames[9].ballsThrown).toStrictEqual(["-", "-", undefined]);
+      expect(game.scoreSheet.frames[9].ballsThrown).toStrictEqual(["-", "-", undefined]);
     });
     it('frame ' + 10 + ' should have running score of 0', () => {
-      expect(actual.frames[9].runningScore).toBe(0);
+      expect(game.scoreSheet.frames[9].runningScore).toBe(0);
     });
   });
 
@@ -52,57 +51,53 @@ describe('scoreSheet', () => {
     for (let i = 0; i < 12; i++) {
       game = game.roll(10);
     }
-    const actual = game.scoreSheet;
     for (let i = 0; i < 9; i++) {
       it('frame ' + (i + 1) + ' should have one strike and empty fill', () => {
-        expect(actual.frames[i].ballsThrown).toStrictEqual(["X", undefined]);
+        expect(game.scoreSheet.frames[i].ballsThrown).toStrictEqual(["X", undefined]);
       });
       it('frame ' + (i + 1) + ' should have running score of 30 per frame', () => {
-        expect(actual.frames[i].runningScore).toBe((i + 1) * 30);
+        expect(game.scoreSheet.frames[i].runningScore).toBe((i + 1) * 30);
       });
     }
 
     it('frame ' + 10 + ' should have three strikes', () => {
-      expect(actual.frames[9].ballsThrown).toStrictEqual(["X", "X", "X"]);
+      expect(game.scoreSheet.frames[9].ballsThrown).toStrictEqual(["X", "X", "X"]);
     });
     it('frame ' + 10 + ' should have running score of 300', () => {
-      expect(actual.frames[9].runningScore).toBe(300);
+      expect(game.scoreSheet.frames[9].runningScore).toBe(300);
     });
   });
 
   describe('first frame strike', () => {
-    let game = bowling().roll(10);
-    it('frame ' + 1 + ' should have running score of undefined because frame is not done counting', () => {
+    const game = bowling().roll(10);
+    it('frame 1 should have running score of undefined because frame is not done counting', () => {
       expect(game.scoreSheet.frames[0].runningScore).toBeUndefined();
     });
-    game = game.roll(5);
-    it('frame ' + 1 + ' should have running score of undefined because frame is not done counting', () => {
-      expect(game.scoreSheet.frames[0].runningScore).toBeUndefined();
+    it('frame 1 should have running score of undefined because frame is not done counting', () => {
+      expect(game.roll(5).scoreSheet.frames[0].runningScore).toBeUndefined();
     });
-    game = game.roll(3);
-    it('frame ' + 1 + ' should have running score of 18 because frame is done counting', () => {
-      expect(game.scoreSheet.frames[0].runningScore).toBe(18);
+    it('frame 1 should have running score of 18 because frame is done counting', () => {
+      expect(game.roll(3).scoreSheet.frames[0].runningScore).toBe(18);
     });
   });
 
   describe('first frame spare', () => {
-    let game = bowling().roll(0).roll(10);
-    it('frame ' + 1 + ' should have one strike and empty fill', () => {
+    const game = bowling().roll(0).roll(10);
+    it('frame 1 should have one strike and empty fill', () => {
       expect(game.scoreSheet.frames[0].ballsThrown).toStrictEqual(["-", "/"]);
     });
-    it('frame ' + 1 + ' should have running score of undefined because frame is not done counting', () => {
+    it('frame 1 should have running score of undefined because frame is not done counting', () => {
       expect(game.scoreSheet.frames[0].runningScore).toBeUndefined();
     });
-    game = game.roll(7);
-    it('frame ' + 1 + ' should have running score of 17 because frame is done counting', () => {
-      expect(game.scoreSheet.frames[0].runningScore).toBe(17);
+    it('frame 1 should have running score of 17 because frame is done counting', () => {
+      expect(game.roll(7).scoreSheet.frames[0].runningScore).toBe(17);
     });
   });
 
   describe('first frame open', () => {
     const game = bowling().roll(5).roll(4);
     const actual = game.scoreSheet;
-    it('frame ' + 1 + ' should have running score of 9 because frame is done counting', () => {
+    it('frame 1 should have running score of 9 because frame is done counting', () => {
       expect(actual.frames[0].runningScore).toBe(9);
     });
   });
@@ -122,10 +117,10 @@ describe('scoreSheet', () => {
       });
     }
 
-    it('frame ' + 10 + ' should have "5 / 5"', () => {
+    it('frame 10 should have "5 / 5"', () => {
       expect(actual.frames[9].ballsThrown).toStrictEqual(["5", "/", "5"]);
     });
-    it('frame ' + 10 + ' should have running score of 150', () => {
+    it('frame 10 should have running score of 150', () => {
       expect(actual.frames[9].runningScore).toBe(150);
     });
   });
@@ -135,23 +130,16 @@ describe('scoreSheet', () => {
     for (let i = 0; i < 18; i++) {
       game = game.roll(0);
     }
-    game = game.roll(10);
-    it('frame ' + 10 + ' should have be undefined because not done counting', () => {
-      expect(game.scoreSheet.frames[9].runningScore).toBeUndefined();
+    it('frame 10 should have be undefined because not done counting', () => {
+      expect(game.roll(10).scoreSheet.frames[9].runningScore).toBeUndefined();
     });
-
-    game = game.roll(5);
-
-    it('frame ' + 10 + ' should have be undefined because not done counting', () => {
-      expect(game.scoreSheet.frames[9].runningScore).toBeUndefined();
+    it('frame 10 should have be undefined because not done counting', () => {
+      expect(game.roll(5).scoreSheet.frames[9].runningScore).toBeUndefined();
     });
-    game = game.roll(5);
-
-    it('frame ' + 10 + ' should have be 20 because done counting', () => {
-      expect(game.scoreSheet.frames[9].runningScore).toBe(20);
+    it('frame 10 should have be 20 because done counting', () => {
+      expect(game.roll(5).scoreSheet.frames[9].runningScore).toBe(20);
     });
-
-    it('frame ' + 10 + ' should have "X 5 /"', () => {
+    it('frame 10 should have "X 5 /"', () => {
       expect(game.scoreSheet.frames[9].ballsThrown).toStrictEqual(["X", "5", "/"]);
     });
   });
