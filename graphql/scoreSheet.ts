@@ -204,8 +204,13 @@ class Frame {
     this._components = frameComponents;
   }
 
-  get ballsThrown(): (string | undefined)[] {
+  get marks(): (string | undefined)[] {
     return this._components.marks.toArray;
+  }
+
+  /// for backwards compatibility in GraphQL API
+  get ballsThrown(): (string | undefined)[] {
+    return this.marks;
   }
 
   get runningScore(): number | undefined {
