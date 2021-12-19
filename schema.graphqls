@@ -6,8 +6,18 @@ type Query {
     bowling ( rolls: [Int]! ): Game
 }
 
+type Frame {
+    ballsThrown: [String]
+    runningScore: Int
+}
+
+type ScoreSheet {
+    frames: [Frame]
+}
+
 type Game {
     score: Int
+    scoreSheet: ScoreSheet
 }
 
 type Response {
