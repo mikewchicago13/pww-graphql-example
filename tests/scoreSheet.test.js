@@ -86,7 +86,10 @@ describe('scoreSheet', () => {
   });
 
   describe('first frame spare', () => {
-    let game = bowling().roll(5).roll(5);
+    let game = bowling().roll(0).roll(10);
+    it('frame ' + 1 + ' should have one strike and empty fill', () => {
+      expect(game.scoreSheet.frames[0].ballsThrown).toStrictEqual(["0", "/"]);
+    });
     it('frame ' + 1 + ' should have running score of undefined because frame is not done counting', () => {
       expect(game.scoreSheet.frames[0].runningScore).toBeUndefined();
     });
