@@ -23,7 +23,6 @@ export default async function graphqlClient(
       body: body
     });
   const result = await response.json();
-  const actual = JSON.stringify(result);
-  console.log(actual);
-  return JSON.parse(actual);
+  console.log(JSON.stringify(result, undefined, " "));
+  return result;
 }

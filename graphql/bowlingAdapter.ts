@@ -1,7 +1,7 @@
 import {Game, IGame} from './bowling';
 
 export class BowlingAdapter {
-  create() {
+  acceptAllRollsAtOnce() {
     return (
       _: unknown,
       {rolls}: { rolls: number[] }
@@ -10,6 +10,11 @@ export class BowlingAdapter {
       const game = new Game();
       rolls.forEach(value => game.roll(value));
       return game;
+    };
+  }
+  enableInteractive() {
+    return (): IGame => {
+      return new Game();
     };
   }
 }

@@ -17,5 +17,6 @@ export default {
   },
   bookById: new BookRepository().bookById(),
   authorById: new AuthorRepository().authorById(),
-  bowling: new BowlingAdapter().create()
+  bowling: new BowlingAdapter().acceptAllRollsAtOnce(),
+  liveBowling: new BowlingAdapter().enableInteractive()
 };

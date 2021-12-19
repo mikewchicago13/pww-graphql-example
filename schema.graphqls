@@ -4,6 +4,7 @@ type Query {
     bookById ( id: ID ): Book
     authorById ( id: ID ): Author
     bowling ( rolls: [Int]! ): Game
+    liveBowling : Game
 }
 
 type Frame {
@@ -18,6 +19,7 @@ type ScoreSheet {
 type Game {
     score: Int
     scoreSheet: ScoreSheet
+    rollPins( pins: Int! ): Game
 }
 
 type Response {
