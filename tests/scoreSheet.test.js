@@ -32,7 +32,7 @@ describe('scoreSheet', () => {
     const actual = game.scoreSheet;
     for (let i = 0; i < 9; i++) {
       it('frame ' + (i + 1) + ' should have two balls thrown', () => {
-        expect(actual.frames[i].ballsThrown).toStrictEqual([0, 0]);
+        expect(actual.frames[i].ballsThrown).toStrictEqual(["0", "0"]);
       });
       it('frame ' + (i + 1) + ' should have running score of 0', () => {
         expect(actual.frames[i].runningScore).toBe(0);
@@ -40,10 +40,33 @@ describe('scoreSheet', () => {
     }
 
     it('frame ' + 10 + ' should have two balls thrown', () => {
-      expect(actual.frames[9].ballsThrown).toStrictEqual([0, 0, undefined]);
+      expect(actual.frames[9].ballsThrown).toStrictEqual(["0", "0", undefined]);
     });
     it('frame ' + 10 + ' should have running score of 0', () => {
       expect(actual.frames[9].runningScore).toBe(0);
+    });
+  });
+
+  xdescribe('perfect game', () => {
+    let game = bowling();
+    for (let i = 0; i < 12; i++) {
+      game = game.roll(10);
+    }
+    const actual = game.scoreSheet;
+    for (let i = 0; i < 9; i++) {
+      it('frame ' + (i + 1) + ' should have one strike and empty fill', () => {
+        expect(actual.frames[i].ballsThrown).toStrictEqual(["X", undefined]);
+      });
+      it('frame ' + (i + 1) + ' should have running score of 30 per frame', () => {
+        expect(actual.frames[i].runningScore).toBe((i + 1) * 30);
+      });
+    }
+
+    it('frame ' + 10 + ' should have three strikes', () => {
+      expect(actual.frames[9].ballsThrown).toStrictEqual(["X","X","X"]);
+    });
+    it('frame ' + 10 + ' should have running score of 300', () => {
+      expect(actual.frames[9].runningScore).toBe(300);
     });
   });
 });

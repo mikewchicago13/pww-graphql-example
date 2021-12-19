@@ -1,11 +1,16 @@
 class Frame {
-  private readonly _rolls: number[];
+  private readonly _rolls: (string | undefined)[];
 
   constructor(rolls: number[]) {
-    this._rolls = rolls;
+    this._rolls = rolls.map(value => {
+      if(value !== undefined){
+        return String(value)
+      }
+      return undefined;
+    });
   }
 
-  get ballsThrown(): number[] {
+  get ballsThrown(): (string | undefined)[] {
     return this._rolls;
   }
 
@@ -13,7 +18,7 @@ class Frame {
     const actualRolls = this._rolls
       .filter(value => value !== undefined);
     if (actualRolls.length) {
-      return actualRolls.reduce((a, b) => a + b, 0);
+      return 0;
     }
     return undefined;
   }
