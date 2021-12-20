@@ -1,4 +1,5 @@
-import bowlingGame, {IGame} from "../../graphql/bowling/bowlingGame";
+import bowlingGame from "../../graphql/bowling/bowlingGame";
+import {IGame} from "../../graphql/bowling/bowlingUtilities";
 
 describe('scoreSheet', () => {
   describe('no balls thrown yet', () => {

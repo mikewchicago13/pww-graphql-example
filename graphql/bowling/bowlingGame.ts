@@ -1,11 +1,5 @@
 import {ScoreSheet} from "./scoreSheet";
-import {FrameUtilities, IndexedGame} from "./bowlingUtilities";
-
-export interface IGame {
-  roll(pins: number): IGame;
-  get score(): number;
-  get scoreSheet(): ScoreSheet;
-}
+import {FrameUtilities, IGame, IndexedGame} from "./bowlingUtilities";
 
 export class Game implements IndexedGame, IGame {
   private readonly _rolls: number[] = new Array(21).fill(undefined);
@@ -74,8 +68,6 @@ export class Game implements IndexedGame, IGame {
   toString(): string {
     return JSON.stringify(this);
   }
-
-
 }
 
 function bowlingGame(): Game {
