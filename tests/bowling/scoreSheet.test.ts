@@ -1,4 +1,4 @@
-import bowlingGame from "../../graphql/bowling/bowlingGame";
+import bowlingGame, {IGame} from "../../graphql/bowling/bowlingGame";
 
 describe('scoreSheet', () => {
   describe('no balls thrown yet', () => {
@@ -23,10 +23,8 @@ describe('scoreSheet', () => {
   });
 
   describe('all zeros', () => {
-    let game = bowlingGame();
-    for (let i = 0; i < 20; i++) {
-      game = game.roll(0);
-    }
+    const game = new Array(20).fill(1)
+      .reduce((g: IGame) => g.roll(0), bowlingGame())
     for (let i = 0; i < 9; i++) {
       it('frame ' + (i + 1) + ' should have two balls thrown', () => {
         expect(game.scoreSheet.frames[i].marks).toStrictEqual(["-", "-"]);
@@ -45,12 +43,9 @@ describe('scoreSheet', () => {
   });
 
   describe('perfect game', () => {
-    function perfectGame() {
-      let game = bowlingGame();
-      for (let i = 0; i < 12; i++) {
-        game = game.roll(10);
-      }
-      return game;
+    function perfectGame(): IGame {
+      return new Array(12).fill(1)
+        .reduce((g: IGame) => g.roll(10), bowlingGame())
     }
 
     it('frame 1 should have running score of 30 per frame', () => {
@@ -112,12 +107,9 @@ describe('scoreSheet', () => {
   });
 
   describe('all 5s, i.e. all spares and fill ball', () => {
-    function allFives() {
-      let game = bowlingGame();
-      for (let i = 0; i < 21; i++) {
-        game = game.roll(5);
-      }
-      return game;
+    function allFives(): IGame {
+      return new Array(21).fill(1)
+        .reduce((g: IGame) => g.roll(5), bowlingGame())
     }
 
     for (let i = 0; i < 9; i++) {
@@ -138,12 +130,9 @@ describe('scoreSheet', () => {
   });
 
   describe('spare on fill ball in the tenth', () => {
-    function eighteenGutters() {
-      let game = bowlingGame();
-      for (let i = 0; i < 18; i++) {
-        game = game.roll(0);
-      }
-      return game;
+    function eighteenGutters(): IGame {
+      return new Array(18).fill(1)
+        .reduce((g: IGame) => g.roll(0), bowlingGame())
     }
 
     it('frame 10 should have be undefined because not done counting', () => {

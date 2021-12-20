@@ -78,7 +78,7 @@ export class Game implements IndexedGame, IGame {
 
 }
 
-function bowlingGame() {
+function bowlingGame(): Game {
   return new Game();
 }
 
