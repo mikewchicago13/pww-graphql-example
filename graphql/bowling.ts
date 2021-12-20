@@ -6,7 +6,6 @@ export interface IndexedGame {
 
 export interface IGame {
   roll(pins: number): IGame;
-  rollPins({pins}: {pins: number}): IGame;
   get score(): number;
   get scoreSheet(): ScoreSheet;
 }
@@ -14,7 +13,6 @@ export interface IGame {
 export class Game implements IndexedGame, IGame {
   private readonly _rolls: number[] = new Array(21).fill(undefined);
   private _index = 0;
-
 
   roll(pins: number): IGame {
     this._rolls[this._index] = pins;
@@ -24,10 +22,6 @@ export class Game implements IndexedGame, IGame {
       this._index++;
     }
     return this;
-  }
-
-  rollPins({pins}: { pins: number }): IGame {
-    return this.roll(pins);
   }
 
   private _countPinsFor(roll: number): number {
