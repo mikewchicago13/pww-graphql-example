@@ -1,10 +1,4 @@
-import {IndexedGame} from "./bowling";
-
-class FrameUtilities {
-  static sumsToTen(ballsThrown: number[]): boolean {
-    return ballsThrown.reduce((a, b) => a + b) === 10;
-  }
-}
+import {IndexedGame, FrameUtilities} from "./bowlingUtilities";
 
 class Marks {
   protected readonly _rolls: number[];
@@ -44,11 +38,11 @@ class Marks {
   }
 
   protected _isStrike(indexWithinFrame: number, value: number) {
-    return indexWithinFrame === 0 && FrameUtilities.sumsToTen([value]);
+    return indexWithinFrame === 0 && FrameUtilities.wereAllPinsKnockedDown([value]);
   }
 
   protected _isSpare(indexWithinFrame: number, ballsThrown: number[]) {
-    return indexWithinFrame === 1 && FrameUtilities.sumsToTen(ballsThrown);
+    return indexWithinFrame === 1 && FrameUtilities.wereAllPinsKnockedDown(ballsThrown);
   }
 }
 
@@ -62,11 +56,11 @@ class TenthFrameMarks extends Marks {
   }
 
   protected _isStrike(_: number, value: number): boolean {
-    return FrameUtilities.sumsToTen([value]);
+    return FrameUtilities.wereAllPinsKnockedDown([value]);
   }
 
   private static areBallsStartingAtIndexASpare(start: number, ballsThrown: number[]) {
-    return FrameUtilities.sumsToTen(ballsThrown.slice(start, start + 2));
+    return FrameUtilities.wereAllPinsKnockedDown(ballsThrown.slice(start, start + 2));
   }
 
   protected _isSpare(indexWithinFrame: number, ballsThrown: number[]): boolean {
@@ -126,7 +120,7 @@ class RunningScore {
       return false;
     }
 
-    if (!FrameUtilities.sumsToTen(ballsThrown)) {
+    if (!FrameUtilities.wereAllPinsKnockedDown(ballsThrown)) {
       return false;
     }
 
@@ -144,7 +138,7 @@ class RunningScore {
       return false;
     }
 
-    if (!FrameUtilities.sumsToTen(ballsThrown)) {
+    if (!FrameUtilities.wereAllPinsKnockedDown(ballsThrown)) {
       return false;
     }
 

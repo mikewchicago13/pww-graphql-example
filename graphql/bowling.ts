@@ -1,8 +1,5 @@
 import {ScoreSheet} from "./scoreSheet";
-
-export interface IndexedGame {
-  scoreUpToFrame(frameIndex: number): number;
-}
+import {FrameUtilities, IndexedGame} from "./bowlingUtilities";
 
 export interface IGame {
   roll(pins: number): IGame;
@@ -56,15 +53,11 @@ export class Game implements IndexedGame, IGame {
   }
 
   private static _isStrike(firstBallOfFrame: number): boolean {
-    return Game._didAllThePinsFall(firstBallOfFrame);
+    return FrameUtilities.wereAllPinsKnockedDown([firstBallOfFrame]);
   }
 
   private static _isSpare(...rolls: number[]): boolean {
-    return Game._didAllThePinsFall(...rolls);
-  }
-
-  private static _didAllThePinsFall(...rolls: number[]): boolean {
-    return rolls.reduce((a, b) => a + b, 0) === 10;
+    return FrameUtilities.wereAllPinsKnockedDown(rolls)
   }
 
   private _isFirstBallOf9thFrameOrEarlier(): boolean {
