@@ -23,7 +23,7 @@ describe('can connect to local graphql', () => {
     bowling = json.data.bowling;
   })
 
-  it('should not have error', () => {
+  it('should not have errors', () => {
     expect(errors).toBeFalsy();
   });
 

@@ -15,7 +15,7 @@ describe('can connect to local graphql', () => {
     errors = json.errors;
   })
 
-  it('should have a result', async () => {
+  it('should have errors', async () => {
     expect(errors).toBeTruthy();
   });
 });
