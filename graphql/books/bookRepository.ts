@@ -63,21 +63,19 @@ const map: Map<string, Book> = new Map<string, Book>();
 books.forEach(value => map.set(value.id, value));
 
 export class BookRepository {
-  bookById(): (
+  static bookById(
     _: unknown,
     {id}: { id: string }
-  ) => Book {
-    return (_, {id}): Book => {
-      console.log("FIRST_PARAM_TO_BOOK_BY_ID " + JSON.stringify(_));
-      console.log("INSIDE_BOOK_BY_ID " + id);
-      const book = map.get(id);
+  ): Book {
+    console.log("FIRST_PARAM_TO_BOOK_BY_ID " + JSON.stringify(_));
+    console.log("INSIDE_BOOK_BY_ID " + id);
+    const book = map.get(id);
 
-      function blowUp(): Book {
-        throw new Error(id + " not found");
-      }
+    function blowUp(): Book {
+      throw new Error(id + " not found");
+    }
 
-      return book || blowUp();
-    };
+    return book || blowUp();
   }
 
   booksWrittenBy(authorId: string): Book[] {

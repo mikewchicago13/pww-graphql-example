@@ -6,7 +6,7 @@ import {Greetings} from "./greetings/greetings";
 export default {
   goodbye: Greetings.goodbye,
   hello: Greetings.hello,
-  bookById: new BookRepository().bookById(),
+  bookById: BookRepository.bookById,
   authorById: new AuthorRepository().authorById(),
   bowling: BowlingAdapter.acceptAllRollsAtOnce,
   liveBowling: BowlingAdapter.enableInteractive
