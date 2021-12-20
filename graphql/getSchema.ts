@@ -1,8 +1,8 @@
 import {GraphQLSchema} from "graphql/type/schema";
 import {makeExecutableSchema} from '@graphql-tools/schema'
 import Query from "./query";
-import {Book, BookRepository} from "./bookRepository";
-import {Author, AuthorRepository} from "./authorRepository";
+import {Book, BookRepository} from "./books/bookRepository";
+import {Author, AuthorRepository} from "./books/authorRepository";
 import getTypeDefs from "./getTypeDefs";
 
 function author(book: Book): Author {

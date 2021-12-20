@@ -1,6 +1,6 @@
 import Response from "./response";
-import {BookRepository} from "./bookRepository";
-import {AuthorRepository} from "./authorRepository";
+import {BookRepository} from "./books/bookRepository";
+import {AuthorRepository} from "./books/authorRepository";
 import {BowlingAdapter} from "./bowlingAdapter";
 
 export default {
