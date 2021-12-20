@@ -1,6 +1,6 @@
 import {BookRepository} from "./books/bookRepository";
 import {AuthorRepository} from "./books/authorRepository";
-import {BowlingAdapter} from "./bowlingAdapter";
+import {BowlingAdapter} from "./bowling/bowlingAdapter";
 import {Greetings} from "./greetings/greetings";
 
 export default {
