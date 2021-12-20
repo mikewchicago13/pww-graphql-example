@@ -7,7 +7,7 @@ export default {
   goodbye: Greetings.goodbye,
   hello: Greetings.hello,
   bookById: BookRepository.bookById,
-  authorById: new AuthorRepository().authorById(),
+  authorById: AuthorRepository.authorById,
   bowling: BowlingAdapter.acceptAllRollsAtOnce,
   liveBowling: BowlingAdapter.enableInteractive
 };
