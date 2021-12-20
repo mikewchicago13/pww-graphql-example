@@ -1,5 +1,5 @@
-import {Game, IGame} from './bowling';
-import {ScoreSheet} from "./scoreSheet";
+import {Game, IGame} from './bowling/bowlingGame';
+import {ScoreSheet} from "./bowling/scoreSheet";
 
 interface IGraphQLAdaptedGame {
   rollPins({pins}: { pins: number }): IGraphQLAdaptedGame;
