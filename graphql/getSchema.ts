@@ -12,7 +12,7 @@ function author(book: Book): Author {
 
 function books(author: Author): Book[] {
   console.log(JSON.stringify(author));
-  return new BookRepository().booksWrittenBy(author.id);
+  return BookRepository.booksWrittenBy(author.id);
 }
 
 function getResolvers(): any {
