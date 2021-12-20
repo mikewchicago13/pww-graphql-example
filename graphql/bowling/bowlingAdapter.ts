@@ -30,21 +30,14 @@ class GraphQLAdaptedGame implements IGraphQLAdaptedGame {
 }
 
 export class BowlingAdapter {
-  acceptAllRollsAtOnce(): (_: unknown, {rolls}: { rolls: number[] }) => IGraphQLAdaptedGame {
-    return (
-      _: unknown,
-      {rolls}: { rolls: number[] }
-    ): IGraphQLAdaptedGame => {
-      console.log("rolls " + rolls);
-      const game = new Game();
-      rolls.forEach(value => game.roll(value));
-      return new GraphQLAdaptedGame(game);
-    };
+  static acceptAllRollsAtOnce(_: unknown, {rolls}: { rolls: number[] }): IGraphQLAdaptedGame {
+    console.log("rolls " + rolls);
+    const game = new Game();
+    rolls.forEach(value => game.roll(value));
+    return new GraphQLAdaptedGame(game);
   }
 
-  enableInteractive(): () => IGraphQLAdaptedGame {
-    return (): IGraphQLAdaptedGame => {
-      return new GraphQLAdaptedGame(new Game());
-    };
+  static enableInteractive(): IGraphQLAdaptedGame {
+    return new GraphQLAdaptedGame(new Game());
   }
 }

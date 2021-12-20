@@ -8,6 +8,6 @@ export default {
   hello: Greetings.hello,
   bookById: new BookRepository().bookById(),
   authorById: new AuthorRepository().authorById(),
-  bowling: new BowlingAdapter().acceptAllRollsAtOnce(),
-  liveBowling: new BowlingAdapter().enableInteractive()
+  bowling: BowlingAdapter.acceptAllRollsAtOnce,
+  liveBowling: BowlingAdapter.enableInteractive
 };
