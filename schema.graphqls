@@ -5,6 +5,7 @@ type Query {
     authorById ( id: ID ): Author
     bowling ( rolls: [Int]! ): Game
     liveBowling : Game
+    examineRequest : String
 }
 
 type Frame {
