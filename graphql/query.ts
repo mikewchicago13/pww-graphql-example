@@ -2,20 +2,7 @@ import {BookRepository} from "./books/bookRepository";
 import {AuthorRepository} from "./books/authorRepository";
 import {BowlingAdapter} from "./bowling/bowlingAdapter";
 import {Greetings} from "./greetings/greetings";
-import {Request} from "express";
-
-function secure(func: Function) {
-  return (context: unknown, args: unknown, req: Request) => {
-    if(req.headers.authorization === 'secret') {
-      return func(context, args);
-    }
-    if(req && req.res) {
-      req.res.status(401);
-      throw new Error("Unauthorized");
-    }
-    throw new Error("invalid parameters");
-  }
-}
+import {secure} from "./secure";
 
 export default {
   goodbye: Greetings.goodbye,
@@ -24,14 +11,5 @@ export default {
   authorById: AuthorRepository.authorById,
   bowling: BowlingAdapter.acceptAllRollsAtOnce,
   liveBowling: BowlingAdapter.enableInteractive,
-  examineRequest: (context: unknown, args: unknown, req: Request) => {
-    console.log(context);
-    console.log(args);
-    return JSON.stringify({
-      ip: req.ip,
-      headers: req.headers,
-      body: req.body
-    });
-  },
   addBook: secure(BookRepository.addBook)
 };
