@@ -68,8 +68,10 @@ export class BookRepository {
   static addBook(_: unknown,
                  {title, pageCount, authorId}:
                    { title: string, pageCount: number, authorId: string }) : Book {
-    const book = new Book(uuidv4(), title, pageCount, authorId);
+    const id = uuidv4();
+    const book = new Book(id, title, pageCount, authorId);
     books.push(book);
+    map.set(id, book);
     return book;
   }
 

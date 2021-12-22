@@ -13,26 +13,33 @@ describe('can connect to local graphql', () => {
           }
       }`;
 
-  let json: any;
+  let addBook: any;
   beforeAll(async () => {
-    json = await graphqlClient({query}, {authorization: "secret"});
-    console.log(json);
+    const json = await graphqlClient({query}, {authorization: "secret"});
+    addBook = json.data.addBook;
   })
 
-  it('should have a result', async () => {
-    expect(json).toBeTruthy();
-  });
-
   it('should have id', () => {
-    expect(json.data.addBook.id).toBeTruthy();
+    expect(addBook.id).toBeTruthy();
   });
   it('should have author.id', () => {
-    expect(json.data.addBook.author.id).toContain("author-");
+    expect(addBook.author.id).toContain("author-");
   });
   it('should have author.firstName', () => {
-    expect(json.data.addBook.author.firstName).toContain("first");
+    expect(addBook.author.firstName).toContain("first");
   });
   it('should have author.lastName', () => {
-    expect(json.data.addBook.author.lastName).toContain("last");
+    expect(addBook.author.lastName).toContain("last");
+  });
+
+  it('should be retrievable later', async () => {
+    const query2 = /* GraphQL */
+        `{
+            bookById(id: "${addBook.id}"){
+                id
+            }
+        }`;
+    const json = await graphqlClient({query: query2});
+    expect(json.data.bookById.id).toBe(addBook.id);
   });
 });
