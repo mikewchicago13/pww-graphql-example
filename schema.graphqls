@@ -6,6 +6,7 @@ type Query {
     bowling ( rolls: [Int]! ): Game
     liveBowling : Game
     examineRequest : String
+    addBook( title: String!, pageCount: Int!, authorId: String! ): Book
 }
 
 type Frame {

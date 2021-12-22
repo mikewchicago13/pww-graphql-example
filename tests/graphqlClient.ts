@@ -3,10 +3,8 @@ import fetch from 'cross-fetch';
 export default async function graphqlClient(
   {
     query
-  }:
-    {
-      query: string
-    }
+  }: { query: string },
+  additionalHeaders: any = {}
 ): Promise<any> {
   const body = JSON.stringify({
     query
@@ -19,6 +17,7 @@ export default async function graphqlClient(
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
+        ...additionalHeaders
       },
       body: body
     });

@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 export class Book {
   private _id: string;
   private _title: string;
@@ -63,6 +65,14 @@ const map: Map<string, Book> = new Map<string, Book>();
 books.forEach(value => map.set(value.id, value));
 
 export class BookRepository {
+  static addBook(_: unknown,
+                 {title, pageCount, authorId}:
+                   { title: string, pageCount: number, authorId: string }) : Book {
+    const book = new Book(uuidv4(), title, pageCount, authorId);
+    books.push(book);
+    return book;
+  }
+
   static bookById(
     _: unknown,
     {id}: { id: string }

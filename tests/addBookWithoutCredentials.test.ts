@@ -3,7 +3,9 @@ import graphqlClient from "./graphqlClient";
 describe('can connect to local graphql', () => {
   const query = /* GraphQL */
       `{
-          examineRequest
+          addBook( title: "a title", pageCount: 7, authorId: "author-1"){
+              id
+          }
       }`;
 
   let json: any;
@@ -14,5 +16,9 @@ describe('can connect to local graphql', () => {
 
   it('should have a result', async () => {
     expect(json).toBeTruthy();
+  });
+
+  it('should have errors', async () => {
+    expect(json.errors).toBeTruthy();
   });
 });

@@ -2,7 +2,15 @@ import {BookRepository} from "./books/bookRepository";
 import {AuthorRepository} from "./books/authorRepository";
 import {BowlingAdapter} from "./bowling/bowlingAdapter";
 import {Greetings} from "./greetings/greetings";
-import  { Request} from "express";
+import {Request} from "express";
+
+function secure(func: Function) {
+  return (context: unknown, args: unknown, req: Request) => {
+    console.log(JSON.stringify(args));
+    console.log(req.headers);
+    return func(context, args);
+  }
+}
 
 export default {
   goodbye: Greetings.goodbye,
@@ -19,5 +27,6 @@ export default {
       headers: req.headers,
       body: req.body
     });
-  }
+  },
+  addBook: secure(BookRepository.addBook)
 };
