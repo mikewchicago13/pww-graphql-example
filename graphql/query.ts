@@ -6,9 +6,14 @@ import {Request} from "express";
 
 function secure(func: Function) {
   return (context: unknown, args: unknown, req: Request) => {
-    console.log(JSON.stringify(args));
-    console.log(req.headers);
-    return func(context, args);
+    if(req.headers.authorization === 'secret') {
+      return func(context, args);
+    }
+    if(req && req.res) {
+      req.res.status(401);
+      throw new Error("Unauthorized");
+    }
+    throw new Error("invalid parameters");
   }
 }
 

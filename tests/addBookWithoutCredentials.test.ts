@@ -10,7 +10,12 @@ describe('can connect to local graphql', () => {
 
   let json: any;
   beforeAll(async () => {
-    json = await graphqlClient({query});
+    const isUnauthorized = (statusCode: number) => {
+      expect(statusCode).toBe(401)
+    };
+    json = await graphqlClient({query},
+      {},
+      isUnauthorized);
     console.log(json);
   })
 

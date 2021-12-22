@@ -4,7 +4,8 @@ export default async function graphqlClient(
   {
     query
   }: { query: string },
-  additionalHeaders: any = {}
+  additionalHeaders: any = {},
+  statusCodeExpectation: (statusCode: number) => void = () => {}
 ): Promise<any> {
   const body = JSON.stringify({
     query
@@ -22,6 +23,7 @@ export default async function graphqlClient(
       body: body
     });
   const result = await response.json();
+  statusCodeExpectation(response.status);
   console.log(JSON.stringify(result, undefined, " "));
   return result;
 }
