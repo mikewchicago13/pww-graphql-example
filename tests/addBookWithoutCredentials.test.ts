@@ -1,4 +1,4 @@
-import graphqlClient from "./graphqlClient";
+import {httpGraphqlClient, QueryResult} from "./graphqlClient";
 
 describe('can connect to local graphql', () => {
   const query = /* GraphQL */
@@ -8,22 +8,20 @@ describe('can connect to local graphql', () => {
           }
       }`;
 
-  let json: any;
+  let actual: QueryResult;
   beforeAll(async () => {
-    const isUnauthorized = (statusCode: number) => {
-      expect(statusCode).toBe(401)
-    };
-    json = await graphqlClient({query},
-      {},
-      isUnauthorized);
-    console.log(json);
+    actual = await httpGraphqlClient({query});
   })
 
   it('should have a result', async () => {
-    expect(json).toBeTruthy();
+    expect(actual).toBeTruthy();
   });
 
   it('should have errors', async () => {
-    expect(json.errors).toBeTruthy();
+    expect(actual.json.errors).toBeTruthy();
+  });
+
+  it('should have 401 unauthorized', async () => {
+    expect(actual.status).toBe(401);
   });
 });

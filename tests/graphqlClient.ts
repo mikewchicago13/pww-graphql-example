@@ -5,12 +5,25 @@ export default async function graphqlClient(
     query
   }: { query: string },
   additionalHeaders: any = {},
-  statusCodeExpectation: (statusCode: number) => void = () => {}
 ): Promise<any> {
+  return httpGraphqlClient({query}, additionalHeaders)
+    .then(value => value.json)
+}
+
+export interface QueryResult {
+  json: any,
+  status: number
+}
+
+export async function httpGraphqlClient(
+  {
+    query
+  }: { query: string },
+  additionalHeaders: any = {}
+): Promise<QueryResult> {
   const body = JSON.stringify({
     query
   });
-  console.log(body);
   const response = await fetch(
     "http://localhost:4000/graphql",
     {
@@ -22,8 +35,12 @@ export default async function graphqlClient(
       },
       body: body
     });
-  const result = await response.json();
-  statusCodeExpectation(response.status);
-  console.log(JSON.stringify(result, undefined, " "));
-  return result;
+  return response
+    .json()
+    .then(value => {
+      return {
+        json: value,
+        status: response.status
+      }
+    });
 }
