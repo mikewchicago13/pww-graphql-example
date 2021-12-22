@@ -37,13 +37,12 @@ export class Author {
   }
 }
 
-const authors = [
-  new Author("author-1", "Joe first", "Smith last"),
-  new Author("author-2", "Sally first", "Jones last")
-];
 
 const map: Map<string, Author> = new Map<string, Author>();
-authors.forEach(value => map.set(value.id, value))
+[
+  new Author("author-1", "Joe first", "Smith last"),
+  new Author("author-2", "Sally first", "Jones last")
+].forEach(value => map.set(value.id, value))
 
 export class AuthorRepository {
   static authorById(_: unknown, {id}: { id: string }): Author {

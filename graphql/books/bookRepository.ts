@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+import {v4 as uuidv4} from 'uuid';
 
 export class Book {
   private _id: string;
@@ -56,22 +56,23 @@ export class Book {
   }
 }
 
-const books = [
+const map: Map<string, Book> = new Map<string, Book>();
+
+function addBook(value: Book): void {
+  map.set(value.id, value);
+}
+
+[
   new Book("book-1", "title 1", 1, "author-1"),
   new Book("book-2", "title 2", 2, "author-2")
-];
-
-const map: Map<string, Book> = new Map<string, Book>();
-books.forEach(value => map.set(value.id, value));
+].forEach(value => addBook(value));
 
 export class BookRepository {
   static addBook(_: unknown,
                  {title, pageCount, authorId}:
                    { title: string, pageCount: number, authorId: string }) : Book {
-    const id = uuidv4();
-    const book = new Book(id, title, pageCount, authorId);
-    books.push(book);
-    map.set(id, book);
+    const book = new Book(uuidv4(), title, pageCount, authorId);
+    addBook(book);
     return book;
   }
 
@@ -92,7 +93,8 @@ export class BookRepository {
 
   static booksWrittenBy(authorId: string): Book[] {
     console.log("INSIDE_BOOKS_WRITTEN_BY " + authorId);
-    return books
-      .filter(book => authorId === book.authorId)
+    return [...map]
+      .map(([_, book]): Book => book)
+      .filter(book => authorId == book.authorId)
   }
 }
