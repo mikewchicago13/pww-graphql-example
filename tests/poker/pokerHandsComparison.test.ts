@@ -6,6 +6,9 @@ describe('poker hands comparison', () => {
     it('should have black hand', () => {
       expect(comparison.black).toBeTruthy();
     });
+    it('should have white hand', () => {
+      expect(comparison.white).toBeTruthy();
+    });
   });
 
   describe('choose a winner', () => {
