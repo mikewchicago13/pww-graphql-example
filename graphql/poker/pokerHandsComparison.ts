@@ -58,22 +58,20 @@ class Cards {
 class HandMatchResult {
   name: string;
   doesMatch: boolean;
-  primaryCards: Card[];
-  secondaryCards: Card[];
-  remainingCards: Card[];
+  sortedListsOfCardsToCompare: Card[][];
 
   constructor({
                 name,
                 doesMatch,
-                primaryCards,
-                secondaryCards,
-                remainingCards
-              }: { name: string, doesMatch: boolean, primaryCards: Card[], secondaryCards: Card[], remainingCards: Card[] }) {
+                sortedListsOfCardsToCompare
+              }: {
+    name: string,
+    doesMatch: boolean,
+    sortedListsOfCardsToCompare: Card[][]
+  }) {
     this.name = name;
     this.doesMatch = doesMatch;
-    this.primaryCards = primaryCards;
-    this.secondaryCards = secondaryCards;
-    this.remainingCards = remainingCards;
+    this.sortedListsOfCardsToCompare = sortedListsOfCardsToCompare;
   }
 
   private static _sortedFromHighestToLowest(cards: Card[]): number[] {
@@ -98,21 +96,17 @@ class HandMatchResult {
   }
 
   isGreaterThan(otherHand: HandMatchResult, handType: HandType) {
-
-    const sortedOrderToCheckForDifferences: ("primaryCards" | "secondaryCards" | "remainingCards")[] = [
-      "primaryCards",
-      "secondaryCards",
-      "remainingCards"
-    ];
-
-    const messageForFirstPropertyWhereThisIsGreaterThanOther = sortedOrderToCheckForDifferences.map(value => {
-      if (HandMatchResult._isFirstGreaterThanSecond(this[value], otherHand[value])) {
-         return `${handType}: ${this.name}.${value} (${this[value]}) are better than ${otherHand.name}.${value} (${otherHand[value]})`
-      }
-      return undefined;
-    })
-      .filter((value) => value)
-      [0];
+    const messageForFirstPropertyWhereThisIsGreaterThanOther =
+      this.sortedListsOfCardsToCompare.map(
+        (value, index) => {
+          const otherCards = otherHand.sortedListsOfCardsToCompare[index];
+          if (HandMatchResult._isFirstGreaterThanSecond(value, otherCards)) {
+            return `${handType}: ${this.name}.${index} (${value}) are better than ${otherHand.name}.${index} (${otherCards})`
+          }
+          return undefined;
+        })
+        .filter((value) => value)
+        [0];
 
     if (messageForFirstPropertyWhereThisIsGreaterThanOther) {
       console.log(messageForFirstPropertyWhereThisIsGreaterThanOther);
@@ -134,9 +128,7 @@ class HighCard implements HandType {
     return new HandMatchResult({
         name,
         doesMatch: true,
-        primaryCards: cards,
-        secondaryCards: [],
-        remainingCards: []
+        sortedListsOfCardsToCompare: [cards]
       }
     )
   }
@@ -164,9 +156,7 @@ class Pair implements HandType {
         return new HandMatchResult({
           name,
           doesMatch: true,
-          primaryCards,
-          secondaryCards: [],
-          remainingCards
+          sortedListsOfCardsToCompare: [primaryCards, remainingCards]
         })
       }
     }
@@ -174,9 +164,7 @@ class Pair implements HandType {
     return new HandMatchResult({
       name,
       doesMatch: false,
-      primaryCards: [],
-      secondaryCards: [],
-      remainingCards: cards
+      sortedListsOfCardsToCompare: [cards]
     })
   }
 }
@@ -211,9 +199,7 @@ class TwoPairs implements HandType {
       return new HandMatchResult({
         name,
         doesMatch: true,
-        primaryCards,
-        secondaryCards,
-        remainingCards
+        sortedListsOfCardsToCompare: [primaryCards, secondaryCards, remainingCards]
       })
 
     }
@@ -221,9 +207,7 @@ class TwoPairs implements HandType {
     return new HandMatchResult({
         name,
         doesMatch: false,
-        primaryCards: [],
-        secondaryCards: [],
-        remainingCards: cards
+        sortedListsOfCardsToCompare: [cards]
       }
     )
   }
