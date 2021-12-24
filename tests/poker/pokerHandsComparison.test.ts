@@ -65,6 +65,25 @@ describe('poker hands comparison', () => {
         expect(comparison + "").toMatch(/White/);
       });
     });
+
+    describe('two pairs', () => {
+      it('highest pair wins', () => {
+        const comparison = new PokerHandsInput().parse("Black: 5C 5S 4S 4C AH  White: 5H 5D 6C 6S AD");
+        expect(comparison + "").toMatch(/White/);
+      });
+      it('second highest pair wins', () => {
+        const comparison = new PokerHandsInput().parse("Black: 3C 3S KS KC 2H  White: 3H 3D QC QS AD");
+        expect(comparison + "").toMatch(/Black/);
+      });
+      it('same pairs uses final card', () => {
+        const comparison = new PokerHandsInput().parse("Black: 3C 3S KS KC AH  White: 3H 3D KC KS QD");
+        expect(comparison + "").toMatch(/Black/);
+      });
+      it('tie', () => {
+        const comparison = new PokerHandsInput().parse("Black: 3C 3S QS QC AH  White: 3H 3D QC QS AD");
+        expect(comparison + "").toMatch(/Tie/);
+      });
+    });
   });
 
   describe('describe winning hand', () => {
