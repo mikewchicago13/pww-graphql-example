@@ -51,40 +51,53 @@ class Hand {
     return this._name;
   }
 
-  get highCard(): number {
+  private _sortedByNumericValue(): number[] {
     return this._cards
       .map(c => c.numericValue)
-      .sort((a, b) => b - a)
-      [0];
+      .sort((a, b) => b - a);
   }
 
   toString(): string {
     return this._cardsInput;
   }
+
+  isBetterThan(other: Hand): boolean {
+    const me = this._sortedByNumericValue();
+    const you = other._sortedByNumericValue();
+    for (let i = 0; i < me.length; i++) {
+      if(me[i] > you[i]){
+        return true;
+      }
+      if(you[i]> me[i]){
+        return false;
+      }
+    }
+    return false;
+  }
 }
 
 class Comparison {
-  private readonly _black: Hand;
-  private readonly _white: Hand;
+  private readonly _one: Hand;
+  private readonly _two: Hand;
 
-  constructor(black: Hand, white: Hand) {
-    this._black = black;
-    this._white = white;
+  constructor(one: Hand, two: Hand) {
+    this._one = one;
+    this._two = two;
   }
 
-  get black(): Hand {
-    return this._black;
+  get one(): Hand {
+    return this._one;
   }
 
-  get white(): Hand {
-    return this._white;
+  get two(): Hand {
+    return this._two;
   }
 
   toString(): string{
-    if (this._white.highCard > this._black.highCard) {
-      return this._white.name;
-    } else if (this._black.highCard > this._white.highCard) {
-      return this._black.name;
+    if (this._two.isBetterThan(this._one)) {
+      return this._two.name;
+    } else if (this._one.isBetterThan(this._two)) {
+      return this._one.name;
     }
     return "Tie"
   }
