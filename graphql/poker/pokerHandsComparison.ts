@@ -1,10 +1,12 @@
 class Card {
   private readonly _numericValue: number;
   private readonly _asString: string;
+  private readonly _suit: string;
 
   constructor(character_suit: string) {
     this._asString = character_suit;
-    const [character] = character_suit;
+    const [character, suit] = character_suit;
+    this._suit = suit;
     this._numericValue = Card._toNumber(character);
   }
 
@@ -21,6 +23,10 @@ class Card {
 
   get numericValue(): number {
     return this._numericValue;
+  }
+
+  get suit(): string {
+    return this._suit;
   }
 
   toString(): string {
@@ -60,6 +66,8 @@ class Cards {
       .sort((a, b) => b - a);
   }
 
+
+
 }
 
 class HandMatchResult {
@@ -78,9 +86,10 @@ class HandMatchResult {
   }) {
     this.name = name;
     this.doesMatch = doesMatch;
-    this.sortedListsOfCardsToCompare = sortedListsOfCardsToCompare;
+    this.sortedListsOfCardsToCompare = sortedListsOfCardsToCompare
+      .map(cards =>
+        cards.sort((a, b) => b.numericValue - a.numericValue));
   }
-
 
   static _isFirstGreaterThanSecond(first: Card[], second: Card[]): boolean {
     const me = Cards.sortedFromHighestToLowest(first);
@@ -92,28 +101,6 @@ class HandMatchResult {
       if (you[i] > me[i]) {
         return false;
       }
-    }
-
-    return false;
-  }
-
-  isGreaterThan(otherHand: HandMatchResult, handType: HandType) {
-    const messageForFirstPropertyWhereThisIsGreaterThanOther =
-      this.sortedListsOfCardsToCompare.map(
-        (value, index) => {
-          const otherCards = otherHand.sortedListsOfCardsToCompare[index];
-          if (HandMatchResult._isFirstGreaterThanSecond(value, otherCards)) {
-            return `${handType}: ${this.name}.${index} (${value}) are better than` +
-              ` ${otherHand.name}.${index} (${otherCards})`;
-          }
-          return undefined;
-        })
-        .filter((value) => value)
-        [0];
-
-    if (messageForFirstPropertyWhereThisIsGreaterThanOther) {
-      console.log(messageForFirstPropertyWhereThisIsGreaterThanOther);
-      return true;
     }
 
     return false;
@@ -263,7 +250,7 @@ class Straight implements HandType {
   parse(cards: Card[], name: string): HandMatchResult {
     const sorted = Cards.sortedFromHighestToLowest(cards);
 
-    function arrayEquals(a: number[], b: number[]) : boolean {
+    function arrayEquals(a: number[], b: number[]): boolean {
       return a.length === b.length &&
         a.every((val, index) => val === b[index]) &&
         b.every((val, index) => val === a[index]);
@@ -293,6 +280,18 @@ const handTypesSortedFromBestToWorst: HandType[] = [
   new HighCard()
 ];
 
+class EncodedCard {
+  private readonly _card: Card;
+
+  constructor(card: Card) {
+    this._card = card;
+  }
+
+  toString(): string {
+    return String(this._card.numericValue).padStart(2, "0");
+  }
+}
+
 class Hand {
   private readonly _name: string;
   private readonly _cards: Card[];
@@ -315,29 +314,20 @@ class Hand {
   }
 
   toString(): string {
-    return this._cards + "";
-  }
-
-  isBetterThan(other: Hand): boolean {
-    for (const handType of handTypesSortedFromBestToWorst) {
+    const results: string[] = [];
+    let firstMatchingHandGrouping: string | undefined = undefined;
+    for (let i = 0; i < handTypesSortedFromBestToWorst.length; i++) {
+      const handType = handTypesSortedFromBestToWorst[i];
       const myHand = handType.parse(this._cards, this._name);
-      const otherHand = handType.parse(other._cards, other._name);
-
-      if (myHand.doesMatch) {
-        if (!otherHand.doesMatch) {
-          console.log(`${this._name} has ${handType}, but ${other._name} does not`);
-          return true;
-        } else if (otherHand.doesMatch) {
-          const isThisHandGreater = myHand.isGreaterThan(otherHand, handType);
-          if (isThisHandGreater) {
-            return true;
-          }
-        }
+      results.push(`${handType}: ${myHand.doesMatch ? "1" : "0"}`)
+      if (myHand.doesMatch && !firstMatchingHandGrouping) {
+        firstMatchingHandGrouping = myHand
+          .sortedListsOfCardsToCompare
+          .flat()
+          .map(x => new EncodedCard(x)) + "";
       }
     }
-
-    console.log(`default: ${this._name} not determined to be better than ${other._name}`);
-    return false;
+    return results.join(" ") + " " + firstMatchingHandGrouping;
   }
 }
 
@@ -350,19 +340,11 @@ class Comparison {
     this._two = two;
   }
 
-  get one(): Hand {
-    return this._one;
-  }
-
-  get two(): Hand {
-    return this._two;
-  }
-
   toString(): string {
-    if (this._two.isBetterThan(this._one)) {
-      return this._two.name;
-    } else if (this._one.isBetterThan(this._two)) {
-      return this._one.name;
+    if (this._two + "" > this._one + "") {
+      return this._two.name + ": " + this._two;
+    } else if (this._one + "" > this._two + "") {
+      return this._one.name + ": " + this._one;
     }
     return "Tie"
   }
