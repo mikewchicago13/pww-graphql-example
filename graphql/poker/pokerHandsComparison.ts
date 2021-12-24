@@ -41,7 +41,7 @@ class Cards {
       .map(x => new Card(x));
   }
 
-  static _countByProperty(cards: Card[], func: (x:Card) => string): any{
+  static _countByProperty(cards: Card[], func: (x: Card) => string): any {
     return cards
       .map(value => func(value))
       .map(value => {
@@ -294,7 +294,10 @@ class FullHouse implements HandType {
   }
 
   parse(cards: Card[], name: string): HandMatchResult {
-    const {doesMatch: hasThreeOfAKind, sortedListsOfCardsToCompare} = new ThreeOfAKind().parse(cards, name);
+    const {
+      doesMatch: hasThreeOfAKind,
+      sortedListsOfCardsToCompare
+    } = new ThreeOfAKind().parse(cards, name);
     const {doesMatch: hasPair} = new Pair().parse(cards, name);
     const isFullHouse = hasThreeOfAKind && hasPair;
 
@@ -316,7 +319,24 @@ class FourOfAKind implements HandType {
   }
 }
 
+class StraightFlush implements HandType {
+  toString(): string {
+    return "Straight Flush";
+  }
+
+  parse(cards: Card[], name: string): HandMatchResult {
+    const {doesMatch: isStraight, sortedListsOfCardsToCompare} = new Straight().parse(cards, name);
+    const {doesMatch: isFlush} = new Flush().parse(cards, name);
+    return new HandMatchResult({
+      name,
+      doesMatch: isFlush && isStraight,
+      sortedListsOfCardsToCompare
+    });
+  }
+}
+
 const handTypesSortedFromBestToWorst: HandType[] = [
+  new StraightFlush(),
   new FourOfAKind(),
   new FullHouse(),
   new Flush(),
@@ -387,17 +407,18 @@ class Comparison {
     this._two = two;
   }
 
-  get one(): Hand{
+  get one(): Hand {
     return this._one;
   }
-  get two(): Hand{
+
+  get two(): Hand {
     return this._two;
   }
 
-  get debug(): string{
+  get debug(): string {
     return this._one.name + ": " + this.one +
       "\n" +
-      this._two.name + ": " +this.two;
+      this._two.name + ": " + this.two;
   }
 
   toString(): string {

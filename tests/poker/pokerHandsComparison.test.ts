@@ -202,7 +202,6 @@ describe('poker hands comparison', () => {
       it('beats full house', () => {
         const comparison = new PokerHandsInput().parse("Black: AH QC QH QC QS  White: 2H 2C KH KC KS");
         expect(comparison + "").toMatch(/Black/);
-        console.log(comparison.debug)
       });
       it('beats flush', () => {
         const comparison = new PokerHandsInput().parse("Black: AH QC QH QC QS  White: 2H 3H 4H 5H 7H");
@@ -226,6 +225,48 @@ describe('poker hands comparison', () => {
       });
       it('beats high card', () => {
         const comparison = new PokerHandsInput().parse("Black: 2H QC QH QC QS  White: AH 5D 7C 8S 9D");
+        expect(comparison + "").toMatch(/Black/);
+      });
+    });
+    describe('straight flush', () => {
+      it('highest high card wins', () => {
+        const comparison = new PokerHandsInput().parse("Black: KH QH JH TH 9H  White: AS KS QS JS TS");
+        expect(comparison + "").toMatch(/White/);
+      });
+      it('ace can be low end of straight', () => {
+        const comparison = new PokerHandsInput().parse("Black: 2H KH KC KS KD  White: AS 2S 3S 4S 5S");
+        expect(comparison + "").toMatch(/White/);
+      });
+      it('beats four of a kind', () => {
+        const comparison = new PokerHandsInput().parse("Black: 2H AH AC AS AD  White: 2D 3D 4D 5D 6D");
+        expect(comparison + "").toMatch(/White/);
+      });
+      it('beats full house', () => {
+        const comparison = new PokerHandsInput().parse("Black: 2D 3D 4D 5D 6D  White: 2H 2C KH KC KS");
+        expect(comparison + "").toMatch(/Black/);
+      });
+      it('beats flush', () => {
+        const comparison = new PokerHandsInput().parse("Black: 2D 3D 4D 5D 6D  White: 2H 3H 4H 5H 7H");
+        expect(comparison + "").toMatch(/Black/);
+      });
+      it('beats straight', () => {
+        const comparison = new PokerHandsInput().parse("Black: 2D 3D 4D 5D 6D  White: 2C 3S 4S 5C 6S");
+        expect(comparison + "").toMatch(/Black/);
+      });
+      it('beats three of a kind', () => {
+        const comparison = new PokerHandsInput().parse("Black: 2D 3D 4D 5D 6D  White: AC 5S KS KC KH");
+        expect(comparison + "").toMatch(/Black/)
+      });
+      it('beats two pairs', () => {
+        const comparison = new PokerHandsInput().parse("Black: 2D 3D 4D 5D 6D  White: AH 5D 5C 4S 4D");
+        expect(comparison + "").toMatch(/Black/);
+      });
+      it('beats a pair', () => {
+        const comparison = new PokerHandsInput().parse("Black: 2D 3D 4D 5D 6D  White: AH 5D 7C KS KD");
+        expect(comparison + "").toMatch(/Black/);
+      });
+      it('beats high card', () => {
+        const comparison = new PokerHandsInput().parse("Black: 2D 3D 4D 5D 6D  White: AH 5D 7C 8S 9D");
         expect(comparison + "").toMatch(/Black/);
       });
     });
