@@ -277,5 +277,9 @@ describe('poker hands comparison', () => {
       const comparison = new PokerHandsInput().parse("Black: 2H 3D 5S 9C KD  White: 2C 3H 4S 8C AH");
       expect(comparison + "").toBe("White wins with High Card: A");
     });
+    it('pair', () => {
+      const comparison = new PokerHandsInput().parse("Black: 2H 3D 5S 9C KD  White: 2C 2S 4S 8C QH");
+      expect(comparison + "").toBe("White wins with Pair: 2s");
+    });
   });
 });

@@ -129,7 +129,7 @@ class HandWithSpecifiedNumberOfSameCardNumber implements HandType {
         return new HandMatchResult({
           doesMatch: true,
           sortedListsOfCardsToCompare: [primaryCards, remainingCards],
-          description: x => x + ""
+          description: x => String(x[0][0])[0] + "s"
         })
       }
     }
