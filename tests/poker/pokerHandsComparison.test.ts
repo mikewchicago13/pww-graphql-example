@@ -269,6 +269,10 @@ describe('poker hands comparison', () => {
         const comparison = new PokerHandsInput().parse("Black: 2D 3D 4D 5D 6D  White: AH 5D 7C 8S 9D");
         expect(comparison + "").toMatch(/Black/);
       });
+      it('tie', () => {
+        const comparison = new PokerHandsInput().parse("Black: KH QH JH TH 9H  White: KD QD JD TD 9D");
+        expect(comparison + "").toMatch(/Tie/);
+      });
     });
   });
 

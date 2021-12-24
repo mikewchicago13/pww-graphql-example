@@ -235,8 +235,6 @@ class Straight implements HandType {
     return "Straight";
   }
 
-  private static _fiveHighStraight: number[] = [map.A, 5, 4, 3, 2];
-
   private static _regularStraights: number[][] = [
     [6, 5, 4, 3, 2],
     [7, 6, 5, 4, 3],
@@ -249,30 +247,18 @@ class Straight implements HandType {
     [map.A, map.K, map.Q, map.J, map.T],
   ]
 
+  static _arrayEquals(a: number[], b: number[]): boolean {
+    return a.length === b.length &&
+      a.every((val, index) => val === b[index]);
+  }
+
   parse(cards: Card[]): HandMatchResult {
     const sorted = cards
       .map(c => c.numericValue)
       .sort((a, b) => b - a);
 
-    function arrayEquals(a: number[], b: number[]): boolean {
-      return a.length === b.length &&
-        a.every((val, index) => val === b[index]);
-    }
-
-    const isRegularStraight = Straight._regularStraights
-      .reduce((accumulator, validStraight) => {
-        const matchesAKnownStraight = arrayEquals(validStraight, sorted);
-        return accumulator || matchesAKnownStraight;
-      }, false);
-
-    const isFiveHighStraight = arrayEquals(Straight._fiveHighStraight, sorted);
-    const replaceAceWithOne = cards
-      .map(value => {
-        if (value.numericValue === map.A) {
-          return new Card("1" + value.suit);
-        }
-        return value;
-      })
+    const isRegularStraight = this._isRegularStraight(sorted);
+    const {isFiveHighStraight, replaceAceWithOne} = this._fiveHighStraight(sorted, cards);
 
     return new HandMatchResult(
       {
@@ -281,6 +267,29 @@ class Straight implements HandType {
         description: (x: Card[][]) => String(x[0][0])[0] + " high"
       }
     );
+  }
+
+  private _isRegularStraight(sorted: number[]) {
+    return Straight._regularStraights
+      .reduce((accumulator, validStraight) => {
+        const matchesAKnownStraight = Straight._arrayEquals(validStraight, sorted);
+        return accumulator || matchesAKnownStraight;
+      }, false);
+  }
+
+  private _fiveHighStraight(sorted: number[], cards: Card[]) : {
+    isFiveHighStraight: boolean,
+    replaceAceWithOne: Card[]
+  }{
+    const isFiveHighStraight = Straight._arrayEquals([map.A, 5, 4, 3, 2], sorted);
+    const replaceAceWithOne = cards
+      .map(value => {
+        if (value.numericValue === map.A) {
+          return new Card("1" + value.suit);
+        }
+        return value;
+      })
+    return {isFiveHighStraight, replaceAceWithOne};
   }
 }
 
