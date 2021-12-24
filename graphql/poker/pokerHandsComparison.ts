@@ -278,7 +278,7 @@ class Flush implements HandType {
     return new HandMatchResult({
       doesMatch: allCardsOfSameSuit,
       sortedListsOfCardsToCompare: [cards],
-      description: x => x + ""
+      description: x => String(x[0][0])[0] + " high"
     });
   }
 }

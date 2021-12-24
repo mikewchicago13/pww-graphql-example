@@ -297,5 +297,9 @@ describe('poker hands comparison', () => {
       const comparison = new PokerHandsInput().parse("Black: 2H 3D 4C 5S 7D  White: AC 2S 3S 4C 5H");
       expect(comparison + "").toBe("White wins with Straight: 5 high");
     });
+    it('flush', () => {
+      const comparison = new PokerHandsInput().parse("Black: 2H 3H 4H 5H 7H  White: 3C 4C 5C 6C 8C");
+      expect(comparison + "").toBe("White wins with Flush: 8 high");
+    });
   });
 });
