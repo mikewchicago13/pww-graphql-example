@@ -23,7 +23,7 @@ class Card {
     return this._numericValue;
   }
 
-  toString(): string{
+  toString(): string {
     return this._asString;
   }
 }
@@ -60,19 +60,19 @@ class Cards {
       .sort((a, b) => b - a);
   }
 
-  static compare(myHand: Card[], otherHand: Card[]): CardsComparisonResult {
-    const me = Cards._sortedFromHighestToLowest(myHand);
-    const you = Cards._sortedFromHighestToLowest(otherHand);
+  static isFirstGreaterThanSecond(first: Card[], second: Card[]): boolean {
+    const me = Cards._sortedFromHighestToLowest(first);
+    const you = Cards._sortedFromHighestToLowest(second);
     for (let i = 0; i < me.length; i++) {
       if (me[i] > you[i]) {
-        return CardsComparisonResult.FirstIsGreater;
+        return true;
       }
       if (you[i] > me[i]) {
-        return CardsComparisonResult.SecondIsGreater;
+        return false;
       }
     }
 
-    return CardsComparisonResult.Unknown;
+    return false;
   }
 }
 
@@ -188,12 +188,6 @@ class TwoPairs implements HandType {
   }
 }
 
-enum CardsComparisonResult {
-  FirstIsGreater,
-  SecondIsGreater,
-  Unknown
-}
-
 class Hand {
   private readonly _cardsInput: string;
   private readonly _name: string;
@@ -237,35 +231,19 @@ class Hand {
           console.log(`${this._name} has ${handType}, but ${other._name} does not`);
           return true;
         } else if (otherHand.doesMatch) {
-
-          const primaryComparisonResult = Cards.compare(myHand.primaryCards, otherHand.primaryCards);
-          if (primaryComparisonResult === CardsComparisonResult.FirstIsGreater) {
+          if (Cards.isFirstGreaterThanSecond(myHand.primaryCards, otherHand.primaryCards)) {
             console.log(`${handType}: ${this._name}.primaryCards (${myHand.primaryCards}) are better than ${otherHand.name}.primaryCards (${otherHand.primaryCards})`);
             return true;
           }
-          if (primaryComparisonResult === CardsComparisonResult.SecondIsGreater) {
-            console.log(`${handType}: ${other._name}.primaryCards (${otherHand.primaryCards}) are better than ${this._name}.primaryCards (${myHand.primaryCards})`);
-            return false;
-          }
 
-          const secondaryComparisonResult = Cards.compare(myHand.secondaryCards, otherHand.secondaryCards);
-          if (secondaryComparisonResult === CardsComparisonResult.FirstIsGreater) {
+          if (Cards.isFirstGreaterThanSecond(myHand.secondaryCards, otherHand.secondaryCards)) {
             console.log(`${handType}: ${this._name}.secondaryCards (${myHand.secondaryCards}) are better than ${otherHand.name}.secondaryCards (${otherHand.secondaryCards})`);
             return true;
           }
-          if (secondaryComparisonResult === CardsComparisonResult.SecondIsGreater) {
-            console.log(`${handType}: ${other._name}.secondaryCards (${otherHand.secondaryCards}) are better than ${this._name}.secondaryCards (${myHand.secondaryCards})`);
-            return false;
-          }
 
-          const remainingComparisonResult = Cards.compare(myHand.remainingCards, otherHand.remainingCards);
-          if (remainingComparisonResult === CardsComparisonResult.FirstIsGreater) {
+          if (Cards.isFirstGreaterThanSecond(myHand.remainingCards, otherHand.remainingCards)) {
             console.log(`${handType}: ${this._name}.remainingCards (${myHand.remainingCards}) are better than ${otherHand.name}.remainingCards (${otherHand.remainingCards})`);
             return true;
-          }
-          if (remainingComparisonResult === CardsComparisonResult.SecondIsGreater) {
-            console.log(`${handType}: ${other._name}.remainingCards (${otherHand.remainingCards}) are better than ${this._name}.remainingCards (${myHand.remainingCards})`);
-            return false;
           }
         }
       }
