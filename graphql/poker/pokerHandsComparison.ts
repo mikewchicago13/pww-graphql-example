@@ -53,6 +53,28 @@ class Cards {
         return accumulatorMap;
       }, {});
   }
+}
+
+class HandMatchResult {
+  name: string;
+  doesMatch: boolean;
+  primaryCards: Card[];
+  secondaryCards: Card[];
+  remainingCards: Card[];
+
+  constructor({
+                name,
+                doesMatch,
+                primaryCards,
+                secondaryCards,
+                remainingCards
+              }: { name: string, doesMatch: boolean, primaryCards: Card[], secondaryCards: Card[], remainingCards: Card[] }) {
+    this.name = name;
+    this.doesMatch = doesMatch;
+    this.primaryCards = primaryCards;
+    this.secondaryCards = secondaryCards;
+    this.remainingCards = remainingCards;
+  }
 
   private static _sortedFromHighestToLowest(cards: Card[]): number[] {
     return cards
@@ -60,9 +82,9 @@ class Cards {
       .sort((a, b) => b - a);
   }
 
-  static isFirstGreaterThanSecond(first: Card[], second: Card[]): boolean {
-    const me = Cards._sortedFromHighestToLowest(first);
-    const you = Cards._sortedFromHighestToLowest(second);
+  static _isFirstGreaterThanSecond(first: Card[], second: Card[]): boolean {
+    const me = HandMatchResult._sortedFromHighestToLowest(first);
+    const you = HandMatchResult._sortedFromHighestToLowest(second);
     for (let i = 0; i < me.length; i++) {
       if (me[i] > you[i]) {
         return true;
@@ -74,14 +96,24 @@ class Cards {
 
     return false;
   }
-}
 
-interface HandMatchResult {
-  name: string;
-  doesMatch: boolean;
-  primaryCards: Card[];
-  secondaryCards: Card[];
-  remainingCards: Card[];
+  isGreaterThan(otherHand: HandMatchResult, handType: HandType) {
+    if (HandMatchResult._isFirstGreaterThanSecond(this.primaryCards, otherHand.primaryCards)) {
+      console.log(`${handType}: ${this.name}.primaryCards (${this.primaryCards}) are better than ${otherHand.name}.primaryCards (${otherHand.primaryCards})`);
+      return true;
+    }
+
+    if (HandMatchResult._isFirstGreaterThanSecond(this.secondaryCards, otherHand.secondaryCards)) {
+      console.log(`${handType}: ${this.name}.secondaryCards (${this.secondaryCards}) are better than ${otherHand.name}.secondaryCards (${otherHand.secondaryCards})`);
+      return true;
+    }
+
+    if (HandMatchResult._isFirstGreaterThanSecond(this.remainingCards, otherHand.remainingCards)) {
+      console.log(`${handType}: ${this.name}.remainingCards (${this.remainingCards}) are better than ${otherHand.name}.remainingCards (${otherHand.remainingCards})`);
+      return true;
+    }
+    return false;
+  }
 }
 
 interface HandType {
@@ -92,13 +124,14 @@ interface HandType {
 
 class HighCard implements HandType {
   parse(cards: Card[], name: string): HandMatchResult {
-    return {
+    return new HandMatchResult({
       name,
       doesMatch: true,
       primaryCards: cards,
       secondaryCards: [],
       remainingCards: []
     }
+    )
   }
 
   toString(): string {
@@ -121,23 +154,23 @@ class Pair implements HandType {
         const remainingCards =
           cards.filter(x => x.numericValue !== Number(key));
 
-        return {
+        return new HandMatchResult({
           name,
           doesMatch: true,
           primaryCards,
           secondaryCards: [],
           remainingCards
-        }
+        })
       }
     }
 
-    return {
+    return new HandMatchResult({
       name,
       doesMatch: false,
       primaryCards: [],
       secondaryCards: [],
       remainingCards: cards
-    }
+    })
   }
 }
 
@@ -168,25 +201,32 @@ class TwoPairs implements HandType {
       const remainingCards =
         cards.filter(x => ![higherPair, lowerPair].includes(x.numericValue));
 
-      return {
+      return new HandMatchResult({
         name,
         doesMatch: true,
         primaryCards,
         secondaryCards,
         remainingCards
-      }
+      })
 
     }
 
-    return {
+    return new HandMatchResult({
       name,
       doesMatch: false,
       primaryCards: [],
       secondaryCards: [],
       remainingCards: cards
     }
+    )
   }
 }
+
+const handTypesSortedFromBestToWorst: HandType[] = [
+  new TwoPairs(),
+  new Pair(),
+  new HighCard()
+];
 
 class Hand {
   private readonly _cardsInput: string;
@@ -216,12 +256,6 @@ class Hand {
   }
 
   isBetterThan(other: Hand): boolean {
-    const handTypesSortedFromBestToWorst: HandType[] = [
-      new TwoPairs(),
-      new Pair(),
-      new HighCard()
-    ];
-
     for (const handType of handTypesSortedFromBestToWorst) {
       const myHand = handType.parse(this._cards, this._name);
       const otherHand = handType.parse(other._cards, other._name);
@@ -231,18 +265,8 @@ class Hand {
           console.log(`${this._name} has ${handType}, but ${other._name} does not`);
           return true;
         } else if (otherHand.doesMatch) {
-          if (Cards.isFirstGreaterThanSecond(myHand.primaryCards, otherHand.primaryCards)) {
-            console.log(`${handType}: ${this._name}.primaryCards (${myHand.primaryCards}) are better than ${otherHand.name}.primaryCards (${otherHand.primaryCards})`);
-            return true;
-          }
-
-          if (Cards.isFirstGreaterThanSecond(myHand.secondaryCards, otherHand.secondaryCards)) {
-            console.log(`${handType}: ${this._name}.secondaryCards (${myHand.secondaryCards}) are better than ${otherHand.name}.secondaryCards (${otherHand.secondaryCards})`);
-            return true;
-          }
-
-          if (Cards.isFirstGreaterThanSecond(myHand.remainingCards, otherHand.remainingCards)) {
-            console.log(`${handType}: ${this._name}.remainingCards (${myHand.remainingCards}) are better than ${otherHand.name}.remainingCards (${otherHand.remainingCards})`);
+          const isThisHandGreater = myHand.isGreaterThan(otherHand, handType);
+          if (isThisHandGreater) {
             return true;
           }
         }
