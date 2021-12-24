@@ -35,12 +35,8 @@ class Card {
   }
 }
 
-class Cards {
-  static parse(cards: string): Card[] {
-    return cards.split(" ")
-      .map(x => new Card(x));
-  }
 
+class Cards {
   static _countByProperty(cards: Card[], func: (x: Card) => string): any {
     return cards
       .map(value => func(value))
@@ -68,29 +64,19 @@ class Cards {
   static countBySuit(cards: Card[]): any {
     return Cards._countByProperty(cards, x => x.suit);
   }
-
-  static sortedFromHighestToLowest(cards: Card[]): number[] {
-    return cards
-      .map(c => c.numericValue)
-      .sort((a, b) => b - a);
-  }
 }
 
 class HandMatchResult {
-  name: string;
   doesMatch: boolean;
   sortedListsOfCardsToCompare: Card[][];
 
   constructor({
-                name,
                 doesMatch,
                 sortedListsOfCardsToCompare
               }: {
-    name: string,
     doesMatch: boolean,
     sortedListsOfCardsToCompare: Card[][]
   }) {
-    this.name = name;
     this.doesMatch = doesMatch;
     this.sortedListsOfCardsToCompare = sortedListsOfCardsToCompare
       .map(cards =>
@@ -99,15 +85,14 @@ class HandMatchResult {
 }
 
 interface HandType {
-  parse(cards: Card[], name: string): HandMatchResult;
+  parse(cards: Card[]): HandMatchResult;
 
   toString(): string;
 }
 
 class HighCard implements HandType {
-  parse(cards: Card[], name: string): HandMatchResult {
+  parse(cards: Card[]): HandMatchResult {
     return new HandMatchResult({
-        name,
         doesMatch: true,
         sortedListsOfCardsToCompare: [cards]
       }
@@ -126,7 +111,7 @@ class HandWithSpecifiedNumberOfSameCardNumber implements HandType {
     this._numberOfSameCardNumber = numberOfSameCardNumber;
   }
 
-  parse(cards: Card[], name: string): HandMatchResult {
+  parse(cards: Card[]): HandMatchResult {
     const countByCardValue = Cards.countByCardValue(cards);
 
     for (const key in countByCardValue) {
@@ -137,7 +122,6 @@ class HandWithSpecifiedNumberOfSameCardNumber implements HandType {
           cards.filter(x => x.numericValue !== Number(key));
 
         return new HandMatchResult({
-          name,
           doesMatch: true,
           sortedListsOfCardsToCompare: [primaryCards, remainingCards]
         })
@@ -145,7 +129,6 @@ class HandWithSpecifiedNumberOfSameCardNumber implements HandType {
     }
 
     return new HandMatchResult({
-      name,
       doesMatch: false,
       sortedListsOfCardsToCompare: [cards]
     })
@@ -161,8 +144,8 @@ class Pair implements HandType {
     return "Pair";
   }
 
-  parse(cards: Card[], name: string): HandMatchResult {
-    return new HandWithSpecifiedNumberOfSameCardNumber(2).parse(cards, name);
+  parse(cards: Card[]): HandMatchResult {
+    return new HandWithSpecifiedNumberOfSameCardNumber(2).parse(cards);
   }
 }
 
@@ -171,7 +154,7 @@ class TwoPairs implements HandType {
     return "Two Pairs";
   }
 
-  parse(cards: Card[], name: string): HandMatchResult {
+  parse(cards: Card[]): HandMatchResult {
     const countByCardValue = Cards.countByCardValue(cards);
 
     const pairsFound: number[] = [];
@@ -194,7 +177,6 @@ class TwoPairs implements HandType {
         cards.filter(x => ![higherPair, lowerPair].includes(x.numericValue));
 
       return new HandMatchResult({
-        name,
         doesMatch: true,
         sortedListsOfCardsToCompare: [primaryCards, secondaryCards, remainingCards]
       })
@@ -202,7 +184,6 @@ class TwoPairs implements HandType {
     }
 
     return new HandMatchResult({
-        name,
         doesMatch: false,
         sortedListsOfCardsToCompare: [cards]
       }
@@ -215,8 +196,8 @@ class ThreeOfAKind implements HandType {
     return "Three of a Kind";
   }
 
-  parse(cards: Card[], name: string): HandMatchResult {
-    return new HandWithSpecifiedNumberOfSameCardNumber(3).parse(cards, name);
+  parse(cards: Card[]): HandMatchResult {
+    return new HandWithSpecifiedNumberOfSameCardNumber(3).parse(cards);
   }
 }
 
@@ -239,13 +220,14 @@ class Straight implements HandType {
     [map.A, map.K, map.Q, map.J, map.T],
   ]
 
-  parse(cards: Card[], name: string): HandMatchResult {
-    const sorted = Cards.sortedFromHighestToLowest(cards);
+  parse(cards: Card[]): HandMatchResult {
+    const sorted = cards
+      .map(c => c.numericValue)
+      .sort((a, b) => b - a);
 
     function arrayEquals(a: number[], b: number[]): boolean {
       return a.length === b.length &&
-        a.every((val, index) => val === b[index]) &&
-        b.every((val, index) => val === a[index]);
+        a.every((val, index) => val === b[index]);
     }
 
     const isRegularStraight = Straight._regularStraights
@@ -265,7 +247,6 @@ class Straight implements HandType {
 
     return new HandMatchResult(
       {
-        name,
         doesMatch: isRegularStraight || isFiveHighStraight,
         sortedListsOfCardsToCompare: [isFiveHighStraight ? replaceAceWithOne : cards]
       }
@@ -278,10 +259,9 @@ class Flush implements HandType {
     return "Flush";
   }
 
-  parse(cards: Card[], name: string): HandMatchResult {
+  parse(cards: Card[]): HandMatchResult {
     const allCardsOfSameSuit = Object.keys(Cards.countBySuit(cards)).length === 1;
     return new HandMatchResult({
-      name,
       doesMatch: allCardsOfSameSuit,
       sortedListsOfCardsToCompare: [cards]
     });
@@ -293,16 +273,15 @@ class FullHouse implements HandType {
     return "Full House";
   }
 
-  parse(cards: Card[], name: string): HandMatchResult {
+  parse(cards: Card[]): HandMatchResult {
     const {
       doesMatch: hasThreeOfAKind,
       sortedListsOfCardsToCompare
-    } = new ThreeOfAKind().parse(cards, name);
-    const {doesMatch: hasPair} = new Pair().parse(cards, name);
+    } = new ThreeOfAKind().parse(cards);
+    const {doesMatch: hasPair} = new Pair().parse(cards);
     const isFullHouse = hasThreeOfAKind && hasPair;
 
     return new HandMatchResult({
-      name,
       doesMatch: isFullHouse,
       sortedListsOfCardsToCompare
     });
@@ -314,8 +293,8 @@ class FourOfAKind implements HandType {
     return "Four of a Kind";
   }
 
-  parse(cards: Card[], name: string): HandMatchResult {
-    return new HandWithSpecifiedNumberOfSameCardNumber(4).parse(cards, name);
+  parse(cards: Card[]): HandMatchResult {
+    return new HandWithSpecifiedNumberOfSameCardNumber(4).parse(cards);
   }
 }
 
@@ -324,11 +303,10 @@ class StraightFlush implements HandType {
     return "Straight Flush";
   }
 
-  parse(cards: Card[], name: string): HandMatchResult {
-    const {doesMatch: isStraight, sortedListsOfCardsToCompare} = new Straight().parse(cards, name);
-    const {doesMatch: isFlush} = new Flush().parse(cards, name);
+  parse(cards: Card[]): HandMatchResult {
+    const {doesMatch: isStraight, sortedListsOfCardsToCompare} = new Straight().parse(cards);
+    const {doesMatch: isFlush} = new Flush().parse(cards);
     return new HandMatchResult({
-      name,
       doesMatch: isFlush && isStraight,
       sortedListsOfCardsToCompare
     });
@@ -373,7 +351,8 @@ class Hand {
         name: string
       }) {
     this._name = name;
-    this._cards = Cards.parse(cards);
+    this._cards = cards.split(" ")
+      .map(x => new Card(x));
   }
 
   get name(): string {
@@ -385,7 +364,7 @@ class Hand {
     let firstMatchingHandGrouping: string | undefined = undefined;
     for (let i = 0; i < handTypesSortedFromBestToWorst.length; i++) {
       const handType = handTypesSortedFromBestToWorst[i];
-      const myHand = handType.parse(this._cards, this._name);
+      const myHand = handType.parse(this._cards);
       results.push(`${handType}: ${myHand.doesMatch ? "1" : "0"}`)
       if (myHand.doesMatch && !firstMatchingHandGrouping) {
         firstMatchingHandGrouping = myHand
