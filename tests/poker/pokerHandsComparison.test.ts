@@ -164,6 +164,36 @@ describe('poker hands comparison', () => {
         expect(comparison + "").toMatch(/Tie/);
       });
     });
+    describe('full house', () => {
+      it('highest set of three wins', () => {
+        const comparison = new PokerHandsInput().parse("Black: AH AC QH QC QS  White: 2H 2C KH KC KS");
+        expect(comparison + "").toMatch(/White/);
+      });
+      it('beats flush', () => {
+        const comparison = new PokerHandsInput().parse("Black: AH AC QH QC QS  White: 2H 3H 4H 5H 7H");
+        expect(comparison + "").toMatch(/Black/);
+      });
+      it('beats straight', () => {
+        const comparison = new PokerHandsInput().parse("Black: AH AC QH QC QS  White: AC 2S 3S 4C 5D");
+        expect(comparison + "").toMatch(/Black/);
+      });
+      it('beats three of a kind', () => {
+        const comparison = new PokerHandsInput().parse("Black: 2H 2C QH QC QS  White: AC 5S KS KC KH");
+        expect(comparison + "").toMatch(/Black/)
+      });
+      it('beats two pairs', () => {
+        const comparison = new PokerHandsInput().parse("Black: AH AC 3H 3C 3S  White: AH 5D 5C 4S 4D");
+        expect(comparison + "").toMatch(/Black/);
+      });
+      it('beats a pair', () => {
+        const comparison = new PokerHandsInput().parse("Black: AH AC QH QC QS  White: AH 5D 7C KS KD");
+        expect(comparison + "").toMatch(/Black/);
+      });
+      it('beats high card', () => {
+        const comparison = new PokerHandsInput().parse("Black: AH AC QH QC QS  White: AH 5D 7C 8S 9D");
+        expect(comparison + "").toMatch(/Black/);
+      });
+    });
   });
 
   describe('describe winning hand', () => {

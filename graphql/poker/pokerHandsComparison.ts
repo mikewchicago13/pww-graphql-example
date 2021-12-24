@@ -288,7 +288,26 @@ class Flush implements HandType {
   }
 }
 
+class FullHouse implements HandType {
+  toString(): string {
+    return "Full House";
+  }
+
+  parse(cards: Card[], name: string): HandMatchResult {
+    const {doesMatch: hasThreeOfAKind, sortedListsOfCardsToCompare} = new ThreeOfAKind().parse(cards, name);
+    const {doesMatch: hasPair} = new Pair().parse(cards, name);
+    const isFullHouse = hasThreeOfAKind && hasPair;
+
+    return new HandMatchResult({
+      name,
+      doesMatch: isFullHouse,
+      sortedListsOfCardsToCompare
+    });
+  }
+}
+
 const handTypesSortedFromBestToWorst: HandType[] = [
+  new FullHouse(),
   new Flush(),
   new Straight(),
   new ThreeOfAKind(),
@@ -355,6 +374,19 @@ class Comparison {
   constructor(one: Hand, two: Hand) {
     this._one = one;
     this._two = two;
+  }
+
+  get one(): Hand{
+    return this._one;
+  }
+  get two(): Hand{
+    return this._two;
+  }
+
+  get debug(): string{
+    return this._one.name + ": " + this.one +
+      "\n" +
+      this._two.name + ": " +this.two;
   }
 
   toString(): string {
