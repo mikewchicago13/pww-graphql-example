@@ -32,13 +32,14 @@ class Cards {
 interface HandMatchResult {
   name: string;
   doesMatch: boolean;
-  // primaryCards: Card[];
+  primaryCards: Card[];
   // secondaryCards : Card[];
   remainingCards: Card[];
 }
 
 interface HandType {
   parse(cards: Card[], name: string): HandMatchResult;
+
   toString(): string;
 }
 
@@ -47,9 +48,11 @@ class HighCard implements HandType {
     return {
       name,
       doesMatch: true,
-      remainingCards: cards
+      primaryCards: cards,
+      remainingCards: []
     }
   }
+
   toString(): string {
     return "High Card";
   }
@@ -83,10 +86,19 @@ class Pair implements HandType {
 
     for (const key in countByCardValue) {
       if (countByCardValue[key] === 2) {
+
+        const primaryCards =
+          cards
+            .filter(x => x.numericValue === Number(key));
+        const remainingCards =
+          cards
+            .filter(x => x.numericValue !== Number(key));
+
         return {
           name,
           doesMatch: true,
-          remainingCards: []
+          primaryCards,
+          remainingCards
         }
       }
     }
@@ -94,6 +106,7 @@ class Pair implements HandType {
     return {
       name,
       doesMatch: false,
+      primaryCards: [],
       remainingCards: cards
     }
   }
@@ -144,8 +157,21 @@ class Hand {
       const otherHand = handType.parse(other._cards, other._name);
       if (myHand.doesMatch) {
         if (!otherHand.doesMatch) {
-          console.log(`${this._name}.primaryCards are better than ${other._name}.primaryCards`);
+          console.log(`${this._name} has ${handType}, but ${other._name} does not`);
           return true;
+        } else if (otherHand.doesMatch) {
+          const me = Hand._sortedByNumericValue(myHand.primaryCards);
+          const you = Hand._sortedByNumericValue(otherHand.primaryCards);
+          for (let i = 0; i < me.length; i++) {
+            if (me[i] > you[i]) {
+              console.log(`${this._name}.primaryCards (${me}) are better than ${other._name}.primaryCards (${you})`);
+              return true;
+            }
+            if (you[i] > me[i]) {
+              console.log(`${other._name}.primaryCards (${you}) are better than ${this._name}.primaryCards (${me})`);
+              return false;
+            }
+          }
         } else {
           const me = Hand._sortedByNumericValue(myHand.remainingCards);
           const you = Hand._sortedByNumericValue(otherHand.remainingCards);
