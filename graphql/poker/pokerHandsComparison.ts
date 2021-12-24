@@ -398,7 +398,7 @@ class Hand {
         return `${handType}: ${myHand.description}`;
       }
     }
-    return "";
+    throw new Error(`${this._name} ${this._cards} should have matched at least one hand type`);
   }
 
   toString(): string {
