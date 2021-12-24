@@ -35,7 +35,6 @@ class Card {
   }
 }
 
-
 class Cards {
   static _countByProperty(cards: Card[], func: (x: Card) => string): any {
     return cards
@@ -293,7 +292,6 @@ class Straight implements HandType {
   }
 }
 
-
 class Flush implements HandType {
   toString(): string {
     return "Flush";
@@ -378,7 +376,6 @@ class StraightFlush implements HandType {
     });
   }
 }
-
 
 class SortableCard {
   private readonly _card: Card;
