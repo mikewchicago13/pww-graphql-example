@@ -69,18 +69,22 @@ class Cards {
 class HandMatchResult {
   doesMatch: boolean;
   sortedListsOfCardsToCompare: Card[][];
+  description: string;
 
   constructor({
                 doesMatch,
-                sortedListsOfCardsToCompare
+                sortedListsOfCardsToCompare,
+                description
               }: {
     doesMatch: boolean,
-    sortedListsOfCardsToCompare: Card[][]
+    sortedListsOfCardsToCompare: Card[][],
+    description: (cardsAfterSortingEachGroup: Card[][]) => string
   }) {
     this.doesMatch = doesMatch;
     this.sortedListsOfCardsToCompare = sortedListsOfCardsToCompare
       .map(cards =>
         cards.sort((a, b) => b.numericValue - a.numericValue));
+    this.description = description(this.sortedListsOfCardsToCompare);
   }
 }
 
@@ -94,7 +98,8 @@ class HighCard implements HandType {
   parse(cards: Card[]): HandMatchResult {
     return new HandMatchResult({
         doesMatch: true,
-        sortedListsOfCardsToCompare: [cards]
+        sortedListsOfCardsToCompare: [cards],
+        description: x => String(x[0][0])[0]
       }
     )
   }
@@ -123,14 +128,16 @@ class HandWithSpecifiedNumberOfSameCardNumber implements HandType {
 
         return new HandMatchResult({
           doesMatch: true,
-          sortedListsOfCardsToCompare: [primaryCards, remainingCards]
+          sortedListsOfCardsToCompare: [primaryCards, remainingCards],
+          description: x => x + ""
         })
       }
     }
 
     return new HandMatchResult({
       doesMatch: false,
-      sortedListsOfCardsToCompare: [cards]
+      sortedListsOfCardsToCompare: [cards],
+      description: x => x + ""
     })
   }
 
@@ -178,14 +185,16 @@ class TwoPairs implements HandType {
 
       return new HandMatchResult({
         doesMatch: true,
-        sortedListsOfCardsToCompare: [primaryCards, secondaryCards, remainingCards]
+        sortedListsOfCardsToCompare: [primaryCards, secondaryCards, remainingCards],
+        description: x => x + ""
       })
 
     }
 
     return new HandMatchResult({
         doesMatch: false,
-        sortedListsOfCardsToCompare: [cards]
+        sortedListsOfCardsToCompare: [cards],
+        description: x => x + ""
       }
     )
   }
@@ -248,7 +257,8 @@ class Straight implements HandType {
     return new HandMatchResult(
       {
         doesMatch: isRegularStraight || isFiveHighStraight,
-        sortedListsOfCardsToCompare: [isFiveHighStraight ? replaceAceWithOne : cards]
+        sortedListsOfCardsToCompare: [isFiveHighStraight ? replaceAceWithOne : cards],
+        description: x => x + ""
       }
     );
   }
@@ -263,7 +273,8 @@ class Flush implements HandType {
     const allCardsOfSameSuit = Object.keys(Cards.countBySuit(cards)).length === 1;
     return new HandMatchResult({
       doesMatch: allCardsOfSameSuit,
-      sortedListsOfCardsToCompare: [cards]
+      sortedListsOfCardsToCompare: [cards],
+      description: x => x + ""
     });
   }
 }
@@ -283,7 +294,8 @@ class FullHouse implements HandType {
 
     return new HandMatchResult({
       doesMatch: isFullHouse,
-      sortedListsOfCardsToCompare
+      sortedListsOfCardsToCompare,
+      description: x => x + ""
     });
   }
 }
@@ -308,7 +320,8 @@ class StraightFlush implements HandType {
     const {doesMatch: isFlush} = new Flush().parse(cards);
     return new HandMatchResult({
       doesMatch: isFlush && isStraight,
-      sortedListsOfCardsToCompare
+      sortedListsOfCardsToCompare,
+      description: x => x + ""
     });
   }
 }
@@ -359,6 +372,17 @@ class Hand {
     return this._name;
   }
 
+  get description(): string {
+    for (let i = 0; i < handTypesSortedFromBestToWorst.length; i++) {
+      const handType = handTypesSortedFromBestToWorst[i];
+      const myHand = handType.parse(this._cards);
+      if (myHand.doesMatch) {
+        return `${handType}: ${myHand.description}`;
+      }
+    }
+    return "";
+  }
+
   toString(): string {
     const results: string[] = [];
     let firstMatchingHandGrouping: string | undefined = undefined;
@@ -402,9 +426,9 @@ class Comparison {
 
   toString(): string {
     if (this._two + "" > this._one + "") {
-      return this._two.name + ": " + this._two;
+      return this._two.name + " wins with " + this._two.description;
     } else if (this._one + "" > this._two + "") {
-      return this._one.name + ": " + this._one;
+      return this._one.name + " wins with " + this._one.description;
     }
     return "Tie"
   }

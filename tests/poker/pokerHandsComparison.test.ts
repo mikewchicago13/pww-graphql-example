@@ -273,6 +273,9 @@ describe('poker hands comparison', () => {
   });
 
   describe('describe winning hand', () => {
-
+    it('high card', () => {
+      const comparison = new PokerHandsInput().parse("Black: 2H 3D 5S 9C KD  White: 2C 3H 4S 8C AH");
+      expect(comparison + "").toBe("White wins with High Card: A");
+    });
   });
 });
