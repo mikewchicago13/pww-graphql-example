@@ -46,6 +46,31 @@ describe('poker hands comparison', () => {
         const comparison = new PokerHandsInput().parse("Black: 2C 2H 4S 8C AH  White: 2S 2D 4H 8S AD");
         expect(comparison + "").toMatch(/Tie/);
       });
+
+      it('should map reduce', () => {
+        const numbers = [7, 2, 7, 3];
+        const actual: any = numbers
+          .map(value => {
+            const foo: any = {};
+            foo[value] = 1;
+            return foo;
+          })
+          .reduce((accumulatorMap, mapWithOne) => {
+            for (const num in mapWithOne) {
+              if(accumulatorMap[num]){
+                accumulatorMap[num] += 1;
+              }
+              else{
+                accumulatorMap[num] = 1;
+              }
+            }
+            return accumulatorMap;
+          }, {});
+
+        expect(actual[7]).toBe(2)
+        expect(actual[2]).toBe(1)
+        expect(actual[3]).toBe(1)
+      });
     });
   });
 

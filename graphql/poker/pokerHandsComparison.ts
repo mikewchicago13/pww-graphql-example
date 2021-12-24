@@ -1,7 +1,8 @@
 class Card {
   private readonly _numericValue: number;
+
   constructor(character_suit: string) {
-    const [ character ] = character_suit;
+    const [character] = character_suit;
     this._numericValue = Card._toNumber(character);
   }
 
@@ -21,10 +22,67 @@ class Card {
   }
 }
 
-class Cards{
+class Cards {
   static parse(cards: string): Card[] {
     return cards.split(" ")
       .map(x => new Card(x));
+  }
+}
+
+interface HandMatchResult {
+  doesMatch: boolean;
+  // primaryCards: Card[];
+  // secondaryCards : Card[];
+  remainingCards: Card[];
+}
+
+interface HandType {
+  parse(cards: Card[]): HandMatchResult;
+}
+
+class HighCard implements HandType {
+  parse(cards: Card[]): HandMatchResult {
+    return {
+      doesMatch: true,
+      remainingCards: cards
+    }
+  }
+}
+
+class Pair implements HandType {
+  parse(cards: Card[]): HandMatchResult {
+    const countByCardValue = cards
+      .map(value => value.numericValue)
+      .map(value => {
+        const foo: any = {};
+        foo[value] = 1;
+        return foo;
+      })
+      .reduce((accumulatorMap, mapWithOne) => {
+        for (const num in mapWithOne) {
+          if(accumulatorMap[num]){
+            accumulatorMap[num] += 1;
+          }
+          else{
+            accumulatorMap[num] = 1;
+          }
+        }
+        return accumulatorMap;
+      }, {});
+
+    for (const key in countByCardValue) {
+      if(countByCardValue[key] === 2){
+        return {
+          doesMatch: true,
+          remainingCards: []
+        }
+      }
+    }
+
+    return {
+      doesMatch: false,
+      remainingCards: cards
+    }
   }
 }
 
@@ -47,12 +105,12 @@ class Hand {
     this._cards = Cards.parse(cards);
   }
 
-  get name(): string{
+  get name(): string {
     return this._name;
   }
 
-  private _sortedByNumericValue(): number[] {
-    return this._cards
+  private static _sortedByNumericValue(cards: Card[]): number[] {
+    return cards
       .map(c => c.numericValue)
       .sort((a, b) => b - a);
   }
@@ -62,16 +120,33 @@ class Hand {
   }
 
   isBetterThan(other: Hand): boolean {
-    const me = this._sortedByNumericValue();
-    const you = other._sortedByNumericValue();
-    for (let i = 0; i < me.length; i++) {
-      if(me[i] > you[i]){
-        return true;
-      }
-      if(you[i]> me[i]){
-        return false;
+    const handTypesSortedFromBestToWorst: HandType[] = [
+      new Pair(),
+      new HighCard()
+    ];
+
+    for (const handType of handTypesSortedFromBestToWorst) {
+      const myHand = handType.parse(this._cards);
+      const otherHand = handType.parse(other._cards);
+      if (myHand.doesMatch) {
+        if (!otherHand.doesMatch) {
+          return true;
+        }
+        else{
+          const me = Hand._sortedByNumericValue(myHand.remainingCards);
+          const you = Hand._sortedByNumericValue(otherHand.remainingCards);
+          for (let i = 0; i < me.length; i++) {
+            if(me[i] > you[i]){
+              return true;
+            }
+            if(you[i]> me[i]){
+              return false;
+            }
+          }
+        }
       }
     }
+
     return false;
   }
 }
@@ -93,7 +168,7 @@ class Comparison {
     return this._two;
   }
 
-  toString(): string{
+  toString(): string {
     if (this._two.isBetterThan(this._one)) {
       return this._two.name;
     } else if (this._one.isBetterThan(this._two)) {
