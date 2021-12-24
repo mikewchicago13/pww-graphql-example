@@ -268,17 +268,25 @@ class Straight implements HandType {
   }
 }
 
+const _suitDisplay: any = {
+  "C": "Clubs",
+  "D": "Diamonds",
+  "H": "Hearts",
+  "S": "Spades"
+};
+
 class Flush implements HandType {
   toString(): string {
     return "Flush";
   }
 
   parse(cards: Card[]): HandMatchResult {
-    const allCardsOfSameSuit = Object.keys(Cards.countBySuit(cards)).length === 1;
+    const distinctSuits = Object.keys(Cards.countBySuit(cards));
+    const allCardsOfSameSuit = distinctSuits.length === 1;
     return new HandMatchResult({
       doesMatch: allCardsOfSameSuit,
       sortedListsOfCardsToCompare: [cards],
-      description: x => String(x[0][0])[0] + " high"
+      description: x => String(x[0][0])[0] + " high in " + _suitDisplay[distinctSuits[0]]
     });
   }
 }
@@ -325,12 +333,13 @@ class StraightFlush implements HandType {
   }
 
   parse(cards: Card[]): HandMatchResult {
+    const distinctSuits = Object.keys(Cards.countBySuit(cards));
     const {doesMatch: isStraight, sortedListsOfCardsToCompare} = new Straight().parse(cards);
     const {doesMatch: isFlush} = new Flush().parse(cards);
     return new HandMatchResult({
       doesMatch: isFlush && isStraight,
       sortedListsOfCardsToCompare,
-      description: x => String(x[0][0])[0] + " high"
+      description: x => String(x[0][0])[0] + " high in " + _suitDisplay[distinctSuits[0]]
     });
   }
 }
