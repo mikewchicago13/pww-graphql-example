@@ -60,18 +60,20 @@ class Pair implements HandType {
       })
       .reduce((accumulatorMap, mapWithOne) => {
         for (const num in mapWithOne) {
-          if(accumulatorMap[num]){
+          if (accumulatorMap[num]) {
             accumulatorMap[num] += 1;
-          }
-          else{
+          } else {
             accumulatorMap[num] = 1;
           }
         }
         return accumulatorMap;
       }, {});
 
+    console.log(JSON.stringify(countByCardValue));
+
     for (const key in countByCardValue) {
-      if(countByCardValue[key] === 2){
+      if (countByCardValue[key] === 2) {
+        console.log("FOUND_PAIR", key);
         return {
           doesMatch: true,
           remainingCards: []
@@ -131,15 +133,14 @@ class Hand {
       if (myHand.doesMatch) {
         if (!otherHand.doesMatch) {
           return true;
-        }
-        else{
+        } else {
           const me = Hand._sortedByNumericValue(myHand.remainingCards);
           const you = Hand._sortedByNumericValue(otherHand.remainingCards);
           for (let i = 0; i < me.length; i++) {
-            if(me[i] > you[i]){
+            if (me[i] > you[i]) {
               return true;
             }
-            if(you[i]> me[i]){
+            if (you[i] > me[i]) {
               return false;
             }
           }
