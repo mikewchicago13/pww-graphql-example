@@ -277,10 +277,10 @@ class Straight implements HandType {
       }, false);
   }
 
-  private _fiveHighStraight(sorted: number[], cards: Card[]) : {
+  private _fiveHighStraight(sorted: number[], cards: Card[]): {
     isFiveHighStraight: boolean,
     replaceAceWithOne: Card[]
-  }{
+  } {
     const isFiveHighStraight = Straight._arrayEquals([map.A, 5, 4, 3, 2], sorted);
     const replaceAceWithOne = cards
       .map(value => {
@@ -437,20 +437,26 @@ class Hand {
   }
 
   toString(): string {
-    const results: string[] = [];
-    let firstMatchingHandGrouping: string | undefined = undefined;
-    for (let i = 0; i < handTypesSortedFromBestToWorst.length; i++) {
-      const handType = handTypesSortedFromBestToWorst[i];
-      const myHand = handType.parse(this._cards);
-      results.push(`${handType}: ${myHand.doesMatch ? "1" : "0"}`)
-      if (myHand.doesMatch && !firstMatchingHandGrouping) {
-        firstMatchingHandGrouping = myHand
-          .sortedListsOfCardsToCompare
-          .flat()
-          .map(x => new EncodedCard(x)) + "";
-      }
-    }
-    return results.join(" ") + " " + firstMatchingHandGrouping;
+    const results: { sortableMatch: string, sortableCards: string, doesMatch: boolean }[] =
+      handTypesSortedFromBestToWorst
+        .map(handType => {
+          const myHand = handType.parse(this._cards);
+          const sortableMatch = `${handType}: ${myHand.doesMatch ? "1" : "0"}`;
+          return {
+            doesMatch: myHand.doesMatch,
+            sortableMatch,
+            sortableCards: myHand
+              .sortedListsOfCardsToCompare
+              .flat()
+              .map(x => new EncodedCard(x)) + ""
+          };
+        })
+
+    const firstMatchingHandGrouping = results
+      .filter(x => x.doesMatch)
+      .map(x => x.sortableCards)[0];
+
+    return results.map(value => value.sortableMatch).join(" ") + " " + firstMatchingHandGrouping;
   }
 }
 
