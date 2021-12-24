@@ -36,6 +36,17 @@ describe('poker hands comparison', () => {
         expect(comparison + "").toMatch(/Black/);
       });
     });
+
+    describe('pair vs high card', () => {
+      it('White has pair of 2s, Black has higher high card', () => {
+        const comparison = new PokerHandsInput().parse("Black: 2H 3D 5S 9C KD  White: 2C 2S 4S 8C QH");
+        expect(comparison + "").toMatch(/White/);
+      });
+      it('Tie', () => {
+        const comparison = new PokerHandsInput().parse("Black: 2C 2H 4S 8C AH  White: 2S 2D 4H 8S AD");
+        expect(comparison + "").toMatch(/Tie/);
+      });
+    });
   });
 
   describe('describe winning hand', () => {
