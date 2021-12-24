@@ -12,9 +12,15 @@ describe('poker hands comparison', () => {
   });
 
   describe('choose a winner', () => {
-    it('simple high card', () => {
-      const comparison = new PokerHandsInput().parse("Black: 2H 3D 5S 9C KD  White: 2C 3H 4S 8C AH");
-      expect(comparison + "").toMatch(/White/);
+    describe('simple high card', () => {
+      it('White', () => {
+        const comparison = new PokerHandsInput().parse("Black: 2H 3D 5S 9C KD  White: 2C 3H 4S 8C AH");
+        expect(comparison + "").toMatch(/White/);
+      });
+      it('Black', () => {
+        const comparison = new PokerHandsInput().parse("Black: 2C 3H 4S 8C AH  White: 2H 3D 5S 9C KD");
+        expect(comparison + "").toMatch(/Black/);
+      });
     });
   });
 
