@@ -30,6 +30,7 @@ class Cards {
 }
 
 interface HandMatchResult {
+  name: string;
   doesMatch: boolean;
   // primaryCards: Card[];
   // secondaryCards : Card[];
@@ -37,20 +38,29 @@ interface HandMatchResult {
 }
 
 interface HandType {
-  parse(cards: Card[]): HandMatchResult;
+  parse(cards: Card[], name: string): HandMatchResult;
+  toString(): string;
 }
 
 class HighCard implements HandType {
-  parse(cards: Card[]): HandMatchResult {
+  parse(cards: Card[], name: string): HandMatchResult {
     return {
+      name,
       doesMatch: true,
       remainingCards: cards
     }
   }
+  toString(): string {
+    return "High Card";
+  }
 }
 
 class Pair implements HandType {
-  parse(cards: Card[]): HandMatchResult {
+  toString(): string {
+    return "Pair";
+  }
+
+  parse(cards: Card[], name: string): HandMatchResult {
     const countByCardValue = cards
       .map(value => value.numericValue)
       .map(value => {
@@ -69,12 +79,12 @@ class Pair implements HandType {
         return accumulatorMap;
       }, {});
 
-    console.log(JSON.stringify(countByCardValue));
+    console.log(name, JSON.stringify(countByCardValue));
 
     for (const key in countByCardValue) {
       if (countByCardValue[key] === 2) {
-        console.log("FOUND_PAIR", key);
         return {
+          name,
           doesMatch: true,
           remainingCards: []
         }
@@ -82,6 +92,7 @@ class Pair implements HandType {
     }
 
     return {
+      name,
       doesMatch: false,
       remainingCards: cards
     }
@@ -128,19 +139,23 @@ class Hand {
     ];
 
     for (const handType of handTypesSortedFromBestToWorst) {
-      const myHand = handType.parse(this._cards);
-      const otherHand = handType.parse(other._cards);
+      console.log("handType", handType + "");
+      const myHand = handType.parse(this._cards, this._name);
+      const otherHand = handType.parse(other._cards, other._name);
       if (myHand.doesMatch) {
         if (!otherHand.doesMatch) {
+          console.log(`${this._name}.primaryCards are better than ${other._name}.primaryCards`);
           return true;
         } else {
           const me = Hand._sortedByNumericValue(myHand.remainingCards);
           const you = Hand._sortedByNumericValue(otherHand.remainingCards);
           for (let i = 0; i < me.length; i++) {
             if (me[i] > you[i]) {
+              console.log(`${this._name}.remainingCards (${me}) are better than ${other._name}.remainingCards (${you})`);
               return true;
             }
             if (you[i] > me[i]) {
+              console.log(`${other._name}.remainingCards (${you}) are better than ${this._name}.remainingCards (${me})`);
               return false;
             }
           }
@@ -148,6 +163,7 @@ class Hand {
       }
     }
 
+    console.log(`default: ${this._name} not determined to be better than ${other._name}`);
     return false;
   }
 }

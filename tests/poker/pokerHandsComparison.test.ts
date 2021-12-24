@@ -60,9 +60,9 @@ describe('poker hands comparison', () => {
     });
 
     describe('different pair', () => {
-      it('Black has higher pair', () => {
-        const comparison = new PokerHandsInput().parse("Black: 5H 5D 4C 8S KD  White: 3C 3S 4S 8C KH");
-        expect(comparison + "").toMatch(/Black/);
+      it('higher pair wins', () => {
+        const comparison = new PokerHandsInput().parse("Black: 3C 3S QS KC AH  White: 5H 5D 2C 3S 4D");
+        expect(comparison + "").toMatch(/White/);
       });
     });
   });
