@@ -330,7 +330,7 @@ class StraightFlush implements HandType {
     return new HandMatchResult({
       doesMatch: isFlush && isStraight,
       sortedListsOfCardsToCompare,
-      description: x => x + ""
+      description: x => String(x[0][0])[0] + " high"
     });
   }
 }

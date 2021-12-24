@@ -305,5 +305,17 @@ describe('poker hands comparison', () => {
       const comparison = new PokerHandsInput().parse("Black: AH AC QH QC QS  White: 2H 2C KH KC KS");
       expect(comparison + "").toBe("White wins with Full House: Ks over 2s");
     });
+    it('four of a kind', () => {
+      const comparison = new PokerHandsInput().parse("Black: AH QC QH QC QS  White: 2H KC KH KC KS");
+      expect(comparison + "").toBe("White wins with Four of a Kind: Ks");
+    });
+    it('straight flush', () => {
+      const comparison = new PokerHandsInput().parse("Black: KH QH JH TH 9H  White: AS KS QS JS TS");
+      expect(comparison + "").toBe("White wins with Straight Flush: A high");
+    });
+    it('5 high straight flush', () => {
+      const comparison = new PokerHandsInput().parse("Black: KH QH JH TH 9C  White: AS 2S 3S 4S 5S");
+      expect(comparison + "").toBe("White wins with Straight Flush: 5 high");
+    });
   });
 });
