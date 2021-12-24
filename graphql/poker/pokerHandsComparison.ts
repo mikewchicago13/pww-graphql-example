@@ -53,6 +53,13 @@ class Cards {
         return accumulatorMap;
       }, {});
   }
+
+  static sortedFromHighestToLowest(cards: Card[]): number[] {
+    return cards
+      .map(c => c.numericValue)
+      .sort((a, b) => b - a);
+  }
+
 }
 
 class HandMatchResult {
@@ -74,15 +81,10 @@ class HandMatchResult {
     this.sortedListsOfCardsToCompare = sortedListsOfCardsToCompare;
   }
 
-  private static _sortedFromHighestToLowest(cards: Card[]): number[] {
-    return cards
-      .map(c => c.numericValue)
-      .sort((a, b) => b - a);
-  }
 
   static _isFirstGreaterThanSecond(first: Card[], second: Card[]): boolean {
-    const me = HandMatchResult._sortedFromHighestToLowest(first);
-    const you = HandMatchResult._sortedFromHighestToLowest(second);
+    const me = Cards.sortedFromHighestToLowest(first);
+    const you = Cards.sortedFromHighestToLowest(second);
     for (let i = 0; i < me.length; i++) {
       if (me[i] > you[i]) {
         return true;
@@ -101,7 +103,8 @@ class HandMatchResult {
         (value, index) => {
           const otherCards = otherHand.sortedListsOfCardsToCompare[index];
           if (HandMatchResult._isFirstGreaterThanSecond(value, otherCards)) {
-            return `${handType}: ${this.name}.${index} (${value}) are better than ${otherHand.name}.${index} (${otherCards})`
+            return `${handType}: ${this.name}.${index} (${value}) are better than` +
+              ` ${otherHand.name}.${index} (${otherCards})`;
           }
           return undefined;
         })
@@ -138,8 +141,9 @@ class HighCard implements HandType {
   }
 }
 
-class HandWithSpecifiedNumberOfSameCardNumber implements HandType{
+class HandWithSpecifiedNumberOfSameCardNumber implements HandType {
   private readonly _numberOfSameCardNumber: number;
+
   constructor(numberOfSameCardNumber: number) {
     this._numberOfSameCardNumber = numberOfSameCardNumber;
   }
@@ -238,7 +242,51 @@ class ThreeOfAKind implements HandType {
   }
 }
 
+class Straight implements HandType {
+  toString(): string {
+    return "Straight";
+  }
+
+  private static _validStraights: number[][] = [
+    [14, 5, 4, 3, 2],
+    [6, 5, 4, 3, 2],
+    [7, 6, 5, 4, 3],
+    [8, 7, 6, 5, 4],
+    [9, 8, 7, 6, 5],
+    [10, 9, 8, 7, 6],
+    [11, 10, 9, 8, 7],
+    [12, 11, 10, 9, 8],
+    [13, 12, 11, 10, 9],
+    [14, 13, 12, 11, 10],
+  ]
+
+  parse(cards: Card[], name: string): HandMatchResult {
+    const sorted = Cards.sortedFromHighestToLowest(cards);
+
+    function arrayEquals(a: number[], b: number[]) : boolean {
+      return a.length === b.length &&
+        a.every((val, index) => val === b[index]) &&
+        b.every((val, index) => val === a[index]);
+    }
+
+    const isStraight = Straight._validStraights
+      .reduce((accumulator, validStraight) => {
+        const matchesAKnownStraight = arrayEquals(validStraight, sorted);
+        return accumulator || matchesAKnownStraight;
+      }, false);
+
+    return new HandMatchResult(
+      {
+        name,
+        doesMatch: isStraight,
+        sortedListsOfCardsToCompare: [cards]
+      }
+    );
+  }
+}
+
 const handTypesSortedFromBestToWorst: HandType[] = [
+  new Straight(),
   new ThreeOfAKind(),
   new TwoPairs(),
   new Pair(),
@@ -246,7 +294,6 @@ const handTypesSortedFromBestToWorst: HandType[] = [
 ];
 
 class Hand {
-  private readonly _cardsInput: string;
   private readonly _name: string;
   private readonly _cards: Card[];
 
@@ -259,7 +306,6 @@ class Hand {
         cards: string,
         name: string
       }) {
-    this._cardsInput = cards;
     this._name = name;
     this._cards = Cards.parse(cards);
   }
@@ -269,7 +315,7 @@ class Hand {
   }
 
   toString(): string {
-    return this._cardsInput;
+    return this._cards + "";
   }
 
   isBetterThan(other: Hand): boolean {

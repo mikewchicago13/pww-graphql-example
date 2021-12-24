@@ -4,10 +4,10 @@ describe('poker hands comparison', () => {
   describe('parse input', () => {
     const comparison = new PokerHandsInput().parse("Black: 2H 3D 5S 9C KD  White: 2C 3H 4S 8C AH");
     it('should have black hand', () => {
-      expect(comparison.one + "").toBe("2H 3D 5S 9C KD");
+      expect(comparison.one + "").toBe("2H,3D,5S,9C,KD");
     });
     it('should have white hand', () => {
-      expect(comparison.two + "").toBe("2C 3H 4S 8C AH");
+      expect(comparison.two + "").toBe("2C,3H,4S,8C,AH");
     });
   });
 
@@ -142,22 +142,6 @@ describe('poker hands comparison', () => {
       it('tie', () => {
         const comparison = new PokerHandsInput().parse("Black: 2C 3C 4C 5C 6D  White: 2D 3D 4D 5D 6S");
         expect(comparison + "").toMatch(/Tie/);
-      });
-    });
-    describe('flush', () => {
-      it('should do tomorrow', () => {
-      });
-    });
-    describe('full house', () => {
-      it('should do tomorrow', () => {
-      });
-    });
-    describe('four of a kind', () => {
-      it('should do tomorrow', () => {
-      });
-    });
-    describe('straight flush', () => {
-      it('should do tomorrow', () => {
       });
     });
   });
