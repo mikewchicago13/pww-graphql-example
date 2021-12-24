@@ -426,37 +426,40 @@ class Hand {
   }
 
   get description(): string {
-    for (let i = 0; i < handTypesSortedFromBestToWorst.length; i++) {
-      const handType = handTypesSortedFromBestToWorst[i];
-      const myHand = handType.parse(this._cards);
-      if (myHand.doesMatch) {
-        return `${handType}: ${myHand.description}`;
-      }
-    }
-    throw new Error(`${this._name} ${this._cards} should have matched at least one hand type`);
+    return this._getResults()
+      .filter(x => x.doesMatch)
+      .map(x => x.description)[0];
   }
 
   toString(): string {
-    const results: { sortableMatch: string, sortableCards: string, doesMatch: boolean }[] =
-      handTypesSortedFromBestToWorst
-        .map(handType => {
-          const myHand = handType.parse(this._cards);
-          const sortableMatch = `${handType}: ${myHand.doesMatch ? "1" : "0"}`;
-          return {
-            doesMatch: myHand.doesMatch,
-            sortableMatch,
-            sortableCards: myHand
-              .sortedListsOfCardsToCompare
-              .flat()
-              .map(x => new EncodedCard(x)) + ""
-          };
-        })
+    const results = this._getResults();
 
     const firstMatchingHandGrouping = results
       .filter(x => x.doesMatch)
       .map(x => x.sortableCards)[0];
 
     return results.map(value => value.sortableMatch).join(" ") + " " + firstMatchingHandGrouping;
+  }
+
+  private _getResults(): {
+    sortableMatch: string,
+    sortableCards: string,
+    description: string,
+    doesMatch: boolean }[] {
+    return handTypesSortedFromBestToWorst
+      .map(handType => {
+        const myHand = handType.parse(this._cards);
+        const sortableMatch = `${handType}: ${myHand.doesMatch ? "1" : "0"}`;
+        return {
+          doesMatch: myHand.doesMatch,
+          sortableMatch,
+          description: `${handType}: ${myHand.description}`,
+          sortableCards: myHand
+            .sortedListsOfCardsToCompare
+            .flat()
+            .map(x => new EncodedCard(x)) + ""
+        };
+      });
   }
 }
 
