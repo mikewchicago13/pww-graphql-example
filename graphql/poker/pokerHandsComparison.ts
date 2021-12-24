@@ -128,6 +128,10 @@ class HandWithSpecifiedNumberOfSameCardNumber implements HandType {
     this._numberOfSameCardNumber = numberOfSameCardNumber;
   }
 
+  static description(cards: Card[]): string{
+    return String(cards[0])[0] + "s";
+  }
+
   parse(cards: Card[]): HandMatchResult {
     const countByCardValue = Cards.countByCardValue(cards);
 
@@ -141,7 +145,7 @@ class HandWithSpecifiedNumberOfSameCardNumber implements HandType {
         return new HandMatchResult({
           doesMatch: true,
           sortedListsOfCardsToCompare: [primaryCards, remainingCards],
-          description: x => String(x[0][0])[0] + "s"
+          description: x => HandWithSpecifiedNumberOfSameCardNumber.description(x[0])
         })
       }
     }
@@ -194,9 +198,14 @@ class TwoPairs implements HandType {
       return new HandMatchResult({
         doesMatch: true,
         sortedListsOfCardsToCompare: [primaryCards, secondaryCards, remainingCards],
-        description: x => String(x[0][0])[0] + "s and " + String(x[1][0])[0] + "s"
+        description: x => {
+          return [
+            HandWithSpecifiedNumberOfSameCardNumber.description(x[0]),
+            HandWithSpecifiedNumberOfSameCardNumber.description(x[1])
+          ]
+            .join(" and ");
+        }
       })
-
     }
 
     return new DoesNotMatchHandResult(cards);
