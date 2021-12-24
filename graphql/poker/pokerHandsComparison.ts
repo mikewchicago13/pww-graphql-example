@@ -67,7 +67,6 @@ class Cards {
   }
 
 
-
 }
 
 class HandMatchResult {
@@ -234,8 +233,9 @@ class Straight implements HandType {
     return "Straight";
   }
 
-  private static _validStraights: number[][] = [
-    [14, 5, 4, 3, 2],
+  private static _fiveHighStraight: number[] = [14, 5, 4, 3, 2];
+
+  private static _regularStraights: number[][] = [
     [6, 5, 4, 3, 2],
     [7, 6, 5, 4, 3],
     [8, 7, 6, 5, 4],
@@ -256,17 +256,26 @@ class Straight implements HandType {
         b.every((val, index) => val === a[index]);
     }
 
-    const isStraight = Straight._validStraights
+    const isRegularStraight = Straight._regularStraights
       .reduce((accumulator, validStraight) => {
         const matchesAKnownStraight = arrayEquals(validStraight, sorted);
         return accumulator || matchesAKnownStraight;
       }, false);
 
+    const isFiveHighStraight = arrayEquals(Straight._fiveHighStraight, sorted);
+    const replaceAceWithOne = cards
+      .map(value => {
+        if (value.numericValue === 14) {
+          return new Card("1" + value.suit);
+        }
+        return value;
+      })
+
     return new HandMatchResult(
       {
         name,
-        doesMatch: isStraight,
-        sortedListsOfCardsToCompare: [cards]
+        doesMatch: isRegularStraight,
+        sortedListsOfCardsToCompare: [isFiveHighStraight? replaceAceWithOne: cards]
       }
     );
   }
