@@ -449,10 +449,9 @@ class Hand {
     return handTypesSortedFromBestToWorst
       .map(handType => {
         const myHand = handType.parse(this._cards);
-        const sortableMatch = `${handType}: ${myHand.doesMatch ? "1" : "0"}`;
         return {
           doesMatch: myHand.doesMatch,
-          sortableMatch,
+          sortableMatch: `${handType}: ${myHand.doesMatch ? "1" : "0"}`,
           description: `${handType}: ${myHand.description}`,
           sortableCards: myHand
             .sortedListsOfCardsToCompare
@@ -486,11 +485,15 @@ class Comparison {
       this._two.name + ": " + this.two;
   }
 
+  static _winner(hand: Hand){
+    return `${hand.name} wins with ${hand.description}`;
+  }
+
   toString(): string {
-    if (this._two + "" > this._one + "") {
-      return this._two.name + " wins with " + this._two.description;
-    } else if (this._one + "" > this._two + "") {
-      return this._one.name + " wins with " + this._one.description;
+    if (this.two > this.one) {
+      return Comparison._winner(this.two);
+    } else if (this.one > this.two) {
+      return Comparison._winner(this.one);
     }
     return "Tie"
   }
