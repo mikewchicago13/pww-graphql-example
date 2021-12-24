@@ -21,6 +21,10 @@ describe('poker hands comparison', () => {
         const comparison = new PokerHandsInput().parse("Black: 2C 3H 4S 8C AH  White: 2H 3D 5S 9C KD");
         expect(comparison + "").toMatch(/Black/);
       });
+      it('Tie', () => {
+        const comparison = new PokerHandsInput().parse("Black: 2C 3H 4S 8C AH  White: 2S 3C 4H 8S AD");
+        expect(comparison + "").toMatch(/Tie/);
+      });
     });
   });
 

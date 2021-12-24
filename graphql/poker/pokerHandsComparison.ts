@@ -81,14 +81,12 @@ class Comparison {
   }
 
   toString(): string{
-    return this._betterHandOf().name;
-  }
-
-  private _betterHandOf(): Hand {
-    if(this._white.highCard > this._black.highCard){
-      return this._white;
+    if (this._white.highCard > this._black.highCard) {
+      return this._white.name;
+    } else if (this._black.highCard > this._white.highCard) {
+      return this._black.name;
     }
-    return this._black;
+    return "Tie"
   }
 }
 
