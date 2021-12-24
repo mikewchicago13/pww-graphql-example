@@ -1,3 +1,11 @@
+const map: any = {
+  "T": 10,
+  "J": 11,
+  "Q": 12,
+  "K": 13,
+  "A": 14
+}
+
 class Card {
   private readonly _numericValue: number;
   private readonly _asString: string;
@@ -11,13 +19,6 @@ class Card {
   }
 
   private static _toNumber(character: string): number {
-    const map: any = {
-      "T": 10,
-      "J": 11,
-      "Q": 12,
-      "K": 13,
-      "A": 14
-    }
     return map[character] || Number(character);
   }
 
@@ -65,8 +66,6 @@ class Cards {
       .map(c => c.numericValue)
       .sort((a, b) => b - a);
   }
-
-
 }
 
 class HandMatchResult {
@@ -233,18 +232,18 @@ class Straight implements HandType {
     return "Straight";
   }
 
-  private static _fiveHighStraight: number[] = [14, 5, 4, 3, 2];
+  private static _fiveHighStraight: number[] = [map.A, 5, 4, 3, 2];
 
   private static _regularStraights: number[][] = [
     [6, 5, 4, 3, 2],
     [7, 6, 5, 4, 3],
     [8, 7, 6, 5, 4],
     [9, 8, 7, 6, 5],
-    [10, 9, 8, 7, 6],
-    [11, 10, 9, 8, 7],
-    [12, 11, 10, 9, 8],
-    [13, 12, 11, 10, 9],
-    [14, 13, 12, 11, 10],
+    [map.T, 9, 8, 7, 6],
+    [map.J, map.T, 9, 8, 7],
+    [map.Q, map.J, map.T, 9, 8],
+    [map.K, map.Q, map.J, map.T, 9],
+    [map.A, map.K, map.Q, map.J, map.T],
   ]
 
   parse(cards: Card[], name: string): HandMatchResult {
@@ -265,7 +264,7 @@ class Straight implements HandType {
     const isFiveHighStraight = arrayEquals(Straight._fiveHighStraight, sorted);
     const replaceAceWithOne = cards
       .map(value => {
-        if (value.numericValue === 14) {
+        if (value.numericValue === map.A) {
           return new Card("1" + value.suit);
         }
         return value;
@@ -274,8 +273,8 @@ class Straight implements HandType {
     return new HandMatchResult(
       {
         name,
-        doesMatch: isRegularStraight,
-        sortedListsOfCardsToCompare: [isFiveHighStraight? replaceAceWithOne: cards]
+        doesMatch: isRegularStraight || isFiveHighStraight,
+        sortedListsOfCardsToCompare: [isFiveHighStraight ? replaceAceWithOne : cards]
       }
     );
   }
