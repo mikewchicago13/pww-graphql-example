@@ -41,9 +41,9 @@ class Cards {
       .map(x => new Card(x));
   }
 
-  static countByCardValue(cards: Card[]) {
+  static _countByProperty(cards: Card[], func: (x:Card) => string): any{
     return cards
-      .map(value => value.numericValue)
+      .map(value => func(value))
       .map(value => {
         const foo: any = {};
         foo[value] = 1;
@@ -59,6 +59,14 @@ class Cards {
         }
         return accumulatorMap;
       }, {});
+  }
+
+  static countByCardValue(cards: Card[]): any {
+    return Cards._countByProperty(cards, x => x.numericValue + "");
+  }
+
+  static countBySuit(cards: Card[]): any {
+    return Cards._countByProperty(cards, x => x.suit);
   }
 
   static sortedFromHighestToLowest(cards: Card[]): number[] {
@@ -265,7 +273,23 @@ class Straight implements HandType {
   }
 }
 
+class Flush implements HandType {
+  toString(): string {
+    return "Flush";
+  }
+
+  parse(cards: Card[], name: string): HandMatchResult {
+    const allCardsOfSameSuit = Object.keys(Cards.countBySuit(cards)).length === 1;
+    return new HandMatchResult({
+      name,
+      doesMatch: allCardsOfSameSuit,
+      sortedListsOfCardsToCompare: [cards]
+    });
+  }
+}
+
 const handTypesSortedFromBestToWorst: HandType[] = [
+  new Flush(),
   new Straight(),
   new ThreeOfAKind(),
   new TwoPairs(),
