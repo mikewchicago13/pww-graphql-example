@@ -281,5 +281,9 @@ describe('poker hands comparison', () => {
       const comparison = new PokerHandsInput().parse("Black: 2H 3D 5S 9C KD  White: 2C 2S 4S 8C QH");
       expect(comparison + "").toBe("White wins with Pair: 2s");
     });
+    it('two pairs', () => {
+      const comparison = new PokerHandsInput().parse("Black: 5C 5S 4S 4C AH  White: 5H 5D 6C 6S AD");
+      expect(comparison + "").toBe("White wins with Two Pairs: 6s and 5s");
+    });
   });
 });

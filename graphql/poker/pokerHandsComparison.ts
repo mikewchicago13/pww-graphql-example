@@ -186,7 +186,11 @@ class TwoPairs implements HandType {
       return new HandMatchResult({
         doesMatch: true,
         sortedListsOfCardsToCompare: [primaryCards, secondaryCards, remainingCards],
-        description: x => x + ""
+        description: x => {
+          const bestPair = x[0];
+          const worsePair = x[1];
+          return bestPair[0].numericValue + "s and " + worsePair[0].numericValue + "s";
+        }
       })
 
     }
