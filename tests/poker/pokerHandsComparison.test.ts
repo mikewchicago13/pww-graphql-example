@@ -26,6 +26,16 @@ describe('poker hands comparison', () => {
         expect(comparison + "").toMatch(/Tie/);
       });
     });
+    describe('high card same, need second highest', () => {
+      it('White', () => {
+        const comparison = new PokerHandsInput().parse("Black: 2H 3D 5S 9C AD  White: 2C 3H 4S TC AH");
+        expect(comparison + "").toMatch(/White/);
+      });
+      it('Black', () => {
+        const comparison = new PokerHandsInput().parse("Black: 2C 3H 4S TC AH  White: 2H 3D 5S 9C AD");
+        expect(comparison + "").toMatch(/Black/);
+      });
+    });
   });
 
   describe('describe winning hand', () => {
