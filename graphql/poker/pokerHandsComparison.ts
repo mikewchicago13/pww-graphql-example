@@ -88,21 +88,6 @@ class HandMatchResult {
       .map(cards =>
         cards.sort((a, b) => b.numericValue - a.numericValue));
   }
-
-  static _isFirstGreaterThanSecond(first: Card[], second: Card[]): boolean {
-    const me = Cards.sortedFromHighestToLowest(first);
-    const you = Cards.sortedFromHighestToLowest(second);
-    for (let i = 0; i < me.length; i++) {
-      if (me[i] > you[i]) {
-        return true;
-      }
-      if (you[i] > me[i]) {
-        return false;
-      }
-    }
-
-    return false;
-  }
 }
 
 interface HandType {
