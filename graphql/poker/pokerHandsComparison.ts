@@ -138,16 +138,17 @@ class HighCard implements HandType {
   }
 }
 
-class Pair implements HandType {
-  toString(): string {
-    return "Pair";
+class HandWithSpecifiedNumberOfSameCardNumber implements HandType{
+  private readonly _numberOfSameCardNumber: number;
+  constructor(numberOfSameCardNumber: number) {
+    this._numberOfSameCardNumber = numberOfSameCardNumber;
   }
 
   parse(cards: Card[], name: string): HandMatchResult {
     const countByCardValue = Cards.countByCardValue(cards);
 
     for (const key in countByCardValue) {
-      if (countByCardValue[key] === 2) {
+      if (countByCardValue[key] === this._numberOfSameCardNumber) {
         const primaryCards =
           cards.filter(x => x.numericValue === Number(key));
         const remainingCards =
@@ -166,6 +167,20 @@ class Pair implements HandType {
       doesMatch: false,
       sortedListsOfCardsToCompare: [cards]
     })
+  }
+
+  toString(): string {
+    throw new Error("not applicable");
+  }
+}
+
+class Pair implements HandType {
+  toString(): string {
+    return "Pair";
+  }
+
+  parse(cards: Card[], name: string): HandMatchResult {
+    return new HandWithSpecifiedNumberOfSameCardNumber(2).parse(cards, name);
   }
 }
 
@@ -213,7 +228,18 @@ class TwoPairs implements HandType {
   }
 }
 
+class ThreeOfAKind implements HandType {
+  toString(): string {
+    return "Three of a Kind";
+  }
+
+  parse(cards: Card[], name: string): HandMatchResult {
+    return new HandWithSpecifiedNumberOfSameCardNumber(3).parse(cards, name);
+  }
+}
+
 const handTypesSortedFromBestToWorst: HandType[] = [
+  new ThreeOfAKind(),
   new TwoPairs(),
   new Pair(),
   new HighCard()
