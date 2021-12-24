@@ -72,7 +72,7 @@ describe('poker hands comparison', () => {
         expect(comparison + "").toMatch(/White/);
       });
       it('second highest pair wins', () => {
-        const comparison = new PokerHandsInput().parse("Black: 3C 3S KS KC 2H  White: 3H 3D QC QS AD");
+        const comparison = new PokerHandsInput().parse("Black: AC AS KS KC 2H  White: AH AD QC QS 2D");
         expect(comparison + "").toMatch(/Black/);
       });
       it('same pairs uses final card', () => {
