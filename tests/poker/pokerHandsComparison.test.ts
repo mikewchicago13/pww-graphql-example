@@ -49,7 +49,7 @@ describe('poker hands comparison', () => {
     });
 
     describe('same pair', () => {
-      it('Both have pair of 2s, White has higher last card', () => {
+      it('Both have pair of 2s, both have same first two kickers, White has higher last card', () => {
         const comparison = new PokerHandsInput().parse("Black: 2H 2D 3S 8S KD  White: 2C 2S 4S 8C KH");
         expect(comparison + "").toMatch(/White/);
       });
@@ -60,7 +60,7 @@ describe('poker hands comparison', () => {
     });
 
     describe('different pair', () => {
-      it('higher pair wins', () => {
+      it('higher pair wins, ignoring kickers', () => {
         const comparison = new PokerHandsInput().parse("Black: 3C 3S QS KC AH  White: 5H 5D 2C 3S 4D");
         expect(comparison + "").toMatch(/White/);
       });
@@ -75,7 +75,7 @@ describe('poker hands comparison', () => {
         const comparison = new PokerHandsInput().parse("Black: AC AS KS KC 2H  White: AH AD QC QS 2D");
         expect(comparison + "").toMatch(/Black/);
       });
-      it('same pairs uses final card', () => {
+      it('same pairs uses final kicker', () => {
         const comparison = new PokerHandsInput().parse("Black: 3C 3S KS KC AH  White: 3H 3D KC KS QD");
         expect(comparison + "").toMatch(/Black/);
       });
