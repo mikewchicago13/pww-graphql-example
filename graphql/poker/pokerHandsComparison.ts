@@ -98,20 +98,27 @@ class HandMatchResult {
   }
 
   isGreaterThan(otherHand: HandMatchResult, handType: HandType) {
-    if (HandMatchResult._isFirstGreaterThanSecond(this.primaryCards, otherHand.primaryCards)) {
-      console.log(`${handType}: ${this.name}.primaryCards (${this.primaryCards}) are better than ${otherHand.name}.primaryCards (${otherHand.primaryCards})`);
+
+    const sortedOrderToCheckForDifferences: ("primaryCards" | "secondaryCards" | "remainingCards")[] = [
+      "primaryCards",
+      "secondaryCards",
+      "remainingCards"
+    ];
+
+    const messageForFirstPropertyWhereThisIsGreaterThanOther = sortedOrderToCheckForDifferences.map(value => {
+      if (HandMatchResult._isFirstGreaterThanSecond(this[value], otherHand[value])) {
+         return `${handType}: ${this.name}.${value} (${this[value]}) are better than ${otherHand.name}.${value} (${otherHand[value]})`
+      }
+      return undefined;
+    })
+      .filter((value) => value)
+      [0];
+
+    if (messageForFirstPropertyWhereThisIsGreaterThanOther) {
+      console.log(messageForFirstPropertyWhereThisIsGreaterThanOther);
       return true;
     }
 
-    if (HandMatchResult._isFirstGreaterThanSecond(this.secondaryCards, otherHand.secondaryCards)) {
-      console.log(`${handType}: ${this.name}.secondaryCards (${this.secondaryCards}) are better than ${otherHand.name}.secondaryCards (${otherHand.secondaryCards})`);
-      return true;
-    }
-
-    if (HandMatchResult._isFirstGreaterThanSecond(this.remainingCards, otherHand.remainingCards)) {
-      console.log(`${handType}: ${this.name}.remainingCards (${this.remainingCards}) are better than ${otherHand.name}.remainingCards (${otherHand.remainingCards})`);
-      return true;
-    }
     return false;
   }
 }
@@ -125,12 +132,12 @@ interface HandType {
 class HighCard implements HandType {
   parse(cards: Card[], name: string): HandMatchResult {
     return new HandMatchResult({
-      name,
-      doesMatch: true,
-      primaryCards: cards,
-      secondaryCards: [],
-      remainingCards: []
-    }
+        name,
+        doesMatch: true,
+        primaryCards: cards,
+        secondaryCards: [],
+        remainingCards: []
+      }
     )
   }
 
@@ -212,12 +219,12 @@ class TwoPairs implements HandType {
     }
 
     return new HandMatchResult({
-      name,
-      doesMatch: false,
-      primaryCards: [],
-      secondaryCards: [],
-      remainingCards: cards
-    }
+        name,
+        doesMatch: false,
+        primaryCards: [],
+        secondaryCards: [],
+        remainingCards: cards
+      }
     )
   }
 }
