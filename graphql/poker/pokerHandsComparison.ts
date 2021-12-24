@@ -99,7 +99,7 @@ class HighCard implements HandType {
     return new HandMatchResult({
         doesMatch: true,
         sortedListsOfCardsToCompare: [cards],
-        description: x => String(x[0][0])[0]
+        description: (x: Card[][]) => String(x[0][0])[0]
       }
     )
   }
@@ -121,7 +121,7 @@ class DoesNotMatchHandResult extends HandMatchResult {
   }
 }
 
-class HandWithSpecifiedNumberOfSameCardNumber implements HandType {
+class MultipleOfSameCardNumber implements HandType {
   private readonly _numberOfSameCardNumber: number;
 
   constructor(numberOfSameCardNumber: number) {
@@ -130,6 +130,14 @@ class HandWithSpecifiedNumberOfSameCardNumber implements HandType {
 
   static description(cards: Card[]): string{
     return String(cards[0])[0] + "s";
+  }
+
+  static join(first: Card[], second: Card[], joinText: string): string{
+    return [
+      MultipleOfSameCardNumber.description(first),
+      MultipleOfSameCardNumber.description(second)
+    ]
+      .join(joinText);
   }
 
   parse(cards: Card[]): HandMatchResult {
@@ -145,7 +153,7 @@ class HandWithSpecifiedNumberOfSameCardNumber implements HandType {
         return new HandMatchResult({
           doesMatch: true,
           sortedListsOfCardsToCompare: [primaryCards, remainingCards],
-          description: x => HandWithSpecifiedNumberOfSameCardNumber.description(x[0])
+          description: x => MultipleOfSameCardNumber.description(x[0])
         })
       }
     }
@@ -164,7 +172,7 @@ class Pair implements HandType {
   }
 
   parse(cards: Card[]): HandMatchResult {
-    return new HandWithSpecifiedNumberOfSameCardNumber(2).parse(cards);
+    return new MultipleOfSameCardNumber(2).parse(cards);
   }
 }
 
@@ -198,13 +206,7 @@ class TwoPairs implements HandType {
       return new HandMatchResult({
         doesMatch: true,
         sortedListsOfCardsToCompare: [primaryCards, secondaryCards, remainingCards],
-        description: x => {
-          return [
-            HandWithSpecifiedNumberOfSameCardNumber.description(x[0]),
-            HandWithSpecifiedNumberOfSameCardNumber.description(x[1])
-          ]
-            .join(" and ");
-        }
+        description: (x: Card[][]) => MultipleOfSameCardNumber.join(x[0], x[1], " and ")
       })
     }
 
@@ -218,7 +220,7 @@ class ThreeOfAKind implements HandType {
   }
 
   parse(cards: Card[]): HandMatchResult {
-    return new HandWithSpecifiedNumberOfSameCardNumber(3).parse(cards);
+    return new MultipleOfSameCardNumber(3).parse(cards);
   }
 }
 
@@ -270,7 +272,7 @@ class Straight implements HandType {
       {
         doesMatch: isRegularStraight || isFiveHighStraight,
         sortedListsOfCardsToCompare: [isFiveHighStraight ? replaceAceWithOne : cards],
-        description: x => String(x[0][0])[0] + " high"
+        description: (x: Card[][]) => String(x[0][0])[0] + " high"
       }
     );
   }
@@ -328,7 +330,10 @@ class FullHouse implements HandType {
     return new HandMatchResult({
       doesMatch: isFullHouse,
       sortedListsOfCardsToCompare,
-      description: x => isFullHouse ? String(x[0][0])[0] + "s over " + String(x[1][0])[0] + "s" : x + ""
+      description: (x: Card[][]) =>
+        isFullHouse ?
+          MultipleOfSameCardNumber.join(x[0], x[1], " over ")
+          : x + ""
     });
   }
 }
@@ -339,7 +344,7 @@ class FourOfAKind implements HandType {
   }
 
   parse(cards: Card[]): HandMatchResult {
-    return new HandWithSpecifiedNumberOfSameCardNumber(4).parse(cards);
+    return new MultipleOfSameCardNumber(4).parse(cards);
   }
 }
 
