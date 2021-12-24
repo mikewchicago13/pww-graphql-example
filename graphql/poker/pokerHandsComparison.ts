@@ -379,17 +379,6 @@ class StraightFlush implements HandType {
   }
 }
 
-const handTypesSortedFromBestToWorst: HandType[] = [
-  new StraightFlush(),
-  new FourOfAKind(),
-  new FullHouse(),
-  new Flush(),
-  new Straight(),
-  new ThreeOfAKind(),
-  new TwoPairs(),
-  new Pair(),
-  new HighCard()
-];
 
 class EncodedCard {
   private readonly _card: Card;
@@ -426,13 +415,13 @@ class Hand {
   }
 
   get description(): string {
-    return this._getResults()
+    return this._evaluateAllHandTypes()
       .filter(x => x.doesMatch)
       .map(x => x.description)[0];
   }
 
   toString(): string {
-    const results = this._getResults();
+    const results = this._evaluateAllHandTypes();
 
     const firstMatchingHandGrouping = results
       .filter(x => x.doesMatch)
@@ -441,12 +430,23 @@ class Hand {
     return results.map(value => value.sortableMatch).join(" ") + " " + firstMatchingHandGrouping;
   }
 
-  private _getResults(): {
+  private _evaluateAllHandTypes(): {
     sortableMatch: string,
     sortableCards: string,
     description: string,
-    doesMatch: boolean }[] {
-    return handTypesSortedFromBestToWorst
+    doesMatch: boolean
+  }[] {
+    return [
+      new StraightFlush(),
+      new FourOfAKind(),
+      new FullHouse(),
+      new Flush(),
+      new Straight(),
+      new ThreeOfAKind(),
+      new TwoPairs(),
+      new Pair(),
+      new HighCard()
+    ]
       .map(handType => {
         const myHand = handType.parse(this._cards);
         return {
@@ -485,7 +485,7 @@ class Comparison {
       this._two.name + ": " + this.two;
   }
 
-  static _winner(hand: Hand){
+  static _winner(hand: Hand): string {
     return `${hand.name} wins with ${hand.description}`;
   }
 
