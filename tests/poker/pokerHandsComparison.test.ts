@@ -84,6 +84,25 @@ describe('poker hands comparison', () => {
         expect(comparison + "").toMatch(/Tie/);
       });
     });
+
+    describe('three of a kind', () => {
+      it('highest set wins', () => {
+        const comparison = new PokerHandsInput().parse("Black: AH 5D 6C 6S 6D  White: AC 5S 4S 4C 4H");
+        expect(comparison + "").toMatch(/Black/);
+      });
+      it('beats two pairs', () => {
+        const comparison = new PokerHandsInput().parse("Black: 5C 5S 4S 4C AH  White: AH 5D 2C 2S 2D");
+        expect(comparison + "").toMatch(/White/);
+      });
+      it('beats a pair', () => {
+        const comparison = new PokerHandsInput().parse("Black: 5C 5S 7S 4C AH  White: AH 5D 2C 2S 2D");
+        expect(comparison + "").toMatch(/White/);
+      });
+      it('beats high card', () => {
+        const comparison = new PokerHandsInput().parse("Black: 3C 5S 7S 4C AH  White: AH 5D 2C 2S 2D");
+        expect(comparison + "").toMatch(/White/);
+      });
+    });
   });
 
   describe('describe winning hand', () => {
