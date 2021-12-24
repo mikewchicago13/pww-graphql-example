@@ -307,7 +307,7 @@ class Flush implements HandType {
   };
 
   public static partsFrom(cards: Card[]): {
-    distinctSuits: any,
+    distinctSuits: string[],
     description: (cardsAfterSortingEachGroup: Card[][]) => string
   } {
     const distinctSuits = Object.keys(Cards.countBySuit(cards));
@@ -380,7 +380,7 @@ class StraightFlush implements HandType {
 }
 
 
-class EncodedCard {
+class SortableCard {
   private readonly _card: Card;
 
   constructor(card: Card) {
@@ -406,8 +406,7 @@ class Hand {
         name: string
       }) {
     this._name = name;
-    this._cards = cards.split(" ")
-      .map(x => new Card(x));
+    this._cards = cards.split(" ").map(x => new Card(x));
   }
 
   get name(): string {
@@ -456,7 +455,7 @@ class Hand {
           sortableCards: myHand
             .sortedListsOfCardsToCompare
             .flat()
-            .map(x => new EncodedCard(x)) + ""
+            .map(x => new SortableCard(x)) + ""
         };
       });
   }
