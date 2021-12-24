@@ -109,6 +109,18 @@ class HighCard implements HandType {
   }
 }
 
+class DoesNotMatchHandResult extends HandMatchResult {
+  constructor(cards: Card[]) {
+    super(
+      {
+        doesMatch: false,
+        sortedListsOfCardsToCompare: [cards],
+        description: x => x + ""
+      }
+    );
+  }
+}
+
 class HandWithSpecifiedNumberOfSameCardNumber implements HandType {
   private readonly _numberOfSameCardNumber: number;
 
@@ -134,11 +146,7 @@ class HandWithSpecifiedNumberOfSameCardNumber implements HandType {
       }
     }
 
-    return new HandMatchResult({
-      doesMatch: false,
-      sortedListsOfCardsToCompare: [cards],
-      description: x => x + ""
-    })
+    return new DoesNotMatchHandResult(cards);
   }
 
   toString(): string {
@@ -186,21 +194,12 @@ class TwoPairs implements HandType {
       return new HandMatchResult({
         doesMatch: true,
         sortedListsOfCardsToCompare: [primaryCards, secondaryCards, remainingCards],
-        description: x => {
-          const bestPair = x[0];
-          const worsePair = x[1];
-          return bestPair[0].numericValue + "s and " + worsePair[0].numericValue + "s";
-        }
+        description: x => String(x[0][0])[0] + "s and " + String(x[1][0])[0] + "s"
       })
 
     }
 
-    return new HandMatchResult({
-        doesMatch: false,
-        sortedListsOfCardsToCompare: [cards],
-        description: x => x + ""
-      }
-    )
+    return new DoesNotMatchHandResult(cards);
   }
 }
 
@@ -307,12 +306,7 @@ class FullHouse implements HandType {
     return new HandMatchResult({
       doesMatch: isFullHouse,
       sortedListsOfCardsToCompare,
-      description: x => {
-        if (isFullHouse) {
-          return String(x[0][0])[0] + "s over " + String(x[1][0])[0] + "s";
-        }
-        return "";
-      }
+      description: x => isFullHouse ? String(x[0][0])[0] + "s over " + String(x[1][0])[0] + "s" : x + ""
     });
   }
 }
