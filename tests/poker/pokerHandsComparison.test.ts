@@ -103,6 +103,31 @@ describe('poker hands comparison', () => {
         expect(comparison + "").toMatch(/White/);
       });
     });
+    describe('straight', () => {
+      it('should do tomorrow', () => {
+        expect(true).toBeFalsy();
+      });
+    });
+    describe('flush', () => {
+      it('should do tomorrow', () => {
+        expect(true).toBeFalsy();
+      });
+    });
+    describe('full house', () => {
+      it('should do tomorrow', () => {
+        expect(true).toBeFalsy();
+      });
+    });
+    describe('four of a kind', () => {
+      it('should do tomorrow', () => {
+        expect(true).toBeFalsy();
+      });
+    });
+    describe('straight flush', () => {
+      it('should do tomorrow', () => {
+        expect(true).toBeFalsy();
+      });
+    });
   });
 
   describe('describe winning hand', () => {
