@@ -262,7 +262,7 @@ class Straight implements HandType {
       {
         doesMatch: isRegularStraight || isFiveHighStraight,
         sortedListsOfCardsToCompare: [isFiveHighStraight ? replaceAceWithOne : cards],
-        description: x => x + ""
+        description: x => String(x[0][0])[0] + " high"
       }
     );
   }

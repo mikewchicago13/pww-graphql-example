@@ -285,5 +285,17 @@ describe('poker hands comparison', () => {
       const comparison = new PokerHandsInput().parse("Black: 5C 5S 4S 4C AH  White: 5H 5D 6C 6S AD");
       expect(comparison + "").toBe("White wins with Two Pairs: 6s and 5s");
     });
+    it('three of a kind', () => {
+      const comparison = new PokerHandsInput().parse("Black: AH 5D 6C 6S 6D  White: AC 5S 4S 4C 4H");
+      expect(comparison + "").toBe("Black wins with Three of a Kind: 6s");
+    });
+    it('straight', () => {
+      const comparison = new PokerHandsInput().parse("Black: 2H 3D 4C 5S 6D  White: 3C 4S 5S 6C 7H");
+      expect(comparison + "").toBe("White wins with Straight: 7 high");
+    });
+    it('5 high straight', () => {
+      const comparison = new PokerHandsInput().parse("Black: 2H 3D 4C 5S 7D  White: AC 2S 3S 4C 5H");
+      expect(comparison + "").toBe("White wins with Straight: 5 high");
+    });
   });
 });
