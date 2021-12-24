@@ -301,5 +301,9 @@ describe('poker hands comparison', () => {
       const comparison = new PokerHandsInput().parse("Black: 2H 3H 4H 5H 7H  White: 3C 4C 5C 6C 8C");
       expect(comparison + "").toBe("White wins with Flush: 8 high");
     });
+    it('full house', () => {
+      const comparison = new PokerHandsInput().parse("Black: AH AC QH QC QS  White: 2H 2C KH KC KS");
+      expect(comparison + "").toBe("White wins with Full House: Ks over 2s");
+    });
   });
 });

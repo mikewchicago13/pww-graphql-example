@@ -299,7 +299,12 @@ class FullHouse implements HandType {
     return new HandMatchResult({
       doesMatch: isFullHouse,
       sortedListsOfCardsToCompare,
-      description: x => x + ""
+      description: x => {
+        if (isFullHouse) {
+          return String(x[0][0])[0] + "s over " + String(x[1][0])[0] + "s";
+        }
+        return "";
+      }
     });
   }
 }
