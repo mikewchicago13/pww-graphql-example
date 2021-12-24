@@ -306,7 +306,18 @@ class FullHouse implements HandType {
   }
 }
 
+class FourOfAKind implements HandType {
+  toString(): string {
+    return "Four of a Kind";
+  }
+
+  parse(cards: Card[], name: string): HandMatchResult {
+    return new HandWithSpecifiedNumberOfSameCardNumber(4).parse(cards, name);
+  }
+}
+
 const handTypesSortedFromBestToWorst: HandType[] = [
+  new FourOfAKind(),
   new FullHouse(),
   new Flush(),
   new Straight(),
