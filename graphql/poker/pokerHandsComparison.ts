@@ -6,7 +6,7 @@ const map: any = {
   "A": 14
 }
 
-class Card {
+export class Card {
   private readonly _numericValue: number;
   private readonly _asString: string;
   private readonly _suit: string;
@@ -389,9 +389,19 @@ class SortableCard {
   }
 }
 
-class Hand {
+export class Hand {
   private readonly _name: string;
   private readonly _cards: Card[];
+
+  static create({
+                  cards,
+                  name
+                }: { cards: string; name: string }) : Hand {
+    return new Hand({
+      name,
+      cards: cards.split(" ").map(x => new Card(x))
+    });
+  }
 
   constructor(
     {
@@ -399,11 +409,15 @@ class Hand {
       name
     }:
       {
-        cards: string,
+        cards: Card[],
         name: string
       }) {
     this._name = name;
-    this._cards = cards.split(" ").map(x => new Card(x));
+    this._cards = cards;
+  }
+
+  get rawCards() : Card[] {
+    return this._cards;
   }
 
   get name(): string {
@@ -457,6 +471,7 @@ class Hand {
         };
       });
   }
+
 }
 
 class Comparison {
@@ -500,8 +515,8 @@ export class PokerHandsInput {
   parse(input: string): Comparison {
     const [black, white] = input.split("  ").map(value => value.substring(7));
     return new Comparison(
-      new Hand({cards: black, name: "Black"}),
-      new Hand({cards: white, name: "White"})
+      Hand.create({cards: black, name: "Black"}),
+      Hand.create({cards: white, name: "White"})
     )
   }
 }
