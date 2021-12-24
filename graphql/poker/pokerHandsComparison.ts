@@ -128,11 +128,11 @@ class MultipleOfSameCardNumber implements HandType {
     this._numberOfSameCardNumber = numberOfSameCardNumber;
   }
 
-  static description(cards: Card[]): string{
+  static description(cards: Card[]): string {
     return String(cards[0])[0] + "s";
   }
 
-  static join(first: Card[], second: Card[], joinText: string): string{
+  static join(first: Card[], second: Card[], joinText: string): string {
     return [
       MultipleOfSameCardNumber.description(first),
       MultipleOfSameCardNumber.description(second)
@@ -182,35 +182,41 @@ class TwoPairs implements HandType {
   }
 
   parse(cards: Card[]): HandMatchResult {
-    const countByCardValue = Cards.countByCardValue(cards);
+    const pairsFound = TwoPairs._pairsFound(Cards.countByCardValue(cards));
 
+    if (pairsFound.length === 2) {
+      return new HandMatchResult({
+        doesMatch: true,
+        sortedListsOfCardsToCompare: TwoPairs._separate(pairsFound, cards),
+        description: (x: Card[][]) => MultipleOfSameCardNumber.join(x[0], x[1], " and ")
+      })
+    }
+
+    return new DoesNotMatchHandResult(cards);
+  }
+
+  private static _separate(pairsFound: number[], cards: Card[]): Card[][] {
+    const sortedDescending = pairsFound.sort((a, b) => b - a);
+    const higherPair = sortedDescending[0];
+    const lowerPair = sortedDescending[1];
+
+    const primaryCards =
+      cards.filter(x => x.numericValue === higherPair);
+    const secondaryCards =
+      cards.filter(x => x.numericValue === lowerPair);
+    const remainingCards =
+      cards.filter(x => ![higherPair, lowerPair].includes(x.numericValue));
+    return [primaryCards, secondaryCards, remainingCards];
+  }
+
+  private static _pairsFound(countByCardValue: any): number[] {
     const pairsFound: number[] = [];
     for (const key in countByCardValue) {
       if (countByCardValue[key] === 2) {
         pairsFound.push(Number(key));
       }
     }
-
-    if (pairsFound.length === 2) {
-      const sortedDescending = pairsFound.sort((a, b) => b - a);
-      const higherPair = sortedDescending[0];
-      const lowerPair = sortedDescending[1];
-
-      const primaryCards =
-        cards.filter(x => x.numericValue === higherPair);
-      const secondaryCards =
-        cards.filter(x => x.numericValue === lowerPair);
-      const remainingCards =
-        cards.filter(x => ![higherPair, lowerPair].includes(x.numericValue));
-
-      return new HandMatchResult({
-        doesMatch: true,
-        sortedListsOfCardsToCompare: [primaryCards, secondaryCards, remainingCards],
-        description: (x: Card[][]) => MultipleOfSameCardNumber.join(x[0], x[1], " and ")
-      })
-    }
-
-    return new DoesNotMatchHandResult(cards);
+    return pairsFound;
   }
 }
 
@@ -279,7 +285,6 @@ class Straight implements HandType {
 }
 
 
-
 class Flush implements HandType {
   toString(): string {
     return "Flush";
@@ -292,10 +297,10 @@ class Flush implements HandType {
     "S": "Spades"
   };
 
-  public static partsFrom(cards: Card[]) : {
+  public static partsFrom(cards: Card[]): {
     distinctSuits: any,
     description: (cardsAfterSortingEachGroup: Card[][]) => string
-  }{
+  } {
     const distinctSuits = Object.keys(Cards.countBySuit(cards));
     return {
       distinctSuits,
@@ -306,7 +311,7 @@ class Flush implements HandType {
   parse(cards: Card[]): HandMatchResult {
     const {distinctSuits, description} = Flush.partsFrom(cards);
     const allCardsOfSameSuit = distinctSuits.length === 1;
-     return new HandMatchResult({
+    return new HandMatchResult({
       doesMatch: allCardsOfSameSuit,
       sortedListsOfCardsToCompare: [cards],
       description
