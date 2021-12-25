@@ -3,25 +3,21 @@ import {EOL} from "os";
 import {TexasHoldEmHand} from "../../graphql/poker/texasHoldEmHand";
 
 describe("texas hold 'em", () => {
-  const input = `KC 9S KS KD 9D 3C 6D
+  describe('one winner', () => {
+    const input = `KC 9S KS KD 9D 3C 6D
   9C AH KS KD 9D 3C 6D
   AC QC KS KD 9D 3C
   9H 5S
   4D 2D KS KD 9D 3C 6D
   7S TS KS KD 9D`;
 
-  it('should split by line', () => {
-    expect(TexasHoldEm.parse(input)).toHaveLength(6);
-  });
-
-  describe('one winner', () => {
     const expected = `KC 9S KS KD 9D 3C 6D Full House: Ks over 9s (winner)
 9C AH KS KD 9D 3C 6D Two Pairs: Ks and 9s
 AC QC KS KD 9D 3C 
 9H 5S 
 4D 2D KS KD 9D 3C 6D Flush: K high in Diamonds
 7S TS KS KD 9D`
-    const actual = TexasHoldEm.toOutput(input).split(EOL);
+    const actual = new TexasHoldEm(input).toOutput().split(EOL);
     expected.split(EOL)
       .map(x => x.trim())
       .forEach((value, index) => {
@@ -40,7 +36,7 @@ AC QC KS KD 9D 3C
   AD 3S 4D 5S 6H 8D 9S High Card: A (winner)
   2H 3H 4D 5S 7H 8D 9S High Card: 9`
 
-    const actual = TexasHoldEm.toOutput(input).split(EOL);
+    const actual = new TexasHoldEm(input).toOutput().split(EOL);
     expected.split(EOL)
       .map(x => x.trim())
       .forEach((value, index) => {
