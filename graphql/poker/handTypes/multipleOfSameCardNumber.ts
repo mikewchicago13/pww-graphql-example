@@ -1,6 +1,10 @@
 import {HandType} from "../handType";
 import {Card} from "../card";
-import {DoesNotMatchHandResult, HandMatchResult} from "../handMatchResult";
+import {
+  NegativeMatchResult,
+  HandMatchResult,
+  HandMatchResultFactory
+} from "../handMatchResult";
 import {Cards} from "../cards";
 
 export class MultipleOfSameCardNumber implements HandType {
@@ -32,7 +36,7 @@ export class MultipleOfSameCardNumber implements HandType {
         const remainingCards =
           cards.filter(x => x.numericValue !== Number(key));
 
-        return HandMatchResult.create({
+        return HandMatchResultFactory.create({
           doesMatch: true,
           groupsOfCardsToCompare: [primaryCards, remainingCards],
           description: x => MultipleOfSameCardNumber.description(x[0])
@@ -40,7 +44,7 @@ export class MultipleOfSameCardNumber implements HandType {
       }
     }
 
-    return new DoesNotMatchHandResult();
+    return new NegativeMatchResult();
   }
 
   toString(): string {

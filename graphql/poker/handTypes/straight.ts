@@ -1,6 +1,6 @@
 import {HandType} from "../handType";
 import {Card, map} from "../card";
-import {HandMatchResult} from "../handMatchResult";
+import {HandMatchResult, HandMatchResultFactory} from "../handMatchResult";
 
 export class Straight implements HandType {
   toString(): string {
@@ -32,13 +32,11 @@ export class Straight implements HandType {
     const isRegularStraight = this._isRegularStraight(sorted);
     const {isFiveHighStraight, replaceAceWithOne} = this._fiveHighStraight(sorted, cards);
 
-    return HandMatchResult.create(
-      {
-        doesMatch: isRegularStraight || isFiveHighStraight,
-        groupsOfCardsToCompare: [isFiveHighStraight ? replaceAceWithOne : cards],
-        description: (x: Card[][]) => String(x[0][0])[0] + " high"
-      }
-    );
+    return HandMatchResultFactory.create({
+      doesMatch: isRegularStraight || isFiveHighStraight,
+      groupsOfCardsToCompare: [isFiveHighStraight ? replaceAceWithOne : cards],
+      description: (x: Card[][]) => String(x[0][0])[0] + " high"
+    });
   }
 
   private _isRegularStraight(sorted: number[]) {

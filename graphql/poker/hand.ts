@@ -10,8 +10,9 @@ import {TwoPairs} from "./handTypes/twoPairs";
 import {Pair} from "./handTypes/pair";
 import {HighCard} from "./handTypes/highCard";
 import {HandType} from "./handType";
+import {HandMatchResult} from "./handMatchResult";
 
-interface HandTypeEvaluation{
+interface HandTypeEvaluation {
   sortableMatch: string,
   sortableCards: string,
   description: string,
@@ -21,6 +22,7 @@ interface HandTypeEvaluation{
 export class Hand {
   private readonly _name: string;
   private readonly _cards: Card[];
+  private readonly _handTypesEvaluatedFromBestToWorst: HandTypeEvaluation[];
 
   static create({
                   cards,
@@ -42,11 +44,12 @@ export class Hand {
         name: string
       }) {
     const maximum = 5;
-    if(cards.length > maximum){
+    if (cards.length > maximum) {
       throw new Error(`${cards} has more than ${maximum} cards`);
     }
     this._name = name;
     this._cards = cards;
+    this._handTypesEvaluatedFromBestToWorst = this._evaluateHandTypesFromBestToWorst();
   }
 
   get name(): string {
@@ -54,26 +57,25 @@ export class Hand {
   }
 
   get description(): string {
-    return this._evaluateHandTypesFromBestToWorst()
+    return this._handTypesEvaluatedFromBestToWorst
       .filter(x => x.doesMatch)
       .map(x => x.description)[0];
   }
 
   toString(): string {
-    const results = this._evaluateHandTypesFromBestToWorst();
-    return Hand._getComparableWithAllHandTypesMappedToOnesAndZeros(results) +
+    return this._allHandTypesMappedToOnesAndZeros() +
       " " +
-      Hand._getSortableCardsToBreakTiesWhenHandTypeIsEqual(results);
+      this._sortableCardsToBreakSameHandTypeTies();
   }
 
-  private static _getSortableCardsToBreakTiesWhenHandTypeIsEqual(results: HandTypeEvaluation[]) {
-    return results
+  private _sortableCardsToBreakSameHandTypeTies() {
+    return this._handTypesEvaluatedFromBestToWorst
       .filter(x => x.doesMatch)
       .map(x => x.sortableCards)[0];
   }
 
-  private static _getComparableWithAllHandTypesMappedToOnesAndZeros(results: HandTypeEvaluation[]) {
-    return results.map(value => value.sortableMatch).join(" ");
+  private _allHandTypesMappedToOnesAndZeros() {
+    return this._handTypesEvaluatedFromBestToWorst.map(value => value.sortableMatch).join(" ");
   }
 
   private _evaluateHandTypesFromBestToWorst(): HandTypeEvaluation[] {
@@ -83,7 +85,7 @@ export class Hand {
 
   private _evaluate(handType: HandType): HandTypeEvaluation {
     const fixedWidthNumericValue = (x: Card) => String(x.numericValue).padStart(2, "0");
-    const myHand = handType.parse(this._cards);
+    const myHand: HandMatchResult = handType.parse(this._cards);
     return {
       doesMatch: myHand.doesMatch,
       sortableMatch: `${handType}: ${myHand.doesMatch ? "1" : "0"}`,

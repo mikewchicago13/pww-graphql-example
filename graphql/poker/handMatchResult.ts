@@ -1,9 +1,12 @@
 import {Card} from "./card";
 
-export class HandMatchResult {
-  private readonly _groupsOfCardsToCompare: Card[][];
-  private readonly _description: string;
+export interface HandMatchResult {
+  readonly description: string;
+  readonly groupsOfCardsToCompare: Card[][];
+  readonly doesMatch: boolean;
+}
 
+export class HandMatchResultFactory{
   static create({
                   doesMatch,
                   groupsOfCardsToCompare,
@@ -12,17 +15,21 @@ export class HandMatchResult {
     doesMatch: boolean,
     groupsOfCardsToCompare: Card[][],
     description: (cardsAfterSortingEachGroup: Card[][]) => string
-  }): HandMatchResult{
+  }): HandMatchResult {
     if(doesMatch){
-      return new HandMatchResult({
+      return new PositiveMatchResult({
         groupsOfCardsToCompare,
         description
       })
     }
-    return new DoesNotMatchHandResult();
+    return new NegativeMatchResult();
   }
+}
 
-  protected constructor({
+class PositiveMatchResult implements HandMatchResult {
+  private readonly _groupsOfCardsToCompare: Card[][];
+  private readonly _description: (cardsAfterSortingEachGroup: Card[][]) => string;
+  constructor({
                 groupsOfCardsToCompare,
                 description
               }: {
@@ -32,31 +39,32 @@ export class HandMatchResult {
     this._groupsOfCardsToCompare = groupsOfCardsToCompare
       .map(cards =>
         cards.sort((a, b) => b.numericValue - a.numericValue));
-    this._description = description(this._groupsOfCardsToCompare);
+    this._description = description;
   }
 
   get description(): string {
-    return this._description;
+    return this._description(this.groupsOfCardsToCompare);
   }
+
   get groupsOfCardsToCompare(): Card[][] {
     return this._groupsOfCardsToCompare;
   }
+
   get doesMatch(): boolean {
     return true;
   }
 }
 
-export class DoesNotMatchHandResult extends HandMatchResult {
-  constructor() {
-    super(
-      {
-        groupsOfCardsToCompare: [],
-        description: () => ""
-      }
-    );
-  }
-
+export class NegativeMatchResult implements HandMatchResult {
   get doesMatch(): boolean {
     return false;
+  }
+
+  get description(): string{
+    return "";
+  }
+
+  get groupsOfCardsToCompare(): Card[][]{
+    return [];
   }
 }

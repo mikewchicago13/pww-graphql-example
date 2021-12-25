@@ -1,7 +1,7 @@
 import {HandType} from "../handType";
 import {Card} from "../card";
 import {Cards} from "../cards";
-import {HandMatchResult} from "../handMatchResult";
+import {HandMatchResult, HandMatchResultFactory} from "../handMatchResult";
 
 export class Flush implements HandType {
   toString(): string {
@@ -29,7 +29,7 @@ export class Flush implements HandType {
   parse(cards: Card[]): HandMatchResult {
     const {distinctSuits, description} = Flush.partsFrom(cards);
     const allCardsOfSameSuit = distinctSuits.length === 1;
-    return HandMatchResult.create({
+    return HandMatchResultFactory.create({
       doesMatch: allCardsOfSameSuit,
       groupsOfCardsToCompare: [cards],
       description

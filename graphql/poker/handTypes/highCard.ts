@@ -1,15 +1,14 @@
 import {HandType} from "../handType";
 import {Card} from "../card";
-import {HandMatchResult} from "../handMatchResult";
+import {HandMatchResult, HandMatchResultFactory} from "../handMatchResult";
 
 export class HighCard implements HandType {
   parse(cards: Card[]): HandMatchResult {
-    return HandMatchResult.create({
-        doesMatch: true,
-        groupsOfCardsToCompare: [cards],
-        description: (x: Card[][]) => String(x[0][0])[0]
-      }
-    )
+    return HandMatchResultFactory.create({
+      doesMatch: true,
+      groupsOfCardsToCompare: [cards],
+      description: (x: Card[][]) => String(x[0][0])[0]
+    })
   }
 
   toString(): string {

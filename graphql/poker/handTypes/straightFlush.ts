@@ -1,6 +1,6 @@
 import {HandType} from "../handType";
 import {Card} from "../card";
-import {HandMatchResult} from "../handMatchResult";
+import {HandMatchResult, HandMatchResultFactory} from "../handMatchResult";
 import {Flush} from "./flush";
 import {Straight} from "./straight";
 
@@ -13,7 +13,7 @@ export class StraightFlush implements HandType {
     const {description} = Flush.partsFrom(cards);
     const {doesMatch: isStraight, groupsOfCardsToCompare} = new Straight().parse(cards);
     const {doesMatch: isFlush} = new Flush().parse(cards);
-    return HandMatchResult.create({
+    return HandMatchResultFactory.create({
       doesMatch: isFlush && isStraight,
       groupsOfCardsToCompare: groupsOfCardsToCompare,
       description

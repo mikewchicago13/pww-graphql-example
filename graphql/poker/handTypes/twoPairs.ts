@@ -1,6 +1,10 @@
 import {HandType} from "../handType";
 import {Card} from "../card";
-import {DoesNotMatchHandResult, HandMatchResult} from "../handMatchResult";
+import {
+  NegativeMatchResult,
+  HandMatchResult,
+  HandMatchResultFactory
+} from "../handMatchResult";
 import {Cards} from "../cards";
 import {MultipleOfSameCardNumber} from "./multipleOfSameCardNumber";
 
@@ -13,14 +17,14 @@ export class TwoPairs implements HandType {
     const pairsFound = TwoPairs._pairsFound(Cards.countByCardValue(cards));
 
     if (pairsFound.length === 2) {
-      return HandMatchResult.create({
+      return HandMatchResultFactory.create({
         doesMatch: true,
         groupsOfCardsToCompare: TwoPairs._separate(pairsFound, cards),
         description: (x: Card[][]) => MultipleOfSameCardNumber.join(x[0], x[1], " and ")
       })
     }
 
-    return new DoesNotMatchHandResult();
+    return new NegativeMatchResult();
   }
 
   private static _separate(pairsFound: number[], cards: Card[]): Card[][] {
