@@ -1,5 +1,5 @@
 import {EOL} from "os";
-import {Card, Hand} from "./pokerHandsComparison";
+import {Card, Cards, Hand} from "./pokerHandsComparison";
 
 export class TexasHoldEmHand {
   private readonly _cards: Card[];
@@ -8,7 +8,7 @@ export class TexasHoldEmHand {
 
   constructor(cards: string) {
     this._name = cards;
-    this._cards = cards.split(" ").map(x => new Card(x));
+    this._cards = Cards.parse(cards);
     this._handsFromBestToWorst = TexasHoldEmHand._combinations(
       this._cards,
       5).map((value, index) => {

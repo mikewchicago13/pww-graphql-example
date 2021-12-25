@@ -35,7 +35,7 @@ export class Card {
   }
 }
 
-class Cards {
+export class Cards {
   static _countByProperty(cards: Card[], func: (x: Card) => string): any {
     return cards
       .map(value => func(value))
@@ -62,6 +62,10 @@ class Cards {
 
   static countBySuit(cards: Card[]): any {
     return Cards._countByProperty(cards, x => x.suit);
+  }
+
+  static parse(cards: string): Card[] {
+    return cards.split(" ").map(x => new Card(x));
   }
 }
 
@@ -396,10 +400,10 @@ export class Hand {
   static create({
                   cards,
                   name
-                }: { cards: string; name: string }) : Hand {
+                }: { cards: string; name: string }): Hand {
     return new Hand({
       name,
-      cards: cards.split(" ").map(x => new Card(x))
+      cards: Cards.parse(cards)
     });
   }
 
@@ -469,7 +473,7 @@ export class Hand {
       });
   }
 
-  compareTo(b: Hand) {
+  compareTo(b: Hand): number {
     if (this > b) {
       return -1;
     }
