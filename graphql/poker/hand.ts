@@ -147,31 +147,42 @@ class NullHandTypeLink extends HandTypeLink {
 
 class Chain {
   private readonly _link: HandTypeLink;
-
-  private _cardsForTieBreaking: string;
-  private _descriptions: string[];
-  private _hasPreviousMatch: boolean;
+  private readonly _cardsForTieBreaking: string;
+  private readonly _descriptions: string[];
+  private readonly _hasPreviousMatch: boolean;
 
   constructor(
     link: HandTypeLink,
-    descriptions: string[] = []
+    descriptions: string[] = [],
+    hasPreviousMatch: boolean = false,
+    cardsForTieBreaking : string = ""
   ) {
     this._link = link;
     this._descriptions = descriptions.length ? descriptions: [String(link)];
+    this._hasPreviousMatch = hasPreviousMatch;
+    this._cardsForTieBreaking = cardsForTieBreaking;
   }
 
   append(b: Chain): Chain {
     const handMatchResult: HandMatchResult = b._link.handMatchResult;
     if (!this._hasPreviousMatch && handMatchResult.doesMatch) {
       const fixedWidthNumericValue = (x: Card) => String(x.numericValue).padStart(2, "0");
-      this._cardsForTieBreaking = handMatchResult
+      const cardsForTieBreaking = handMatchResult
         .groupsOfCardsToCompare
         .flat()
         .map(fixedWidthNumericValue) + ""
-      this._hasPreviousMatch = true;
+      return new Chain(
+        b._link,
+        this._descriptions.concat(b._descriptions),
+        true,
+        cardsForTieBreaking
+      )
     }
-    this._descriptions = this._descriptions.concat(b._descriptions);
-    return this;
+    return new Chain(b._link,
+      this._descriptions.concat(b._descriptions),
+      this._hasPreviousMatch,
+      this._cardsForTieBreaking
+      );
   }
 
   toString(): string {
