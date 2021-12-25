@@ -39,12 +39,12 @@ interface Room {
 }
 
 export class QueryService {
-  private readonly _rooms: Room[] = new Array(10).fill(1)
-    .map((_, index): Room => {
-      return {
-        roomName: index + "",
-      }
-    });
+  private readonly _rooms: any = new Array(10).fill(1)
+    .map((_, index): string => index + "")
+    .reduce((previousValue: any, currentValue) => {
+      previousValue[currentValue] = 1;
+      return previousValue;
+    }, {});
 
   private _reservationsByDate: any = {};
 
@@ -72,17 +72,21 @@ export class QueryService {
   }
 
   freeRooms(arrival: Date, departure: Date): Room[] {
-    const availableRooms: Room[] = [...this._rooms];
+    const availableRoomNames: any = {...this._rooms};
     for (let i = arrival; i < departure; i = QueryService.nextDay(i)) {
       const datePart = QueryService.datePart(i);
       const reservationsOnDate = this._reservationsByDate[datePart] || {};
-      availableRooms
-        .forEach((value, index) => {
-          if (reservationsOnDate[value.roomName]) {
-            availableRooms.splice(index, 1);
-          }
-        })
+      console.log(datePart, reservationsOnDate)
+      for (const roomName in reservationsOnDate) {
+        delete availableRoomNames[roomName];
+      }
     }
-    return availableRooms;
+
+    return Object.keys(availableRoomNames)
+      .map(roomName => {
+        return {
+          roomName
+        }
+      });
   }
 }
