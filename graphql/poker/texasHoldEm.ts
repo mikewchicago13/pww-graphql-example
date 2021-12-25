@@ -3,36 +3,42 @@ import {TexasHoldEmHand} from "./texasHoldEmHand";
 
 export class TexasHoldEm {
   private readonly _hands: TexasHoldEmHand[];
+  private readonly _winningHand: TexasHoldEmHand;
   constructor(input: string) {
-    this._hands = input.split(EOL)
-      .map(x => x.trim())
-      .map(value => new TexasHoldEmHand(value));
+    this._hands = TexasHoldEm.toHands(input);
+    this._winningHand = TexasHoldEm._winner(this._hands);
   }
 
   static parse(input: string): TexasHoldEm {
     return new TexasHoldEm(input);
   }
 
-  toOutput(): string {
-    const winner: TexasHoldEmHand = this._winner();
+  private static toHands(input: string): TexasHoldEmHand[] {
+    return input.split(EOL)
+      .map(x => x.trim())
+      .map(value => new TexasHoldEmHand(value));
+  }
 
+  toOutput(): string {
     return this._hands
-      .map((value) => {
-        return `${value.name} ${value.description} ${TexasHoldEm._format(value, winner)}`.trim()
-      })
+      .map((value) => this.formatLine(value))
       .join(EOL);
   }
 
-  private static _format(value: TexasHoldEmHand, winner: TexasHoldEmHand) {
-    return TexasHoldEm._isWinner(value, winner) ? "(winner)" : "";
+  private formatLine(value: TexasHoldEmHand) {
+    return `${value.name} ${value.description} ${this._format(value)}`.trim()
   }
 
-  private static _isWinner(value: TexasHoldEmHand, winner: TexasHoldEmHand) : boolean {
-    return String(value) === String(winner);
+  private _format(value: TexasHoldEmHand) {
+    return this._isWinner(value) ? "(winner)" : "";
   }
 
-  private _winner(): TexasHoldEmHand {
-    return [...this._hands]
+  private _isWinner(value: TexasHoldEmHand) : boolean {
+    return String(value) === String(this._winningHand);
+  }
+
+  private static _winner(hands: TexasHoldEmHand[]): TexasHoldEmHand {
+    return [...hands]
       .sort((a, b) => a.compareTo(b))[0];
   }
 }
