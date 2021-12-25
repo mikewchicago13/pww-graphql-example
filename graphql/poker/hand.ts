@@ -152,9 +152,12 @@ class Chain {
   private _descriptions: string[];
   private _hasPreviousMatch: boolean;
 
-  constructor(link: HandTypeLink) {
+  constructor(
+    link: HandTypeLink,
+    descriptions: string[] = []
+  ) {
     this._link = link;
-    this._descriptions = [String(link)]
+    this._descriptions = descriptions.length ? descriptions: [String(link)];
   }
 
   append(b: Chain): Chain {
