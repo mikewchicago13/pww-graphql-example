@@ -12,13 +12,15 @@ export class TexasHoldEmHand {
     this._cards = Cards.parse(cards);
     this._handsFromBestToWorst = TexasHoldEmHand._combinations(
       this._cards,
-      5).map((value, index) => {
-      return new Hand({cards: value, name: index + ""})
-    })
+      5).map(TexasHoldEmHand._createHand)
       .sort((a, b) => a.compareTo(b))
   }
 
-  static _combinations(
+  private static _createHand(cards: Card[], index: number): Hand {
+    return new Hand({cards, name: index + ""});
+  }
+
+  private static _combinations(
     arr: Card[],
     len: number
   ): Card[][] {
