@@ -3,20 +3,19 @@ import {Card, Hand} from "./pokerHandsComparison";
 
 export class TexasHoldEmHand {
   private readonly _cards: Card[];
-  private readonly _allPossibleHands: Hand[];
+  private readonly _handsFromBestToWorst: Hand[];
   private readonly _name: string;
 
   constructor(cards: string) {
     this._name = cards;
     this._cards = cards.split(" ").map(x => new Card(x));
-    this._allPossibleHands = TexasHoldEmHand._combinations(
+    this._handsFromBestToWorst = TexasHoldEmHand._combinations(
       this._cards,
       5).map((value, index) => {
       return new Hand({cards: value, name: index + ""})
     })
       .sort((a, b) => a.compareTo(b))
   }
-
 
   static _combinations(
     arr: Card[],
@@ -36,8 +35,8 @@ export class TexasHoldEmHand {
     return this._name;
   }
 
-  get allPossibleHands(): Hand[] {
-    return this._allPossibleHands;
+  get handsFromBestToWorst(): Hand[] {
+    return this._handsFromBestToWorst;
   }
 
   get description(): string {
@@ -49,7 +48,7 @@ export class TexasHoldEmHand {
   }
 
   private _bestHand(): Hand {
-    return this._allPossibleHands[0];
+    return this._handsFromBestToWorst[0];
   }
 
   toString(): string {

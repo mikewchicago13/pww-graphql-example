@@ -31,17 +31,17 @@ AC QC KS KD 9D 3C
   describe('create all possible hands', () => {
     const cards = "AD 2D 3D 4D 5D 6D 7D";
     it('should have 7 choose 5 = 21 possible hands', () => {
-      expect(new TexasHoldEmHand(cards).allPossibleHands).toHaveLength(21);
+      expect(new TexasHoldEmHand(cards).handsFromBestToWorst).toHaveLength(21);
     });
     it('should have 21 distinct hands', () => {
-      const uniqueHands = new TexasHoldEmHand(cards).allPossibleHands
+      const uniqueHands = new TexasHoldEmHand(cards).handsFromBestToWorst
         .map(value => value.rawCards + "")
         .filter(function (value, index, self) {
           return self.indexOf(value) === index;
         });
       expect(uniqueHands).toHaveLength(21);
     });
-    new TexasHoldEmHand(cards).allPossibleHands.forEach(value => {
+    new TexasHoldEmHand(cards).handsFromBestToWorst.forEach(value => {
       it(`${value.rawCards} ${value.description}`, () => {
         expect(value.rawCards.length).toBe(5);
       });
