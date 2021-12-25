@@ -89,10 +89,8 @@ export class TexasHoldEm {
 
   static toOutput(input: string): string {
     const texasHoldEmHands = TexasHoldEm.parse(input);
-    return texasHoldEmHands.map(x => `${x.name} ${x.description}`.trim())
-      .join(EOL);
 
-    const winner = texasHoldEmHands.sort(TexasHoldEm.bestToWorst)[0];
+    const winner = [...texasHoldEmHands].sort(TexasHoldEm.bestToWorst)[0];
 
     return texasHoldEmHands
       .map((value) => {
