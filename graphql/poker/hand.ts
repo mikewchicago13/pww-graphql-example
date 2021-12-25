@@ -48,7 +48,6 @@ export class Hand {
     this._name = name;
     this._cards = cards;
     this._handTypesEvaluatedFromBestToWorst = this._evaluateHandTypesFromBestToWorst();
-    this._chainOfResponsibility();
   }
 
   get name(): string {
@@ -113,15 +112,15 @@ export class Hand {
 
 class HandTypeLink {
   private readonly _value: HandType;
-  private readonly _cards: Card[];
+  private readonly _handMatchResult: HandMatchResult;
 
   constructor(value: HandType, cards: Card[]) {
     this._value = value;
-    this._cards = cards;
+    this._handMatchResult = this._value.parse(cards);
   }
 
   get handMatchResult(): HandMatchResult {
-    return this._value.parse(this._cards);
+    return this._handMatchResult;
   }
 
   toString(): string {
@@ -133,6 +132,10 @@ class NullHandType implements HandType {
   parse(_: Card[]): HandMatchResult {
     return HandMatchResultFactory.noMatchDetected();
   }
+
+  toString(): string {
+    return "";
+  }
 }
 
 class NullHandTypeLink extends HandTypeLink {
@@ -140,7 +143,7 @@ class NullHandTypeLink extends HandTypeLink {
     super(new NullHandType(), []);
   }
 
-  toString(): string{
+  toString(): string {
     return "";
   }
 }
@@ -155,34 +158,40 @@ class Chain {
     link: HandTypeLink,
     descriptions: string[] = [],
     hasPreviousMatch: boolean = false,
-    cardsForTieBreaking : string = ""
+    cardsForTieBreaking: string = ""
   ) {
     this._link = link;
-    this._descriptions = descriptions.length ? descriptions: [String(link)];
+    this._descriptions = descriptions.length ? descriptions : [String(link)];
     this._hasPreviousMatch = hasPreviousMatch;
     this._cardsForTieBreaking = cardsForTieBreaking;
   }
 
-  append(b: Chain): Chain {
-    const handMatchResult: HandMatchResult = b._link.handMatchResult;
-    if (!this._hasPreviousMatch && handMatchResult.doesMatch) {
-      const fixedWidthNumericValue = (x: Card) => String(x.numericValue).padStart(2, "0");
-      const cardsForTieBreaking = handMatchResult
-        .groupsOfCardsToCompare
-        .flat()
-        .map(fixedWidthNumericValue) + ""
-      return new Chain(
-        b._link,
-        this._descriptions.concat(b._descriptions),
-        true,
-        cardsForTieBreaking
-      )
+  append(next: Chain): Chain {
+    if (!this._hasPreviousMatch && next._link.handMatchResult.doesMatch) {
+      return this._handleFirstMatch(next);
     }
-    return new Chain(b._link,
-      this._descriptions.concat(b._descriptions),
+    return new Chain(next._link,
+      this._descriptions.concat(next._descriptions),
       this._hasPreviousMatch,
       this._cardsForTieBreaking
-      );
+    );
+  }
+
+  private _handleFirstMatch(next: Chain) {
+    return new Chain(
+      next._link,
+      this._descriptions.concat(next._descriptions),
+      true,
+      this._formatCardsForTieBreaking(next._link.handMatchResult)
+    )
+  }
+
+  private _formatCardsForTieBreaking(handMatchResult: HandMatchResult): string {
+    const fixedWidthNumericValue = (x: Card) => String(x.numericValue).padStart(2, "0");
+    return handMatchResult
+      .groupsOfCardsToCompare
+      .flat()
+      .map(fixedWidthNumericValue) + "";
   }
 
   toString(): string {
