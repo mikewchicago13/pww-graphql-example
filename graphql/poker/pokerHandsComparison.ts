@@ -40,9 +40,9 @@ export class Cards {
     return cards
       .map(value => func(value))
       .map(value => {
-        const foo: any = {};
-        foo[value] = 1;
-        return foo;
+        const map: any = {};
+        map[value] = 1;
+        return map;
       })
       .reduce((accumulatorMap, mapWithOne) => {
         for (const num in mapWithOne) {
