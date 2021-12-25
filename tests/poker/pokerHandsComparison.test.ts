@@ -326,4 +326,10 @@ describe('poker hands comparison', () => {
       expect(comparison + "").toBe("White wins with Straight Flush: 5 high in Spades");
     });
   });
+
+  it('should prevent more than 5 cards in a hand', () => {
+    expect(() => {
+      new PokerHandsInput().parse("Black: KH QH JH TH 9C 8D  White: AS 2S 3S 4S 5S");
+    }).toThrow();
+  });
 });

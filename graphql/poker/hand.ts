@@ -41,10 +41,13 @@ export class Hand {
         cards: Card[],
         name: string
       }) {
+    const maximum = 5;
+    if(cards.length > maximum){
+      throw new Error(`${cards} has more than ${maximum} cards`);
+    }
     this._name = name;
     this._cards = cards;
   }
-
 
   get name(): string {
     return this._name;
