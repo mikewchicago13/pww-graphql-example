@@ -9,18 +9,10 @@ export class Comparison {
     this._two = two;
   }
 
-  get one(): Hand {
-    return this._one;
-  }
-
-  get two(): Hand {
-    return this._two;
-  }
-
   get debug(): string {
-    return this._one.name + ": " + this.one +
+    return this._one.name + ": " + this._one +
       "\n" +
-      this._two.name + ": " + this.two;
+      this._two.name + ": " + this._two;
   }
 
   static _winner(hand: Hand): string {
@@ -28,11 +20,11 @@ export class Comparison {
   }
 
   toString(): string {
-    if (this.two.compareTo(this.one) === 0) {
+    if (this._two.compareTo(this._one) === 0) {
       return "Tie";
     }
 
-    const winner = [this.one, this.two]
+    const winner = [this._one, this._two]
       .sort((a, b) => a.compareTo(b))
       [0];
 
