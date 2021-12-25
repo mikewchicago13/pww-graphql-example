@@ -35,20 +35,12 @@ AC QC KS KD 9D 3C
     });
     it('should have 21 distinct hands', () => {
       const uniqueHands = new TexasHoldEmHand(cards).handsFromBestToWorst
-        .map(value => value.rawCards + "")
+        .map(value => value + "")
         .filter(function (value, index, self) {
           return self.indexOf(value) === index;
         });
       expect(uniqueHands).toHaveLength(21);
     });
-    new TexasHoldEmHand(cards).handsFromBestToWorst.forEach(value => {
-      it(`${value.rawCards} ${value.description}`, () => {
-        expect(value.rawCards.length).toBe(5);
-      });
-      it(`${value}`, () => {
-        expect(value).toBeTruthy();
-      });
-    })
 
     it('should choose the best hand', () => {
       expect(new TexasHoldEmHand(cards).description).toMatch(/Straight Flush: 7 high in Diamonds/);

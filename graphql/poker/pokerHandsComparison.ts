@@ -416,9 +416,6 @@ export class Hand {
     this._cards = cards;
   }
 
-  get rawCards() : Card[] {
-    return this._cards;
-  }
 
   get name(): string {
     return this._name;
