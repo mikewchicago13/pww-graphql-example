@@ -10,24 +10,45 @@ describe("texas hold 'em", () => {
   4D 2D KS KD 9D 3C 6D
   7S TS KS KD 9D`;
 
-  const expected = `KC 9S KS KD 9D 3C 6D Full House: Ks over 9s (winner)
+  it('should split by line', () => {
+    expect(TexasHoldEm.parse(input)).toHaveLength(6);
+  });
+
+  describe('one winner', () => {
+    const expected = `KC 9S KS KD 9D 3C 6D Full House: Ks over 9s (winner)
 9C AH KS KD 9D 3C 6D Two Pairs: Ks and 9s
 AC QC KS KD 9D 3C 
 9H 5S 
 4D 2D KS KD 9D 3C 6D Flush: K high in Diamonds
 7S TS KS KD 9D`
-
-  it('should split by line', () => {
-    expect(TexasHoldEm.parse(input)).toHaveLength(6);
+    const actual = TexasHoldEm.toOutput(input).split(EOL);
+    expected.split(EOL)
+      .map(x => x.trim())
+      .forEach((value, index) => {
+        it(`${index} should match output`, () => {
+          expect(actual[index]).toBe(value);
+        });
+      })
   });
-  const actual = TexasHoldEm.toOutput(input).split(EOL);
-  expected.split(EOL)
-    .map(x => x.trim())
-    .forEach((value, index) => {
-      it(`${index} should match output`, () => {
-        expect(actual[index]).toBe(value);
-      });
-    })
+
+  describe('more than one winner', () => {
+    const input = `AH 2C 4D 5S 6H 8D 9S
+  AD 3S 4D 5S 6H 8D 9S
+  2H 3H 4D 5S 7H 8D 9S`;
+
+    const expected = `AH 2C 4D 5S 6H 8D 9S High Card: A (winner)
+  AD 3S 4D 5S 6H 8D 9S High Card: A (winner)
+  2H 3H 4D 5S 7H 8D 9S High Card: 9`
+
+    const actual = TexasHoldEm.toOutput(input).split(EOL);
+    expected.split(EOL)
+      .map(x => x.trim())
+      .forEach((value, index) => {
+        it(`${index} should match output`, () => {
+          expect(actual[index]).toBe(value);
+        });
+      })
+  });
 
   describe('create all possible hands', () => {
     const cards = "AD 2D 3D 4D 5D 6D 7D";
