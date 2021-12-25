@@ -5,6 +5,7 @@ describe('can connect to local graphql', () => {
       `{
           poker ( name: "The Dude", cards: ["AS", "KS", "QS", "JS", "TS" ] ) {
               description
+              name
           }
       }`;
 
@@ -21,6 +22,9 @@ describe('can connect to local graphql', () => {
   });
 
   it('should have description', () => {
-    expect(poker.description).toBe("The Dude: Straight Flush: A high in Spades");
+    expect(poker.description).toBe("Straight Flush: A high in Spades");
+  });
+  it('should have name', () => {
+    expect(poker.name).toBe("The Dude");
   });
 });

@@ -3,6 +3,7 @@ import {AuthorRepository} from "./books/authorRepository";
 import {BowlingAdapter} from "./bowling/bowlingAdapter";
 import {Greetings} from "./greetings/greetings";
 import {secure} from "./secure";
+import {PokerAdapter} from "./pokerAdapter";
 
 export default {
   goodbye: Greetings.goodbye,
@@ -11,5 +12,6 @@ export default {
   authorById: AuthorRepository.authorById,
   bowling: BowlingAdapter.acceptAllRollsAtOnce,
   liveBowling: BowlingAdapter.enableInteractive,
-  addBook: secure(BookRepository.addBook)
+  addBook: secure(BookRepository.addBook),
+  poker: PokerAdapter.singleHand
 };

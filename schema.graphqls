@@ -11,6 +11,7 @@ type Query {
 
 type Hand {
     description: String
+    name: String
 }
 
 type Frame {
