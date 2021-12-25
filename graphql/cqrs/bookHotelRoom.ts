@@ -39,21 +39,50 @@ interface Room {
 }
 
 export class QueryService {
-  private static _rooms = new Array(10).fill(1)
+  private readonly _rooms: Room[] = new Array(10).fill(1)
     .map((_, index): Room => {
       return {
-        roomName: index + ""
+        roomName: index + "",
       }
-    })
+    });
+
+  private _reservationsByDate: any = {};
+
+  private static nextDay(date: Date): Date {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
+  }
+
+  private static datePart(date: Date): string {
+    return date.toISOString().split("T")[0];
+  }
 
   constructor() {
     EventNotifications.subscribe(({roomBookedEvent}) => {
-      QueryService._rooms = QueryService._rooms
-        .filter(value => value.roomName !== roomBookedEvent.roomName)
+      for (let i = roomBookedEvent.arrivalDate; i < roomBookedEvent.departureDate; i = QueryService.nextDay(i)) {
+        const date = QueryService.datePart(i);
+        if (this._reservationsByDate[date]) {
+          this._reservationsByDate[date][roomBookedEvent.roomName] = 1;
+        } else {
+          const map: any = {}
+          map[roomBookedEvent.roomName] = 1;
+          this._reservationsByDate[date] = map;
+        }
+      }
     })
   }
 
   freeRooms(arrival: Date, departure: Date): Room[] {
-    return QueryService._rooms;
+    const availableRooms: Room[] = [...this._rooms];
+    for (let i = arrival; i < departure; i = QueryService.nextDay(i)) {
+      const datePart = QueryService.datePart(i);
+      const reservationsOnDate = this._reservationsByDate[datePart] || {};
+      availableRooms
+        .forEach((value, index) => {
+          if (reservationsOnDate[value.roomName]) {
+            availableRooms.splice(index, 1);
+          }
+        })
+    }
+    return availableRooms;
   }
 }
