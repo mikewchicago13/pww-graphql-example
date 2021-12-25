@@ -512,12 +512,15 @@ class Comparison {
   }
 
   toString(): string {
-    if (this.two > this.one) {
-      return Comparison._winner(this.two);
-    } else if (this.one > this.two) {
-      return Comparison._winner(this.one);
+    if (this.two.compareTo(this.one) === 0) {
+      return "Tie";
     }
-    return "Tie"
+
+    const winner = [this.one, this.two]
+      .sort((a, b) => a.compareTo(b))
+      [0];
+
+    return Comparison._winner(winner);
   }
 }
 
