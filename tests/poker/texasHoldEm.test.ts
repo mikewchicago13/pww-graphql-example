@@ -17,7 +17,7 @@ AC QC KS KD 9D 3C
 9H 5S 
 4D 2D KS KD 9D 3C 6D Flush: K high in Diamonds
 7S TS KS KD 9D`
-    const actual = new TexasHoldEm(input).toOutput().split(EOL);
+    const actual = String(new TexasHoldEm(input)).split(EOL);
     expected.split(EOL)
       .map(x => x.trim())
       .forEach((value, index) => {
@@ -36,7 +36,7 @@ AC QC KS KD 9D 3C
   AD 3S 4D 5S 6H 8D 9S High Card: A (winner)
   2H 3H 4D 5S 7H 8D 9S High Card: 9`
 
-    const actual = new TexasHoldEm(input).toOutput().split(EOL);
+    const actual = String(new TexasHoldEm(input)).split(EOL);
     expected.split(EOL)
       .map(x => x.trim())
       .forEach((value, index) => {

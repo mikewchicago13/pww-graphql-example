@@ -19,17 +19,17 @@ export class TexasHoldEm {
       .map(value => new TexasHoldEmHand(value));
   }
 
-  toOutput(): string {
+  toString(): string {
     return this._hands
       .map((value) => this.formatLine(value))
       .join(EOL);
   }
 
   private formatLine(value: TexasHoldEmHand) {
-    return `${value.name} ${value.description} ${this._format(value)}`.trim()
+    return `${value.name} ${value.description} ${this._winnerSuffix(value)}`.trim()
   }
 
-  private _format(value: TexasHoldEmHand) {
+  private _winnerSuffix(value: TexasHoldEmHand) {
     return this._isWinner(value) ? "(winner)" : "";
   }
 
