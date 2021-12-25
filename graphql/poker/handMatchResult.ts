@@ -22,6 +22,9 @@ export class HandMatchResultFactory{
         description
       })
     }
+    return HandMatchResultFactory.noMatchDetected();
+  }
+  static noMatchDetected(): HandMatchResult {
     return new NegativeMatchResult();
   }
 }
@@ -55,7 +58,7 @@ class PositiveMatchResult implements HandMatchResult {
   }
 }
 
-export class NegativeMatchResult implements HandMatchResult {
+class NegativeMatchResult implements HandMatchResult {
   get doesMatch(): boolean {
     return false;
   }

@@ -1,7 +1,6 @@
 import {HandType} from "../handType";
 import {Card} from "../card";
 import {
-  NegativeMatchResult,
   HandMatchResult,
   HandMatchResultFactory
 } from "../handMatchResult";
@@ -44,7 +43,7 @@ export class MultipleOfSameCardNumber implements HandType {
       }
     }
 
-    return new NegativeMatchResult();
+    return HandMatchResultFactory.noMatchDetected();
   }
 
   toString(): string {

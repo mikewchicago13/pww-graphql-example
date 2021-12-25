@@ -1,7 +1,6 @@
 import {HandType} from "../handType";
 import {Card} from "../card";
 import {
-  NegativeMatchResult,
   HandMatchResult,
   HandMatchResultFactory
 } from "../handMatchResult";
@@ -24,7 +23,7 @@ export class TwoPairs implements HandType {
       })
     }
 
-    return new NegativeMatchResult();
+    return HandMatchResultFactory.noMatchDetected();
   }
 
   private static _separate(pairsFound: number[], cards: Card[]): Card[][] {
