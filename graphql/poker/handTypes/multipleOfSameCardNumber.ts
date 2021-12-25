@@ -1,7 +1,7 @@
-import {HandType} from "./handType";
-import {Card} from "./card";
-import {DoesNotMatchHandResult, HandMatchResult} from "./handMatchResult";
-import {Cards} from "./cards";
+import {HandType} from "../handType";
+import {Card} from "../card";
+import {DoesNotMatchHandResult, HandMatchResult} from "../handMatchResult";
+import {Cards} from "../cards";
 
 export class MultipleOfSameCardNumber implements HandType {
   private readonly _numberOfSameCardNumber: number;

@@ -1,6 +1,6 @@
-import {HandType} from "./handType";
-import {Card} from "./card";
-import {HandMatchResult} from "./handMatchResult";
+import {HandType} from "../handType";
+import {Card} from "../card";
+import {HandMatchResult} from "../handMatchResult";
 import {MultipleOfSameCardNumber} from "./multipleOfSameCardNumber";
 
 export class Pair implements HandType {

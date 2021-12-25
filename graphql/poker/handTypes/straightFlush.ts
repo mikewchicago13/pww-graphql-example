@@ -1,6 +1,6 @@
-import {HandType} from "./handType";
-import {Card} from "./card";
-import {HandMatchResult} from "./handMatchResult";
+import {HandType} from "../handType";
+import {Card} from "../card";
+import {HandMatchResult} from "../handMatchResult";
 import {Flush} from "./flush";
 import {Straight} from "./straight";
 

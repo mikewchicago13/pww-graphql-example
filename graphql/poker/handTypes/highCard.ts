@@ -1,6 +1,6 @@
-import {HandType} from "./handType";
-import {Card} from "./card";
-import {HandMatchResult} from "./handMatchResult";
+import {HandType} from "../handType";
+import {Card} from "../card";
+import {HandMatchResult} from "../handMatchResult";
 
 export class HighCard implements HandType {
   parse(cards: Card[]): HandMatchResult {

@@ -1,6 +1,6 @@
-import {HandType} from "./handType";
-import {Card, map} from "./card";
-import {HandMatchResult} from "./handMatchResult";
+import {HandType} from "../handType";
+import {Card, map} from "../card";
+import {HandMatchResult} from "../handMatchResult";
 
 export class Straight implements HandType {
   toString(): string {

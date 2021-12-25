@@ -1,7 +1,7 @@
-import {HandType} from "./handType";
-import {Card} from "./card";
-import {Cards} from "./cards";
-import {HandMatchResult} from "./handMatchResult";
+import {HandType} from "../handType";
+import {Card} from "../card";
+import {Cards} from "../cards";
+import {HandMatchResult} from "../handMatchResult";
 
 export class Flush implements HandType {
   toString(): string {
