@@ -5,7 +5,7 @@ export class TexasHoldEm {
   private readonly _hands: TexasHoldEmHand[];
   private readonly _winningHand: TexasHoldEmHand;
   constructor(input: string) {
-    this._hands = TexasHoldEm.toHands(input);
+    this._hands = TexasHoldEm._toHands(input);
     this._winningHand = TexasHoldEm._winner(this._hands);
   }
 
@@ -13,7 +13,7 @@ export class TexasHoldEm {
     return new TexasHoldEm(input);
   }
 
-  private static toHands(input: string): TexasHoldEmHand[] {
+  private static _toHands(input: string): TexasHoldEmHand[] {
     return input.split(EOL)
       .map(x => x.trim())
       .map(value => new TexasHoldEmHand(value));
