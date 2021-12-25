@@ -6,6 +6,11 @@ type Query {
     bowling ( rolls: [Int]! ): Game
     liveBowling : Game
     addBook( title: String!, pageCount: Int!, authorId: String! ): Book
+    poker( name: String!, cards: [String]! ) : Hand
+}
+
+type Hand {
+    description: String
 }
 
 type Frame {
