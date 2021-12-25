@@ -13,7 +13,7 @@ export class StraightFlush implements HandType {
     const {description} = Flush.partsFrom(cards);
     const {doesMatch: isStraight, groupsOfCardsToCompare} = new Straight().parse(cards);
     const {doesMatch: isFlush} = new Flush().parse(cards);
-    return new HandMatchResult({
+    return HandMatchResult.create({
       doesMatch: isFlush && isStraight,
       groupsOfCardsToCompare: groupsOfCardsToCompare,
       description

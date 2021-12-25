@@ -32,7 +32,7 @@ export class Straight implements HandType {
     const isRegularStraight = this._isRegularStraight(sorted);
     const {isFiveHighStraight, replaceAceWithOne} = this._fiveHighStraight(sorted, cards);
 
-    return new HandMatchResult(
+    return HandMatchResult.create(
       {
         doesMatch: isRegularStraight || isFiveHighStraight,
         groupsOfCardsToCompare: [isFiveHighStraight ? replaceAceWithOne : cards],

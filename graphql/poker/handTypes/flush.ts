@@ -29,7 +29,7 @@ export class Flush implements HandType {
   parse(cards: Card[]): HandMatchResult {
     const {distinctSuits, description} = Flush.partsFrom(cards);
     const allCardsOfSameSuit = distinctSuits.length === 1;
-    return new HandMatchResult({
+    return HandMatchResult.create({
       doesMatch: allCardsOfSameSuit,
       groupsOfCardsToCompare: [cards],
       description

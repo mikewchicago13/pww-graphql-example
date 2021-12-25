@@ -32,7 +32,7 @@ export class MultipleOfSameCardNumber implements HandType {
         const remainingCards =
           cards.filter(x => x.numericValue !== Number(key));
 
-        return new HandMatchResult({
+        return HandMatchResult.create({
           doesMatch: true,
           groupsOfCardsToCompare: [primaryCards, remainingCards],
           description: x => MultipleOfSameCardNumber.description(x[0])
@@ -40,7 +40,7 @@ export class MultipleOfSameCardNumber implements HandType {
       }
     }
 
-    return new DoesNotMatchHandResult(cards);
+    return new DoesNotMatchHandResult();
   }
 
   toString(): string {

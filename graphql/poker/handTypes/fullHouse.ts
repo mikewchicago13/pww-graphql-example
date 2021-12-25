@@ -18,7 +18,7 @@ export class FullHouse implements HandType {
     const {doesMatch: hasPair} = new Pair().parse(cards);
     const isFullHouse = hasThreeOfAKind && hasPair;
 
-    return new HandMatchResult({
+    return HandMatchResult.create({
       doesMatch: isFullHouse,
       groupsOfCardsToCompare: groupsOfCardsToCompare,
       description: (x: Card[][]) =>

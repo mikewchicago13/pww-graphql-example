@@ -13,14 +13,14 @@ export class TwoPairs implements HandType {
     const pairsFound = TwoPairs._pairsFound(Cards.countByCardValue(cards));
 
     if (pairsFound.length === 2) {
-      return new HandMatchResult({
+      return HandMatchResult.create({
         doesMatch: true,
         groupsOfCardsToCompare: TwoPairs._separate(pairsFound, cards),
         description: (x: Card[][]) => MultipleOfSameCardNumber.join(x[0], x[1], " and ")
       })
     }
 
-    return new DoesNotMatchHandResult(cards);
+    return new DoesNotMatchHandResult();
   }
 
   private static _separate(pairsFound: number[], cards: Card[]): Card[][] {

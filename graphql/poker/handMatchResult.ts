@@ -1,20 +1,34 @@
 import {Card} from "./card";
 
 export class HandMatchResult {
-  private readonly _doesMatch: boolean;
   private readonly _groupsOfCardsToCompare: Card[][];
   private readonly _description: string;
 
-  constructor({
-                doesMatch,
-                groupsOfCardsToCompare,
-                description
-              }: {
+  static create({
+                  doesMatch,
+                  groupsOfCardsToCompare,
+                  description
+                }: {
     doesMatch: boolean,
     groupsOfCardsToCompare: Card[][],
     description: (cardsAfterSortingEachGroup: Card[][]) => string
+  }): HandMatchResult{
+    if(doesMatch){
+      return new HandMatchResult({
+        groupsOfCardsToCompare,
+        description
+      })
+    }
+    return new DoesNotMatchHandResult();
+  }
+
+  protected constructor({
+                groupsOfCardsToCompare,
+                description
+              }: {
+    groupsOfCardsToCompare: Card[][],
+    description: (cardsAfterSortingEachGroup: Card[][]) => string
   }) {
-    this._doesMatch = doesMatch;
     this._groupsOfCardsToCompare = groupsOfCardsToCompare
       .map(cards =>
         cards.sort((a, b) => b.numericValue - a.numericValue));
@@ -28,18 +42,21 @@ export class HandMatchResult {
     return this._groupsOfCardsToCompare;
   }
   get doesMatch(): boolean {
-    return this._doesMatch;
+    return true;
   }
 }
 
 export class DoesNotMatchHandResult extends HandMatchResult {
-  constructor(cards: Card[]) {
+  constructor() {
     super(
       {
-        doesMatch: false,
-        groupsOfCardsToCompare: [cards],
-        description: x => x + ""
+        groupsOfCardsToCompare: [],
+        description: () => ""
       }
     );
+  }
+
+  get doesMatch(): boolean {
+    return false;
   }
 }
