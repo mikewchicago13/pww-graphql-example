@@ -9,6 +9,14 @@ import {ThreeOfAKind} from "./handTypes/threeOfAKind";
 import {TwoPairs} from "./handTypes/twoPairs";
 import {Pair} from "./handTypes/pair";
 import {HighCard} from "./handTypes/highCard";
+import {HandType} from "./handType";
+
+interface HandTypeEvaluation{
+  sortableMatch: string,
+  sortableCards: string,
+  description: string,
+  doesMatch: boolean
+}
 
 export class Hand {
   private readonly _name: string;
@@ -50,22 +58,41 @@ export class Hand {
 
   toString(): string {
     const results = this._evaluateHandTypesFromBestToWorst();
-
-    const sortableCardsForBestHandTypeMatched = results
-      .filter(x => x.doesMatch)
-      .map(x => x.sortableCards)[0];
-
-    const sortableMatchForAllHandTypes = results.map(value => value.sortableMatch).join(" ");
-    return sortableMatchForAllHandTypes + " " + sortableCardsForBestHandTypeMatched;
+    return Hand._getComparableWithAllHandTypesMappedToOnesAndZeros(results) +
+      " " +
+      Hand._getSortableCardsToBreakTiesWhenHandTypeIsEqual(results);
   }
 
-  private _evaluateHandTypesFromBestToWorst(): {
-    sortableMatch: string,
-    sortableCards: string,
-    description: string,
-    doesMatch: boolean
-  }[] {
+  private static _getSortableCardsToBreakTiesWhenHandTypeIsEqual(results: HandTypeEvaluation[]) {
+    return results
+      .filter(x => x.doesMatch)
+      .map(x => x.sortableCards)[0];
+  }
+
+  private static _getComparableWithAllHandTypesMappedToOnesAndZeros(results: HandTypeEvaluation[]) {
+    return results.map(value => value.sortableMatch).join(" ");
+  }
+
+  private _evaluateHandTypesFromBestToWorst(): HandTypeEvaluation[] {
+    return Hand._handTypesFromBestToWorst()
+      .map(handType => this._evaluate(handType));
+  }
+
+  private _evaluate(handType: HandType): HandTypeEvaluation {
     const fixedWidthNumericValue = (x: Card) => String(x.numericValue).padStart(2, "0");
+    const myHand = handType.parse(this._cards);
+    return {
+      doesMatch: myHand.doesMatch,
+      sortableMatch: `${handType}: ${myHand.doesMatch ? "1" : "0"}`,
+      description: `${handType}: ${myHand.description}`,
+      sortableCards: myHand
+        .groupsOfCardsToCompare
+        .flat()
+        .map(fixedWidthNumericValue) + ""
+    };
+  }
+
+  private static _handTypesFromBestToWorst(): HandType[] {
     return [
       new StraightFlush(),
       new FourOfAKind(),
@@ -76,19 +103,7 @@ export class Hand {
       new TwoPairs(),
       new Pair(),
       new HighCard()
-    ]
-      .map(handType => {
-        const myHand = handType.parse(this._cards);
-        return {
-          doesMatch: myHand.doesMatch,
-          sortableMatch: `${handType}: ${myHand.doesMatch ? "1" : "0"}`,
-          description: `${handType}: ${myHand.description}`,
-          sortableCards: myHand
-            .groupsOfCardsToCompare
-            .flat()
-            .map(fixedWidthNumericValue) + ""
-        };
-      });
+    ];
   }
 
   compareTo(b: Hand): number {
