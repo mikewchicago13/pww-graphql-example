@@ -1,9 +1,9 @@
 import {Card} from "./card";
 
 export class HandMatchResult {
-  doesMatch: boolean;
-  groupsOfCardsToCompare: Card[][];
-  description: string;
+  private readonly _doesMatch: boolean;
+  private readonly _groupsOfCardsToCompare: Card[][];
+  private readonly _description: string;
 
   constructor({
                 doesMatch,
@@ -14,11 +14,21 @@ export class HandMatchResult {
     groupsOfCardsToCompare: Card[][],
     description: (cardsAfterSortingEachGroup: Card[][]) => string
   }) {
-    this.doesMatch = doesMatch;
-    this.groupsOfCardsToCompare = groupsOfCardsToCompare
+    this._doesMatch = doesMatch;
+    this._groupsOfCardsToCompare = groupsOfCardsToCompare
       .map(cards =>
         cards.sort((a, b) => b.numericValue - a.numericValue));
-    this.description = description(this.groupsOfCardsToCompare);
+    this._description = description(this._groupsOfCardsToCompare);
+  }
+
+  get description(): string {
+    return this._description;
+  }
+  get groupsOfCardsToCompare(): Card[][] {
+    return this._groupsOfCardsToCompare;
+  }
+  get doesMatch(): boolean {
+    return this._doesMatch;
   }
 }
 
