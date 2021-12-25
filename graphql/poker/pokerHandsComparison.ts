@@ -472,6 +472,15 @@ export class Hand {
       });
   }
 
+  compareTo(b: Hand) {
+    if (this > b) {
+      return -1;
+    }
+    if (b > this) {
+      return 1;
+    }
+    return 0;
+  }
 }
 
 class Comparison {

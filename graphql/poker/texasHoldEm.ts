@@ -14,7 +14,9 @@ export class TexasHoldEmHand {
       5).map((value, index) => {
       return new Hand({cards: value, name: index + ""})
     })
+      .sort((a, b) => a.compareTo(b))
   }
+
 
   static _combinations(
     arr: Card[],
@@ -39,28 +41,35 @@ export class TexasHoldEmHand {
   }
 
   get description(): string {
-    return this.hasEnoughCards() ? this._bestHand().description : "";
+    return this._hasEnoughCards() ? this._bestHand().description : "";
   }
 
-  public hasEnoughCards() {
+  private _hasEnoughCards(): boolean {
     return this._cards.length === 7;
   }
 
   private _bestHand(): Hand {
-    const bestToWorst = (a: Hand, b: Hand) => {
-      if (a > b) {
-        return -1;
-      }
-      if (b > a) {
-        return 1;
-      }
-      return 0;
-    };
-    return this._allPossibleHands.sort(bestToWorst)[0];
+    return this._allPossibleHands[0];
   }
 
   toString(): string {
-    return this.hasEnoughCards() ? this._bestHand() + "" : "";
+    return this._hasEnoughCards() ? this._bestHand() + "" : "";
+  }
+
+  compareTo(b: TexasHoldEmHand): number {
+    if (!b._hasEnoughCards()) {
+      return -1;
+    }
+    if (!this._hasEnoughCards()) {
+      return 1;
+    }
+    if (this > b) {
+      return -1;
+    }
+    if (b > this) {
+      return 1;
+    }
+    return 0;
   }
 }
 
@@ -71,26 +80,12 @@ export class TexasHoldEm {
       .map(value => new TexasHoldEmHand(value));
   }
 
-  static bestToWorst = (a: TexasHoldEmHand, b: TexasHoldEmHand) => {
-    if (!b.hasEnoughCards()) {
-      return -1;
-    }
-    if (!a.hasEnoughCards()) {
-      return 1;
-    }
-    if (a > b) {
-      return -1;
-    }
-    if (b > a) {
-      return 1;
-    }
-    return 0;
-  };
 
   static toOutput(input: string): string {
     const texasHoldEmHands = TexasHoldEm.parse(input);
 
-    const winner = [...texasHoldEmHands].sort(TexasHoldEm.bestToWorst)[0];
+    const winner = [...texasHoldEmHands]
+      .sort((a, b) => a.compareTo(b))[0];
 
     return texasHoldEmHands
       .map((value) => {
