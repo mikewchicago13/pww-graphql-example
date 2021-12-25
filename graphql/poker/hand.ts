@@ -12,15 +12,11 @@ import {HighCard} from "./handTypes/highCard";
 import {HandType} from "./handType";
 import {HandMatchResult, HandMatchResultFactory} from "./handMatchResult";
 
-interface HandTypeEvaluation {
-  description: string,
-  doesMatch: boolean
-}
-
 export class Hand {
   private readonly _name: string;
   private readonly _cards: Card[];
-  private readonly _handTypesEvaluatedFromBestToWorst: HandTypeEvaluation[];
+  private readonly _sortableString: string;
+  private readonly _description: string;
 
   static create({
                   cards,
@@ -47,7 +43,16 @@ export class Hand {
     }
     this._name = name;
     this._cards = cards;
-    this._handTypesEvaluatedFromBestToWorst = this._evaluateHandTypesFromBestToWorst();
+    const chain: Chain = this._chainOfResponsibility();
+    this._sortableString = String(chain);
+    this._description = chain.readerFriendlyDescription;
+  }
+
+  private _chainOfResponsibility() : Chain {
+    return Hand._handTypesFromBestToWorst()
+      .map((value) => new HandTypeLink(value, this._cards))
+      .map((value) => new Chain(value))
+      .reduce((a, b) => a.append(b), new Chain());
   }
 
   get name(): string {
@@ -55,26 +60,11 @@ export class Hand {
   }
 
   get description(): string {
-    return this._handTypesEvaluatedFromBestToWorst
-      .filter(x => x.doesMatch)
-      .map(x => x.description)[0];
+    return this._description;
   }
 
   toString(): string {
-    return this._chainOfResponsibility();
-  }
-
-  private _evaluateHandTypesFromBestToWorst(): HandTypeEvaluation[] {
-    return Hand._handTypesFromBestToWorst()
-      .map(handType => this._evaluate(handType));
-  }
-
-  private _evaluate(handType: HandType): HandTypeEvaluation {
-    const myHand: HandMatchResult = handType.parse(this._cards);
-    return {
-      doesMatch: myHand.doesMatch,
-      description: `${handType}: ${myHand.description}`
-    };
+    return this._sortableString;
   }
 
   private static _handTypesFromBestToWorst(): HandType[] {
@@ -89,14 +79,6 @@ export class Hand {
       new Pair(),
       new HighCard()
     ];
-  }
-
-  private _chainOfResponsibility(): string {
-    const chain: Chain = Hand._handTypesFromBestToWorst()
-      .map((value) => new HandTypeLink(value, this._cards))
-      .map((value) => new Chain(value))
-      .reduce((a, b) => a.append(b), new Chain(new NullHandTypeLink()));
-    return String(chain);
   }
 
   compareTo(b: Hand): number {
@@ -126,6 +108,10 @@ class HandTypeLink {
   toString(): string {
     return `${this._value}: ${this.handMatchResult.doesMatch ? "1" : "0"}`;
   }
+
+  get readerFriendlyDescription() : string{
+    return `${this._value}: ${this.handMatchResult.description}`;
+  }
 }
 
 class NullHandType implements HandType {
@@ -151,19 +137,22 @@ class NullHandTypeLink extends HandTypeLink {
 class Chain {
   private readonly _link: HandTypeLink;
   private readonly _cardsForTieBreaking: string;
-  private readonly _descriptions: string[];
+  private readonly _sortableDescriptions: string[];
   private readonly _hasPreviousMatch: boolean;
+  private readonly _readerFriendlyDescription: string;
 
   constructor(
-    link: HandTypeLink,
+    link: HandTypeLink = new NullHandTypeLink(),
     descriptions: string[] = [],
     hasPreviousMatch: boolean = false,
-    cardsForTieBreaking: string = ""
+    cardsForTieBreaking: string = "",
+    readerFriendlyDescription: string = ""
   ) {
     this._link = link;
-    this._descriptions = descriptions.length ? descriptions : [String(link)];
+    this._sortableDescriptions = descriptions.length ? descriptions : [String(link)];
     this._hasPreviousMatch = hasPreviousMatch;
     this._cardsForTieBreaking = cardsForTieBreaking;
+    this._readerFriendlyDescription = readerFriendlyDescription;
   }
 
   append(next: Chain): Chain {
@@ -171,18 +160,20 @@ class Chain {
       return this._handleFirstMatch(next);
     }
     return new Chain(next._link,
-      this._descriptions.concat(next._descriptions),
+      this._sortableDescriptions.concat(next._sortableDescriptions),
       this._hasPreviousMatch,
-      this._cardsForTieBreaking
+      this._cardsForTieBreaking,
+      this._readerFriendlyDescription
     );
   }
 
   private _handleFirstMatch(next: Chain) {
     return new Chain(
       next._link,
-      this._descriptions.concat(next._descriptions),
+      this._sortableDescriptions.concat(next._sortableDescriptions),
       true,
-      this._formatCardsForTieBreaking(next._link.handMatchResult)
+      this._formatCardsForTieBreaking(next._link.handMatchResult),
+      next._link.readerFriendlyDescription
     )
   }
 
@@ -195,6 +186,10 @@ class Chain {
   }
 
   toString(): string {
-    return this._descriptions.join(" ").trim() + " " + this._cardsForTieBreaking;
+    return this._sortableDescriptions.join(" ").trim() + " " + this._cardsForTieBreaking;
+  }
+
+  get readerFriendlyDescription() : string{
+    return this._readerFriendlyDescription;
   }
 }
