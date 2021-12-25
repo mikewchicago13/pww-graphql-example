@@ -14,7 +14,6 @@ import {HandMatchResult, HandMatchResultFactory} from "./handMatchResult";
 
 export class Hand {
   private readonly _name: string;
-  private readonly _cards: Card[];
   private readonly _sortableString: string;
   private readonly _description: string;
 
@@ -42,15 +41,14 @@ export class Hand {
       throw new Error(`${cards} has more than ${maximum} cards`);
     }
     this._name = name;
-    this._cards = cards;
-    const chain: Chain = this._chainOfResponsibility();
+    const chain: Chain = Hand._chainOfResponsibility(cards);
     this._sortableString = String(chain);
     this._description = chain.readerFriendlyDescription;
   }
 
-  private _chainOfResponsibility() : Chain {
+  private static _chainOfResponsibility(cards: Card[]) : Chain {
     return Hand._handTypesFromBestToWorst()
-      .map((value) => new HandTypeLink(value, this._cards))
+      .map((value) => new HandTypeLink(value, cards))
       .map((value) => new Chain(value))
       .reduce((a, b) => a.append(b), new Chain());
   }
@@ -93,12 +91,12 @@ export class Hand {
 }
 
 class HandTypeLink {
-  private readonly _value: HandType;
+  private readonly _handType: HandType;
   private readonly _handMatchResult: HandMatchResult;
 
   constructor(value: HandType, cards: Card[]) {
-    this._value = value;
-    this._handMatchResult = this._value.parse(cards);
+    this._handType = value;
+    this._handMatchResult = this._handType.parse(cards);
   }
 
   get handMatchResult(): HandMatchResult {
@@ -106,11 +104,11 @@ class HandTypeLink {
   }
 
   toString(): string {
-    return `${this._value}: ${this.handMatchResult.doesMatch ? "1" : "0"}`;
+    return `${this._handType}: ${this.handMatchResult.doesMatch ? "1" : "0"}`;
   }
 
   get readerFriendlyDescription() : string{
-    return `${this._value}: ${this.handMatchResult.description}`;
+    return `${this._handType}: ${this.handMatchResult.description}`;
   }
 }
 
