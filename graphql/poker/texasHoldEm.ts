@@ -1,5 +1,7 @@
 import {EOL} from "os";
-import {Card, Cards, Hand} from "./pokerHandsComparison";
+import {Card} from "./card";
+import {Cards} from "./cards";
+import {Hand} from "./hand";
 
 export class TexasHoldEmHand {
   private readonly _cards: Card[];
