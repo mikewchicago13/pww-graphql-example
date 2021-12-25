@@ -1,5 +1,6 @@
-import {TexasHoldEm, TexasHoldEmHand} from "../../graphql/poker/texasHoldEm";
+import {TexasHoldEm} from "../../graphql/poker/texasHoldEm";
 import {EOL} from "os";
+import {TexasHoldEmHand} from "../../graphql/poker/texasHoldEmHand";
 
 describe("texas hold 'em", () => {
   const input = `KC 9S KS KD 9D 3C 6D
