@@ -6,8 +6,7 @@ interface Booking {
 }
 
 export class CommandService {
-  bookARoom(booking: Booking): void{
-    throw new Error(booking + "");
+  bookARoom(booking: Booking): void {
   }
 }
 
