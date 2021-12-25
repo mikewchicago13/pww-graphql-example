@@ -58,29 +58,35 @@ export class QueryService {
 
   constructor() {
     EventNotifications.subscribe(({roomBookedEvent}) => {
-      for (let i = roomBookedEvent.arrivalDate; i < roomBookedEvent.departureDate; i = QueryService.nextDay(i)) {
-        const date = QueryService.datePart(i);
-        if (this._reservationsByDate[date]) {
-          this._reservationsByDate[date][roomBookedEvent.roomName] = 1;
-        } else {
-          const map: any = {}
-          map[roomBookedEvent.roomName] = 1;
-          this._reservationsByDate[date] = map;
-        }
-      }
+      this.logReservation(roomBookedEvent);
     })
+  }
+
+  private logReservation(roomBookedEvent: RoomBookedEvent): void {
+    for (let i = roomBookedEvent.arrivalDate; i < roomBookedEvent.departureDate; i = QueryService.nextDay(i)) {
+      const date = QueryService.datePart(i);
+      if (this._reservationsByDate[date]) {
+        this._reservationsByDate[date][roomBookedEvent.roomName] = 1;
+      } else {
+        const map: any = {}
+        map[roomBookedEvent.roomName] = 1;
+        this._reservationsByDate[date] = map;
+      }
+    }
   }
 
   freeRooms(arrival: Date, departure: Date): Room[] {
     const availableRoomNames: any = {...this._rooms};
-    for (let i = arrival; i < departure; i = QueryService.nextDay(i)) {
-      const datePart = QueryService.datePart(i);
-      const reservationsOnDate = this._reservationsByDate[datePart] || {};
-      console.log(datePart, reservationsOnDate)
-      for (const roomName in reservationsOnDate) {
-        delete availableRoomNames[roomName];
-      }
-    }
+    const arrivalDate = QueryService.datePart(arrival);
+    const departureDate = QueryService.datePart(departure);
+
+    Object.keys(this._reservationsByDate)
+      .filter(reservationDate => arrivalDate <= reservationDate && reservationDate < departureDate)
+      .forEach(reservationDate => {
+        const roomNamesReservedOnDate = this._reservationsByDate[reservationDate] || {};
+        Object.keys(roomNamesReservedOnDate)
+          .forEach(roomName => delete availableRoomNames[roomName])
+      });
 
     return Object.keys(availableRoomNames)
       .map(roomName => {
