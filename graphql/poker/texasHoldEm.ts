@@ -30,7 +30,7 @@ export class TexasHoldEmHand {
       .flat();
   }
 
-  get name(): string{
+  get name(): string {
     return this._name;
   }
 
@@ -71,29 +71,32 @@ export class TexasHoldEm {
       .map(value => new TexasHoldEmHand(value));
   }
 
+  static bestToWorst = (a: TexasHoldEmHand, b: TexasHoldEmHand) => {
+    if (!b.hasEnoughCards()) {
+      return -1;
+    }
+    if (!a.hasEnoughCards()) {
+      return 1;
+    }
+    if (a > b) {
+      return -1;
+    }
+    if (b > a) {
+      return 1;
+    }
+    return 0;
+  };
+
   static toOutput(input: string): string {
     const texasHoldEmHands = TexasHoldEm.parse(input);
-    const bestToWorst = (a: TexasHoldEmHand, b: TexasHoldEmHand) => {
-      if(!b.hasEnoughCards()){
-        return -1;
-      }
-      if(!a.hasEnoughCards()){
-        return 1;
-      }
-      if (a > b) {
-        return -1;
-      }
-      if (b > a) {
-        return 1;
-      }
-      return 0;
-    };
+    return texasHoldEmHands.map(x => `${x.name} ${x.description}`.trim())
+      .join(EOL);
 
-    const winner = texasHoldEmHands.sort(bestToWorst)[0];
+    const winner = texasHoldEmHands.sort(TexasHoldEm.bestToWorst)[0];
 
     return texasHoldEmHands
       .map((value) => {
-        return `${value.name} ${value.description} ${value === winner ? "(winner)": ""}`.trim()
+        return `${value.name} ${value.description} ${value === winner ? "(winner)" : ""}`.trim()
       })
       .join(EOL);
   }
