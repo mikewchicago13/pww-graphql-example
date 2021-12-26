@@ -37,33 +37,33 @@ describe('book hotel room', () => {
   });
 
   describe('should book a room', () => {
-    function bookAndValidateNotAvailableBetween(arrival: string, departure: string, roomName: string) {
-      book(roomName);
-      notAvailableBetween(arrival, departure, roomName);
+    function bookAndValidateNotAvailableBetween(arrival: string, departure: string) {
+      book("0");
+      notAvailableBetween(arrival, departure, "0");
     }
 
-    function bookAndValidateAvailableBetween(arrival: string, departure: string, roomName: string) {
-      book(roomName);
-      availableBetween(arrival, departure, roomName);
+    function bookAndValidateAvailableBetween(arrival: string, departure: string) {
+      book("0");
+      availableBetween(arrival, departure, "0");
     }
 
     it('should not be available on last day of reservation', () => {
-      bookAndValidateNotAvailableBetween("2021-12-25", "2021-12-26", "0");
+      bookAndValidateNotAvailableBetween("2021-12-25", "2021-12-26");
     });
     it('should not be available on first day of reservation', () => {
-      bookAndValidateNotAvailableBetween("2021-12-24", "2021-12-25", "1");
+      bookAndValidateNotAvailableBetween("2021-12-24", "2021-12-25");
     });
     it('should not be available over entire reservation', () => {
-      bookAndValidateNotAvailableBetween("2021-12-24", "2021-12-26", "2");
+      bookAndValidateNotAvailableBetween("2021-12-24", "2021-12-26");
     });
     it('should not be available on span over entire duration', () => {
-      bookAndValidateNotAvailableBetween("2021-12-01", "2021-12-31", "3");
+      bookAndValidateNotAvailableBetween("2021-12-01", "2021-12-31");
     });
     it('should be available immediately after the reservation expires', () => {
-      bookAndValidateAvailableBetween("2021-12-26", "2021-12-27", "4")
+      bookAndValidateAvailableBetween("2021-12-26", "2021-12-27")
     });
     it('should be available immediately before the reservation starts', () => {
-      bookAndValidateAvailableBetween("2021-12-21", "2021-12-24", "5")
+      bookAndValidateAvailableBetween("2021-12-21", "2021-12-24")
     });
 
     describe('cannot double book', () => {
@@ -71,9 +71,8 @@ describe('book hotel room', () => {
         book("0", "2021-12-24", "2021-12-26")
         areAllRoomsAvailableBetween("1970-01-01", "2021-12-24")
         areAllRoomsAvailableBetween("2021-12-26", "3000-01-01")
-        expect(() => {
-          book("0", "2021-01-01", "2021-12-31")
-        }).toThrow();
+        expect(() => areAllRoomsAvailableBetween("2021-12-24", "2021-12-26")).toThrow();
+        expect(() => book("0", "2021-01-01", "2021-12-31")).toThrow();
         areAllRoomsAvailableBetween("1970-01-01", "2021-12-24")
         areAllRoomsAvailableBetween("2021-12-26", "3000-01-01")
       });
