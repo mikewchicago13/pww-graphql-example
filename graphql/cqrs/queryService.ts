@@ -37,7 +37,7 @@ export class QueryService {
          i < roomBookedEvent.departureDate;
          i = DateUtilities.nextDay(i)) {
       const date = DateUtilities.datePart(i);
-      if (this._reservationsByDate[date]) {
+      if (date in this._reservationsByDate) {
         this._reservationsByDate[date][roomBookedEvent.roomName] = 1;
       } else {
         const map: any = {}
