@@ -1,8 +1,4 @@
-import {
-  Subscriber,
-  RoomBookedEvent,
-  RoomCanceledEvent
-} from "./eventNotifications";
+import {RoomBookedEvent, RoomCanceledEvent, Subscriber} from "./eventNotifications";
 import {DateUtilities} from "./dateUtilities";
 
 interface Room {
@@ -43,9 +39,11 @@ export class QueryService {
 
   private static cancelReservation(roomCanceledEvent: RoomCanceledEvent) {
     const date = DateUtilities.datePart(roomCanceledEvent.date);
-    const reservationsOnCancellationDate = this._reservationsByDate[date];
-    if (reservationsOnCancellationDate && reservationsOnCancellationDate[roomCanceledEvent.roomName]) {
-      delete reservationsOnCancellationDate[roomCanceledEvent.roomName];
+    if (this._reservationsByDate[date] && this._reservationsByDate[date][roomCanceledEvent.roomName]) {
+      delete this._reservationsByDate[date][roomCanceledEvent.roomName];
+    }
+    if(Object.keys(this._reservationsByDate[date]).length === 0){
+      delete this._reservationsByDate[date];
     }
   }
 
