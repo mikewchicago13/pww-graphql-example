@@ -8,11 +8,8 @@ describe('solution', () => {
   it('should work when called twice', () => {
     assert.equal(add(1)(2), 3);
   });
-  it('should work when called with variable arguments', () => {
-    assert.equal(add(1)(2, 3), 6);
-  });
-  it('call with () at end works', () => {
-    assert.equal(add(10)(20, 30)(), 60);
+  it('should work when called three times', () => {
+    assert.equal(add(1)(2)(5), 8);
   });
   it('should work when called 5 times', () => {
     assert.equal(add(1)(2)(3)(4)(5), 15);
