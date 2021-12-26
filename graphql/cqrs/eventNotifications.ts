@@ -1,11 +1,4 @@
-export enum EventTypes {
-  RoomBooked,
-  RoomCanceled,
-  RoomAdded
-}
-
 export interface Event {
-  readonly eventType: EventTypes;
 }
 
 const _subscriptions: any = {};
@@ -17,7 +10,7 @@ interface Subscription<T extends Event> {
 
 export class Subscriber<T extends Event> {
   subscribe({EventType, callback}: Subscription<T>): void {
-    const eventType = new EventType({}).eventType;
+    const eventType = new EventType({}).constructor.name;
     if (!(eventType in _subscriptions)) {
       _subscriptions[eventType] = []
     }
@@ -31,6 +24,6 @@ interface Publication<T extends Event> {
 
 export class Publisher<T extends Event> {
   publish({evt}: Publication<T>): void {
-    (_subscriptions[evt.eventType] || []).forEach((value: ((evt: T) => void)) => value(evt))
+    (_subscriptions[evt.constructor.name] || []).forEach((value: ((evt: T) => void)) => value(evt))
   }
 }

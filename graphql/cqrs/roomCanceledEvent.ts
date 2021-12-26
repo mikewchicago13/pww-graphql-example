@@ -1,4 +1,4 @@
-import {Event, EventTypes} from "./eventNotifications";
+import {Event} from "./eventNotifications";
 
 export class RoomCanceledEvent implements Event {
   private readonly _roomName: string;
@@ -15,9 +15,5 @@ export class RoomCanceledEvent implements Event {
 
   get roomName(): string {
     return this._roomName;
-  }
-
-  get eventType(): EventTypes {
-    return EventTypes.RoomCanceled;
   }
 }
