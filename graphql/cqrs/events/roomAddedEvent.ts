@@ -1,4 +1,4 @@
-import {Event} from "./eventNotifications";
+import {Event} from "../eventNotifications";
 
 export class RoomAddedEvent implements Event {
   private readonly _roomName: string;
