@@ -52,7 +52,7 @@ export class RoomCanceledEvent implements Event {
   }
 }
 
-export enum EventTypes {
+enum EventTypes {
   RoomBooked,
   RoomCanceled
 }
@@ -60,10 +60,17 @@ export enum EventTypes {
 interface Event {
   readonly eventType: EventTypes
 }
+
 const _subscriptions: any = {};
 
+interface Subscription<T extends Event> {
+  readonly EventType: { new(param: any): T; }
+  readonly callback: (evt: T) => void
+}
+
 export class Subscriber<T extends Event> {
-  subscribe(eventType: EventTypes, callback: (evt: T) => void): void {
+  subscribe({EventType, callback}: Subscription<T>): void {
+    const eventType = new EventType({}).eventType;
     if (!(eventType in _subscriptions)) {
       _subscriptions[eventType] = []
     }
