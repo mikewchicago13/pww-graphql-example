@@ -6,10 +6,6 @@ export class Kata {
       "G": "C",
       "C": "G"
     }
-    const result: string[] = [];
-    for (let i = 0; i < dna.length; i++) {
-      result.push(complements[dna[i]])
-    }
-    return result.join("");
+    return dna.replace(/[ATGC]/g, (substring) => complements[substring]);
   }
 }
