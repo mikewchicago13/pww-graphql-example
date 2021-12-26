@@ -22,10 +22,14 @@ class ReservableRoom {
 }
 
 export class CommandService {
-  private readonly _reservationsByRoom: any = {};
+  private static readonly _reservationsByRoom: any = {};
+
+  static{
+    console.log("COMMAND IN_STATIC_INITIALIZER")
+  }
 
   bookARoom(booking: Booking): void {
-    this._reserve(booking);
+    CommandService._reserve(booking);
     EventNotifications.publish({
       roomName: booking.roomName,
       arrivalDate: booking.arrivalDate,
@@ -33,11 +37,11 @@ export class CommandService {
     })
   }
 
-  private _reserve(booking: Booking): void {
-    if(!(booking.roomName in this._reservationsByRoom)){
-      this._reservationsByRoom[booking.roomName] = new ReservableRoom()
+  private static _reserve(booking: Booking): void {
+    if(!(booking.roomName in CommandService._reservationsByRoom)){
+      CommandService._reservationsByRoom[booking.roomName] = new ReservableRoom()
     }
-    const room: ReservableRoom = this._reservationsByRoom[booking.roomName];
+    const room: ReservableRoom = CommandService._reservationsByRoom[booking.roomName];
     room.reserve(booking);
   }
 }
@@ -76,18 +80,19 @@ interface Room {
 }
 
 export class QueryService {
-  private readonly _rooms: string[] = new Array(10).fill(1)
+  private static readonly _rooms: string[] = new Array(10).fill(1)
     .map((_, index): string => index + "");
 
-  private readonly _reservationsByDate: any = {};
+  private static readonly _reservationsByDate: any = {};
 
-  constructor() {
+  static {
+    console.log("QUERY IN_STATIC_INITIALIZER");
     EventNotifications.subscribe(({roomBookedEvent}) => {
       this.logReservation(roomBookedEvent);
     })
   }
 
-  private logReservation(roomBookedEvent: RoomBookedEvent): void {
+  private static logReservation(roomBookedEvent: RoomBookedEvent): void {
     for (let i = roomBookedEvent.arrivalDate;
          i < roomBookedEvent.departureDate;
          i = DateUtilities.nextDay(i)) {
@@ -105,7 +110,7 @@ export class QueryService {
   freeRooms(arrival: Date, departure: Date): Room[] {
     const reservedRoomNames = this._reservedRoomNames(arrival, departure);
 
-    return this._rooms
+    return QueryService._rooms
       .filter(roomName => !(roomName in reservedRoomNames))
       .map(roomName => {
         return {
@@ -117,10 +122,10 @@ export class QueryService {
   private _reservedRoomNames(arrival: Date, departure: Date): any {
     const arrivalDate = DateUtilities.datePart(arrival);
     const departureDate = DateUtilities.datePart(departure);
-    return Object.keys(this._reservationsByDate)
+    return Object.keys(QueryService._reservationsByDate)
       .filter(reservationDate => arrivalDate <= reservationDate && reservationDate < departureDate)
       .reduce((previousValue, reservationDate) => {
-        const roomNamesReservedOnDate = this._reservationsByDate[reservationDate] || {};
+        const roomNamesReservedOnDate = QueryService._reservationsByDate[reservationDate] || {};
         return {...previousValue, ...roomNamesReservedOnDate};
       }, {});
   }
