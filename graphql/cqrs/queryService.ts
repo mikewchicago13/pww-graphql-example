@@ -1,5 +1,8 @@
-import {RoomAddedEvent, RoomBookedEvent, RoomCanceledEvent, Subscriber} from "./eventNotifications";
+import {Subscriber} from "./eventNotifications";
 import {DateUtilities} from "./dateUtilities";
+import {RoomAddedEvent} from "./roomAddedEvent";
+import {RoomBookedEvent} from "./roomBookedEvent";
+import {RoomCanceledEvent} from "./roomCanceledEvent";
 
 interface Room {
   roomName: string;

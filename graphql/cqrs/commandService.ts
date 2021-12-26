@@ -1,5 +1,8 @@
-import {Publisher, RoomAddedEvent, RoomBookedEvent, RoomCanceledEvent} from "./eventNotifications";
+import {Publisher} from "./eventNotifications";
 import {DateUtilities} from "./dateUtilities";
+import {RoomAddedEvent} from "./roomAddedEvent";
+import {RoomBookedEvent} from "./roomBookedEvent";
+import {RoomCanceledEvent} from "./roomCanceledEvent";
 
 interface Booking {
   clientId: string;
