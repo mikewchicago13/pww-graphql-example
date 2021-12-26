@@ -17,14 +17,28 @@ class ReservableRoom {
   }
 
   reserve(booking: Booking) {
+    this._validateRoomIsAvailable(booking);
+    this._bookAllDates(booking);
+  }
+
+  private _bookAllDates(booking: Booking) {
     for (let i = booking.arrivalDate;
          i < booking.departureDate;
          i = DateUtilities.nextDay(i)) {
-      const datePart = DateUtilities.datePart(i);
-      if (datePart in this._datesReserved) {
-        throw new Error(`Room ${booking.roomName} is already reserved on ${datePart}`);
-      }
-      this._datesReserved[datePart] = booking.clientId;
+      this._datesReserved[DateUtilities.datePart(i)] = booking.clientId;
+    }
+  }
+
+  private _validateRoomIsAvailable(booking: Booking) {
+    const arrivalDate = DateUtilities.datePart(booking.arrivalDate);
+    const departureDate = DateUtilities.datePart(booking.departureDate);
+
+    const doubleBookDates = Object.keys(this._datesReserved)
+      .filter(reservationDate => arrivalDate <= reservationDate && reservationDate < departureDate)
+      .join(",");
+
+    if(doubleBookDates) {
+      throw new Error(`Room ${booking.roomName} is already reserved on ${doubleBookDates}`)
     }
   }
 
