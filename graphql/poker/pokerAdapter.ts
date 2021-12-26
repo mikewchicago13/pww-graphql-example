@@ -1,5 +1,5 @@
-import {Hand} from "./poker/hand";
-import {Card} from "./poker/card";
+import {Hand} from "./hand";
+import {Card} from "./card";
 
 interface HandOutput {
   description: string,

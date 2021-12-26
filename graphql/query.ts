@@ -3,7 +3,7 @@ import {AuthorRepository} from "./books/authorRepository";
 import {BowlingAdapter} from "./bowling/bowlingAdapter";
 import {Greetings} from "./greetings/greetings";
 import {secure} from "./secure";
-import {PokerAdapter} from "./pokerAdapter";
+import {PokerAdapter} from "./poker/pokerAdapter";
 
 export default {
   goodbye: Greetings.goodbye,
