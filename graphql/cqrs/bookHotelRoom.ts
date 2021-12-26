@@ -76,23 +76,25 @@ export class QueryService {
   }
 
   freeRooms(arrival: Date, departure: Date): Room[] {
-    const availableRoomNames: any = {...this._rooms};
-    const arrivalDate = QueryService.datePart(arrival);
-    const departureDate = QueryService.datePart(departure);
+    const reservedRoomNames = this._reservedRoomNames(arrival, departure);
 
-    Object.keys(this._reservationsByDate)
-      .filter(reservationDate => arrivalDate <= reservationDate && reservationDate < departureDate)
-      .forEach(reservationDate => {
-        const roomNamesReservedOnDate = this._reservationsByDate[reservationDate] || {};
-        Object.keys(roomNamesReservedOnDate)
-          .forEach(roomName => delete availableRoomNames[roomName])
-      });
-
-    return Object.keys(availableRoomNames)
+    return Object.keys(this._rooms)
+      .filter(roomName => !(roomName in reservedRoomNames))
       .map(roomName => {
         return {
           roomName
         }
       });
+  }
+
+  private _reservedRoomNames(arrival: Date, departure: Date): any {
+    const arrivalDate = QueryService.datePart(arrival);
+    const departureDate = QueryService.datePart(departure);
+    return Object.keys(this._reservationsByDate)
+      .filter(reservationDate => arrivalDate <= reservationDate && reservationDate < departureDate)
+      .reduce((previousValue, reservationDate) => {
+        const roomNamesReservedOnDate = this._reservationsByDate[reservationDate] || {};
+        return {...previousValue, ...roomNamesReservedOnDate};
+      }, {});
   }
 }
