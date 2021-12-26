@@ -1,5 +1,5 @@
-import { assert } from "chai";
 import {validBraces} from "../../graphql/codewars/validBraces";
+import { assert } from "chai";
 
 describe("valid braces", function() {
   it("parentheses", function() {
@@ -11,16 +11,28 @@ describe("valid braces", function() {
   it("curly braces", function() {
     assert.strictEqual(validBraces("{}"), true);
   });
-  xit('mismatch', () => {
+  it('mismatch', () => {
     assert.strictEqual(validBraces("[(])"), false);
   });
-  xit('mismatch missing opening }', () => {
+  it('mismatch missing opening }', () => {
     assert.strictEqual(validBraces("[]()}"), false);
   });
-  xit('mismatch missing closing }', () => {
-    assert.strictEqual(validBraces("[](){"), false);
+  it('mismatch missing opening [', () => {
+    assert.strictEqual(validBraces("]"), false);
   });
-  xit('intermixed different types', () => {
-    assert.strictEqual(validBraces("[[]]({}){[]}{[()]}{[({})]}"), true);
+  it('mismatch missing opening (', () => {
+    assert.strictEqual(validBraces(")"), false);
+  });
+  it('mismatch missing closing }', () => {
+    assert.strictEqual(validBraces("{"), false);
+  });
+  it('mismatch missing closing )', () => {
+    assert.strictEqual(validBraces("("), false);
+  });
+  it('mismatch missing closing ]', () => {
+    assert.strictEqual(validBraces("["), false);
+  });
+  it('intermixed different types', () => {
+    assert.strictEqual(validBraces("[[]]({}){[]}{[()]}{[({})]}(((((([]))))))"), true);
   });
 });
