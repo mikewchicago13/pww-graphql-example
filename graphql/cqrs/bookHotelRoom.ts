@@ -20,7 +20,7 @@ class ReservableRoom {
          i = DateUtilities.nextDay(i)) {
       const datePart = DateUtilities.datePart(i);
       if (datePart in this._datesReserved) {
-        throw new Error(`Room ${booking.roomName} is already reserved ${JSON.stringify(this._datesReserved)}`);
+        throw new Error(`Room ${booking.roomName} is already reserved on ${datePart}`);
       }
       this._datesReserved[datePart] = booking.clientId;
     }
