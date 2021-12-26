@@ -1,4 +1,4 @@
-import {Publisher, RoomBookedEvent, RoomCanceledEvent} from "./eventNotifications";
+import {Publisher, RoomAddedEvent, RoomBookedEvent, RoomCanceledEvent} from "./eventNotifications";
 import {DateUtilities} from "./dateUtilities";
 
 interface Booking {
@@ -37,7 +37,7 @@ class ReservableRoom {
       .filter(reservationDate => DateUtilities.isDatePartBetween(reservationDate, arrivalDate, departureDate))
       .join(",");
 
-    if(doubleBookDates) {
+    if (doubleBookDates) {
       throw new Error(`Room ${booking.roomName} is already reserved on ${doubleBookDates}`)
     }
   }
@@ -73,7 +73,7 @@ export class CommandService {
 
   private static _reserve(booking: Booking): void {
     if (!(booking.roomName in CommandService._reservationsByRoom)) {
-      CommandService._reservationsByRoom[booking.roomName] = new ReservableRoom(booking.roomName)
+      throw new Error(`${booking.roomName} does not exist`);
     }
     const room: ReservableRoom = CommandService._reservationsByRoom[booking.roomName];
     room.reserve(booking);
@@ -89,6 +89,14 @@ export class CommandService {
       });
       delete CommandService._reservationsByRoom[roomName];
     }
+  }
+
+  addRooms(roomNames: string[]): void {
+    roomNames
+      .forEach(roomName => {
+        CommandService._reservationsByRoom[roomName] = new ReservableRoom(roomName)
+        new Publisher<RoomAddedEvent>().publish({evt: new RoomAddedEvent(roomName)})
+      })
   }
 }
 

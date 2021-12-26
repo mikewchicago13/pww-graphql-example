@@ -80,6 +80,11 @@ describe('book hotel room', () => {
   });
 });
 
+beforeEach(() => {
+  new CommandService()
+    .addRooms(new Array(10).fill(1).map((_, index) => index + ""))
+})
+
 afterEach(() => {
   new CommandService().cancelEverything();
   areAllRoomsAvailableBetween("1970-01-01", "3000-01-01")

@@ -1,3 +1,18 @@
+export class RoomAddedEvent implements Event{
+  private readonly _roomName: string;
+  constructor(roomName: string) {
+    this._roomName = roomName;
+  }
+
+  get roomName(): string {
+    return this._roomName;
+  }
+
+  get eventType(): EventTypes{
+    return EventTypes.RoomAdded;
+  }
+}
+
 export class RoomBookedEvent implements Event {
   private readonly _roomName: string;
   private readonly _arrivalDate: Date;
@@ -54,7 +69,8 @@ export class RoomCanceledEvent implements Event {
 
 enum EventTypes {
   RoomBooked,
-  RoomCanceled
+  RoomCanceled,
+  RoomAdded
 }
 
 interface Event {

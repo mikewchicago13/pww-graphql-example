@@ -1,4 +1,4 @@
-import {RoomBookedEvent, RoomCanceledEvent, Subscriber} from "./eventNotifications";
+import {RoomAddedEvent, RoomBookedEvent, RoomCanceledEvent, Subscriber} from "./eventNotifications";
 import {DateUtilities} from "./dateUtilities";
 
 interface Room {
@@ -6,8 +6,7 @@ interface Room {
 }
 
 export class QueryService {
-  private static readonly _rooms: string[] = new Array(10).fill(1)
-    .map((_, index): string => index + "");
+  private static readonly _rooms: any = {};
 
   private static readonly _reservationsByDate: any = {};
 
@@ -20,6 +19,14 @@ export class QueryService {
       EventType: RoomCanceledEvent,
       callback: (roomCanceledEvent) => this.cancelReservation(roomCanceledEvent)
     })
+    new Subscriber<RoomAddedEvent>().subscribe({
+      EventType: RoomAddedEvent,
+      callback: (roomAddedEvent) => this.addRoom(roomAddedEvent)
+    })
+  }
+
+  private static addRoom(roomAddedEvent: RoomAddedEvent) {
+    this._rooms[roomAddedEvent.roomName] = 1;
   }
 
   private static logReservation(roomBookedEvent: RoomBookedEvent): void {
@@ -50,7 +57,7 @@ export class QueryService {
   freeRooms(arrival: Date, departure: Date): Room[] {
     const reservedRoomNames = this._reservedRoomNames(arrival, departure);
 
-    return QueryService._rooms
+    return Object.keys(QueryService._rooms)
       .filter(roomName => !(roomName in reservedRoomNames))
       .map(roomName => {
         return {
