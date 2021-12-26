@@ -76,7 +76,7 @@ export class CommandService {
 
   private static _reserve(booking: Booking): void {
     if (!(booking.roomName in CommandService._reservationsByRoom)) {
-      throw new Error(`${booking.roomName} does not exist`);
+      throw new Error(`Room ${booking.roomName} does not exist`);
     }
     const room: ReservableRoom = CommandService._reservationsByRoom[booking.roomName];
     room.reserve(booking);
