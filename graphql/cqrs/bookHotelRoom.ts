@@ -7,12 +7,11 @@ interface Booking {
 
 class ReservableRoom {
   private readonly _roomName: string;
+  private readonly _datesReserved: any = {};
 
   constructor(roomName: string) {
     this._roomName = roomName;
   }
-
-  private readonly _datesReserved: any = {};
 
   reserve(booking: Booking) {
     for (let i = booking.arrivalDate;
@@ -42,6 +41,10 @@ export class CommandService {
 
   bookARoom(booking: Booking): void {
     CommandService._reserve(booking);
+    CommandService._notify(booking);
+  }
+
+  private static _notify(booking: Booking) {
     EventNotifications.publish(EventTypes.RoomBooked, {
       roomName: booking.roomName,
       arrivalDate: booking.arrivalDate,
@@ -60,8 +63,10 @@ export class CommandService {
   cancelEverything() {
     for (const roomName in CommandService._reservationsByRoom) {
       const room: ReservableRoom = CommandService._reservationsByRoom[roomName];
-      room.cancelAllNights((evt: RoomCanceledEvent) => EventNotifications.publish(EventTypes.RoomCanceled, evt));
-      delete CommandService._reservationsByRoom[roomName];
+      room.cancelAllNights((evt: RoomCanceledEvent) => {
+        EventNotifications.publish(EventTypes.RoomCanceled, evt);
+        delete CommandService._reservationsByRoom[roomName];
+      });
     }
   }
 }
