@@ -1,4 +1,4 @@
-import {EventNotifications, RoomBookedEvent, RoomCanceledEvent} from "./eventNotifications";
+import {Publisher, RoomBookedEvent, RoomCanceledEvent} from "./eventNotifications";
 import {DateUtilities} from "./dateUtilities";
 
 interface Booking {
@@ -62,7 +62,7 @@ export class CommandService {
   }
 
   private static _notify(booking: Booking) {
-    new EventNotifications<RoomBookedEvent>().publish(new RoomBookedEvent({
+    new Publisher<RoomBookedEvent>().publish(new RoomBookedEvent({
       roomName: booking.roomName,
       arrivalDate: booking.arrivalDate,
       departureDate: booking.departureDate
@@ -81,7 +81,7 @@ export class CommandService {
     for (const roomName in CommandService._reservationsByRoom) {
       const room: ReservableRoom = CommandService._reservationsByRoom[roomName];
       room.cancelAllNights((evt: RoomCanceledEvent) => {
-        new EventNotifications<RoomCanceledEvent>().publish(evt);
+        new Publisher<RoomCanceledEvent>().publish(evt);
       });
       delete CommandService._reservationsByRoom[roomName];
     }

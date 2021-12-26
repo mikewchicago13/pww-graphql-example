@@ -60,18 +60,19 @@ export enum EventTypes {
 interface Event {
   readonly eventType: EventTypes
 }
+const _subscriptions: any = {};
 
-export class EventNotifications<T extends Event> {
-  private static readonly _subscriptions: any = {};
-
+export class Subscriber<T extends Event> {
   subscribe(eventType: EventTypes, callback: (evt: T) => void): void {
-    if (!(eventType in EventNotifications._subscriptions)) {
-      EventNotifications._subscriptions[eventType] = []
+    if (!(eventType in _subscriptions)) {
+      _subscriptions[eventType] = []
     }
-    EventNotifications._subscriptions[eventType].push(callback)
+    _subscriptions[eventType].push(callback)
   }
+}
 
+export class Publisher<T extends Event> {
   publish(evt: T): void {
-    (EventNotifications._subscriptions[evt.eventType] || []).forEach((value: ((evt: T) => void)) => value(evt))
+    (_subscriptions[evt.eventType] || []).forEach((value: ((evt: T) => void)) => value(evt))
   }
 }

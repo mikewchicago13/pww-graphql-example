@@ -1,5 +1,5 @@
 import {
-  EventNotifications,
+  Subscriber,
   EventTypes,
   RoomBookedEvent,
   RoomCanceledEvent
@@ -17,10 +17,10 @@ export class QueryService {
   private static readonly _reservationsByDate: any = {};
 
   static {
-    new EventNotifications<RoomBookedEvent>().subscribe(EventTypes.RoomBooked, (roomBookedEvent) => {
+    new Subscriber<RoomBookedEvent>().subscribe(EventTypes.RoomBooked, (roomBookedEvent) => {
       this.logReservation(roomBookedEvent);
     })
-    new EventNotifications<RoomCanceledEvent>().subscribe(EventTypes.RoomCanceled, (roomCanceledEvent) => {
+    new Subscriber<RoomCanceledEvent>().subscribe(EventTypes.RoomCanceled, (roomCanceledEvent) => {
       this.cancelReservation(roomCanceledEvent);
     })
   }
