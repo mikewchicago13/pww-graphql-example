@@ -1,5 +1,6 @@
-import {CommandService, QueryService} from "../../graphql/cqrs/bookHotelRoom";
 import {v4 as uuidv4} from 'uuid';
+import {CommandService} from "../../graphql/cqrs/commandService";
+import {QueryService} from "../../graphql/cqrs/queryService";
 
 describe('book hotel room', () => {
   it('should have free rooms', () => {
