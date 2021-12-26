@@ -6,6 +6,12 @@ interface Booking {
 }
 
 class ReservableRoom {
+  private readonly _roomName: string;
+
+  constructor(roomName: string) {
+    this._roomName = roomName;
+  }
+
   private readonly _datesReserved: any = {};
 
   reserve(booking: Booking) {
@@ -13,10 +19,20 @@ class ReservableRoom {
          i < booking.departureDate;
          i = DateUtilities.nextDay(i)) {
       const datePart = DateUtilities.datePart(i);
-      if(datePart in this._datesReserved){
+      if (datePart in this._datesReserved) {
         throw new Error(`Room ${booking.roomName} is already reserved ${JSON.stringify(this._datesReserved)}`);
       }
       this._datesReserved[datePart] = booking.clientId;
+    }
+  }
+
+  cancelAllNights(callback: (evt: RoomCanceledEvent) => void) {
+    for (const datesReservedKey in this._datesReserved) {
+      delete this._datesReserved[datesReservedKey];
+      callback({
+        date: new Date(datesReservedKey),
+        roomName: this._roomName
+      })
     }
   }
 }
@@ -24,13 +40,9 @@ class ReservableRoom {
 export class CommandService {
   private static readonly _reservationsByRoom: any = {};
 
-  static{
-    console.log("COMMAND IN_STATIC_INITIALIZER")
-  }
-
   bookARoom(booking: Booking): void {
     CommandService._reserve(booking);
-    EventNotifications.publish({
+    EventNotifications.publish(EventTypes.RoomBooked, {
       roomName: booking.roomName,
       arrivalDate: booking.arrivalDate,
       departureDate: booking.departureDate
@@ -38,11 +50,19 @@ export class CommandService {
   }
 
   private static _reserve(booking: Booking): void {
-    if(!(booking.roomName in CommandService._reservationsByRoom)){
-      CommandService._reservationsByRoom[booking.roomName] = new ReservableRoom()
+    if (!(booking.roomName in CommandService._reservationsByRoom)) {
+      CommandService._reservationsByRoom[booking.roomName] = new ReservableRoom(booking.roomName)
     }
     const room: ReservableRoom = CommandService._reservationsByRoom[booking.roomName];
     room.reserve(booking);
+  }
+
+  cancelEverything() {
+    for (const roomName in CommandService._reservationsByRoom) {
+      const room: ReservableRoom = CommandService._reservationsByRoom[roomName];
+      room.cancelAllNights((evt: RoomCanceledEvent) => EventNotifications.publish(EventTypes.RoomCanceled, evt));
+      delete CommandService._reservationsByRoom[roomName];
+    }
   }
 }
 
@@ -50,6 +70,11 @@ interface RoomBookedEvent {
   roomName: string;
   arrivalDate: Date;
   departureDate: Date;
+}
+
+interface RoomCanceledEvent {
+  roomName: string;
+  date: Date;
 }
 
 class DateUtilities {
@@ -63,15 +88,23 @@ class DateUtilities {
   }
 }
 
-class EventNotifications {
-  private static _subscriptions: (({roomBookedEvent}: { roomBookedEvent: RoomBookedEvent }) => void)[] = []
+enum EventTypes {
+  RoomBooked,
+  RoomCanceled
+}
 
-  static subscribe(callback: ({roomBookedEvent}: { roomBookedEvent: RoomBookedEvent }) => void): void {
-    EventNotifications._subscriptions.push(callback)
+class EventNotifications {
+  private static readonly _subscriptions: any = {};
+
+  static subscribe(eventType: EventTypes, callback: (evt: any) => void): void {
+    if (!(eventType in this._subscriptions)) {
+      this._subscriptions[eventType] = []
+    }
+    this._subscriptions[eventType].push(callback)
   }
 
-  static publish(roomBookedEvent: RoomBookedEvent): void {
-    this._subscriptions.forEach(value => value({roomBookedEvent}))
+  static publish(eventType: EventTypes, evt: any): void {
+    (this._subscriptions[eventType] || []).forEach((value: ((evt: any) => void)) => value(evt))
   }
 }
 
@@ -86,9 +119,11 @@ export class QueryService {
   private static readonly _reservationsByDate: any = {};
 
   static {
-    console.log("QUERY IN_STATIC_INITIALIZER");
-    EventNotifications.subscribe(({roomBookedEvent}) => {
+    EventNotifications.subscribe(EventTypes.RoomBooked, (roomBookedEvent) => {
       this.logReservation(roomBookedEvent);
+    })
+    EventNotifications.subscribe(EventTypes.RoomCanceled, (roomCanceledEvent) => {
+      this.cancelReservation(roomCanceledEvent);
     })
   }
 
@@ -104,6 +139,14 @@ export class QueryService {
         map[roomBookedEvent.roomName] = 1;
         this._reservationsByDate[date] = map;
       }
+    }
+  }
+
+  private static cancelReservation(roomCanceledEvent: RoomCanceledEvent) {
+    const date = DateUtilities.datePart(roomCanceledEvent.date);
+    const reservationsOnCancellationDate = this._reservationsByDate[date];
+    if (reservationsOnCancellationDate && reservationsOnCancellationDate[roomCanceledEvent.roomName]) {
+      delete reservationsOnCancellationDate[roomCanceledEvent.roomName];
     }
   }
 
@@ -129,4 +172,5 @@ export class QueryService {
         return {...previousValue, ...roomNamesReservedOnDate};
       }, {});
   }
+
 }

@@ -74,3 +74,10 @@ describe('book hotel room', () => {
     });
   });
 });
+
+afterEach(() => {
+  new CommandService().cancelEverything();
+  expect(new QueryService()
+    .freeRooms(new Date("1970-01-01"), new Date("3000-01-01")))
+    .toHaveLength(10);
+})
