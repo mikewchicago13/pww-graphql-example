@@ -62,11 +62,13 @@ export class CommandService {
   }
 
   private static _notify(booking: Booking) {
-    new Publisher<RoomBookedEvent>().publish(new RoomBookedEvent({
-      roomName: booking.roomName,
-      arrivalDate: booking.arrivalDate,
-      departureDate: booking.departureDate
-    }))
+    new Publisher<RoomBookedEvent>().publish({
+      evt: new RoomBookedEvent({
+        roomName: booking.roomName,
+        arrivalDate: booking.arrivalDate,
+        departureDate: booking.departureDate
+      })
+    })
   }
 
   private static _reserve(booking: Booking): void {
@@ -81,7 +83,9 @@ export class CommandService {
     for (const roomName in CommandService._reservationsByRoom) {
       const room: ReservableRoom = CommandService._reservationsByRoom[roomName];
       room.cancelAllNights((evt: RoomCanceledEvent) => {
-        new Publisher<RoomCanceledEvent>().publish(evt);
+        new Publisher<RoomCanceledEvent>().publish({
+          evt: evt
+        });
       });
       delete CommandService._reservationsByRoom[roomName];
     }

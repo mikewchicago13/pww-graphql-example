@@ -58,7 +58,7 @@ enum EventTypes {
 }
 
 interface Event {
-  readonly eventType: EventTypes
+  readonly eventType: EventTypes;
 }
 
 const _subscriptions: any = {};
@@ -78,8 +78,12 @@ export class Subscriber<T extends Event> {
   }
 }
 
+interface Publication<T extends Event> {
+  readonly evt: T
+}
+
 export class Publisher<T extends Event> {
-  publish(evt: T): void {
+  publish({evt}: Publication<T>): void {
     (_subscriptions[evt.eventType] || []).forEach((value: ((evt: T) => void)) => value(evt))
   }
 }
