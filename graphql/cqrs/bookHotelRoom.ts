@@ -28,10 +28,10 @@ class ReservableRoom {
   cancelAllNights(callback: (evt: RoomCanceledEvent) => void) {
     for (const datesReservedKey in this._datesReserved) {
       delete this._datesReserved[datesReservedKey];
-      callback({
+      callback(new RoomCanceledEvent({
         date: new Date(datesReservedKey),
         roomName: this._roomName
-      })
+      }))
     }
   }
 }
@@ -45,11 +45,11 @@ export class CommandService {
   }
 
   private static _notify(booking: Booking) {
-    EventNotifications.publish(EventTypes.RoomBooked, {
+    new EventNotifications<RoomBookedEvent>().publish(new RoomBookedEvent({
       roomName: booking.roomName,
       arrivalDate: booking.arrivalDate,
       departureDate: booking.departureDate
-    })
+    }))
   }
 
   private static _reserve(booking: Booking): void {
@@ -64,22 +64,65 @@ export class CommandService {
     for (const roomName in CommandService._reservationsByRoom) {
       const room: ReservableRoom = CommandService._reservationsByRoom[roomName];
       room.cancelAllNights((evt: RoomCanceledEvent) => {
-        EventNotifications.publish(EventTypes.RoomCanceled, evt);
+        new EventNotifications<RoomCanceledEvent>().publish(evt);
         delete CommandService._reservationsByRoom[roomName];
       });
     }
   }
 }
 
-interface RoomBookedEvent {
-  roomName: string;
-  arrivalDate: Date;
-  departureDate: Date;
+class RoomBookedEvent implements Event {
+  private readonly _roomName: string;
+  private readonly _arrivalDate: Date;
+  private readonly _departureDate: Date;
+
+  constructor({
+                roomName,
+                arrivalDate,
+                departureDate
+              }: { roomName: string, arrivalDate: Date, departureDate: Date }) {
+    this._roomName = roomName;
+    this._arrivalDate = arrivalDate;
+    this._departureDate = departureDate;
+  }
+
+  get departureDate(): Date {
+    return this._departureDate;
+  }
+
+  get arrivalDate(): Date {
+    return this._arrivalDate;
+  }
+
+  get roomName(): string {
+    return this._roomName;
+  }
+
+  get eventType(): EventTypes {
+    return EventTypes.RoomBooked;
+  }
 }
 
-interface RoomCanceledEvent {
-  roomName: string;
-  date: Date;
+class RoomCanceledEvent implements Event {
+  private readonly _roomName: string;
+  private readonly _date: Date;
+
+  constructor({roomName, date}: { roomName: string, date: Date }) {
+    this._roomName = roomName;
+    this._date = date;
+  }
+
+  get date(): Date {
+    return this._date;
+  }
+
+  get roomName(): string {
+    return this._roomName;
+  }
+
+  get eventType(): EventTypes {
+    return EventTypes.RoomCanceled;
+  }
 }
 
 class DateUtilities {
@@ -98,18 +141,22 @@ enum EventTypes {
   RoomCanceled
 }
 
-class EventNotifications {
+interface Event {
+  readonly eventType: EventTypes
+}
+
+class EventNotifications<T extends Event> {
   private static readonly _subscriptions: any = {};
 
-  static subscribe(eventType: EventTypes, callback: (evt: any) => void): void {
-    if (!(eventType in this._subscriptions)) {
-      this._subscriptions[eventType] = []
+  subscribe(eventType: EventTypes, callback: (evt: T) => void): void {
+    if (!(eventType in EventNotifications._subscriptions)) {
+      EventNotifications._subscriptions[eventType] = []
     }
-    this._subscriptions[eventType].push(callback)
+    EventNotifications._subscriptions[eventType].push(callback)
   }
 
-  static publish(eventType: EventTypes, evt: any): void {
-    (this._subscriptions[eventType] || []).forEach((value: ((evt: any) => void)) => value(evt))
+  publish(evt: T): void {
+    (EventNotifications._subscriptions[evt.eventType] || []).forEach((value: ((evt: T) => void)) => value(evt))
   }
 }
 
@@ -124,10 +171,10 @@ export class QueryService {
   private static readonly _reservationsByDate: any = {};
 
   static {
-    EventNotifications.subscribe(EventTypes.RoomBooked, (roomBookedEvent) => {
+    new EventNotifications<RoomBookedEvent>().subscribe(EventTypes.RoomBooked, (roomBookedEvent) => {
       this.logReservation(roomBookedEvent);
     })
-    EventNotifications.subscribe(EventTypes.RoomCanceled, (roomCanceledEvent) => {
+    new EventNotifications<RoomCanceledEvent>().subscribe(EventTypes.RoomCanceled, (roomCanceledEvent) => {
       this.cancelReservation(roomCanceledEvent);
     })
   }
