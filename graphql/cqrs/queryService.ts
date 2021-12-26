@@ -65,7 +65,7 @@ export class QueryService {
     const arrivalDate = DateUtilities.datePart(arrival);
     const departureDate = DateUtilities.datePart(departure);
     return Object.keys(QueryService._reservationsByDate)
-      .filter(reservationDate => arrivalDate <= reservationDate && reservationDate < departureDate)
+      .filter(reservationDate => DateUtilities.isDatePartBetween(reservationDate, arrivalDate, departureDate))
       .reduce((previousValue, reservationDate) => {
         const roomNamesReservedOnDate = QueryService._reservationsByDate[reservationDate] || {};
         return {...previousValue, ...roomNamesReservedOnDate};

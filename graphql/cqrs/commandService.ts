@@ -34,7 +34,7 @@ class ReservableRoom {
     const departureDate = DateUtilities.datePart(booking.departureDate);
 
     const doubleBookDates = Object.keys(this._datesReserved)
-      .filter(reservationDate => arrivalDate <= reservationDate && reservationDate < departureDate)
+      .filter(reservationDate => DateUtilities.isDatePartBetween(reservationDate, arrivalDate, departureDate))
       .join(",");
 
     if(doubleBookDates) {

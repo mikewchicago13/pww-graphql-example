@@ -7,4 +7,8 @@ export class DateUtilities {
   static datePart(date: Date): string {
     return date.toISOString().split("T")[0];
   }
+
+  static isDatePartBetween(reservationDate: string, arrivalDate: string, departureDate: string): boolean {
+    return arrivalDate <= reservationDate && reservationDate < departureDate;
+  }
 }
