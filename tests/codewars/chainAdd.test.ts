@@ -58,6 +58,9 @@ describe('solution', () => {
     it('not 3', () => {
       expect(addTwo).not.toDoubleEqual(3);
     });
+    it('expected failure', () => {
+      expect(addTwo).not.toDoubleEqual(2);
+    });
     it('allow plus operator', () => {
       expect(addTwo + 5).toDoubleEqual(7);
     });
