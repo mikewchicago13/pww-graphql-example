@@ -3,13 +3,11 @@ import {DateUtilities} from "./dateUtilities";
 import {RoomAddedEvent} from "./events/roomAddedEvent";
 import {RoomBookedEvent} from "./events/roomBookedEvent";
 import {RoomCanceledEvent} from "./events/roomCanceledEvent";
+import {DatePart, RoomName} from "./types";
 
 interface Room {
   roomName: string;
 }
-
-type RoomName = string;
-type DatePart = string;
 
 export class QueryService {
   private static readonly _rooms: Set<RoomName> = new Set<RoomName>();

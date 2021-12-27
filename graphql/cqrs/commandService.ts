@@ -3,6 +3,7 @@ import {DateUtilities} from "./dateUtilities";
 import {RoomAddedEvent} from "./events/roomAddedEvent";
 import {RoomBookedEvent} from "./events/roomBookedEvent";
 import {RoomCanceledEvent} from "./events/roomCanceledEvent";
+import {DatePart, RoomName} from "./types";
 
 interface Booking {
   clientId: string;
@@ -12,10 +13,10 @@ interface Booking {
 }
 
 class ReservableRoom {
-  private readonly _roomName: string;
-  private readonly _datesReserved: any = {};
+  private readonly _roomName: RoomName;
+  private readonly _datesReserved: Set<DatePart> = new Set<DatePart>();
 
-  constructor(roomName: string) {
+  constructor(roomName: RoomName) {
     this._roomName = roomName;
   }
 
@@ -28,7 +29,7 @@ class ReservableRoom {
     for (let i = booking.arrivalDate;
          i < booking.departureDate;
          i = DateUtilities.nextDay(i)) {
-      this._datesReserved[DateUtilities.datePart(i)] = booking.clientId;
+      this._datesReserved.add(DateUtilities.datePart(i));
     }
   }
 
@@ -36,7 +37,7 @@ class ReservableRoom {
     const arrivalDate = DateUtilities.datePart(booking.arrivalDate);
     const departureDate = DateUtilities.datePart(booking.departureDate);
 
-    const doubleBookDates = Object.keys(this._datesReserved)
+    const doubleBookDates = Array.from(this._datesReserved.keys())
       .filter(reservationDate => DateUtilities.isDatePartBetween(reservationDate, arrivalDate, departureDate))
       .join(",");
 
@@ -46,13 +47,14 @@ class ReservableRoom {
   }
 
   cancelAllNights(eachNightCanceledCallback: (evt: RoomCanceledEvent) => void) {
-    for (const datesReservedKey in this._datesReserved) {
-      delete this._datesReserved[datesReservedKey];
-      eachNightCanceledCallback(new RoomCanceledEvent({
-        date: new Date(datesReservedKey),
-        roomName: this._roomName
-      }))
-    }
+    Array.from(this._datesReserved.keys())
+      .forEach(datePart => {
+        this._datesReserved.delete(datePart);
+        eachNightCanceledCallback(new RoomCanceledEvent({
+          date: new Date(datePart),
+          roomName: this._roomName
+        }))
+      });
   }
 }
 
