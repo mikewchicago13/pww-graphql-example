@@ -1,13 +1,19 @@
+type Opener = {
+  '{': string,
+  '(': string,
+  '[': string,
+}
+
 export function validBraces(braces: string): boolean {
   const stack: string[] = [];
 
-  const openers: Set<string> = new Set<string>(["{", "(", "["]);
-
-  const closers: Map<string, string> = new Map<string, string>([
+  const closers: Map<string, keyof Opener> = new Map<string, keyof Opener>([
     [")", "("],
     ["}", "{"],
-    ["]", "["]
-  ]);
+    ["]", "["],
+  ])
+
+  const openers = new Set<string>(Array.from(closers.values()));
 
   for (let i = 0; i < braces.length; i++) {
     const char = braces[i];
