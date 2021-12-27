@@ -1,11 +1,8 @@
 export function validBraces(braces: string): boolean {
   const stack: string[] = [];
 
-  const openers: any = {
-    "(": ")",
-    "{": "}",
-    "[": "]"
-  }
+  const openers: Set<String> = new Set<String>(["{", "(", "["]);
+
   const closers: any = {
     ")": "(",
     "}": "{",
@@ -13,7 +10,7 @@ export function validBraces(braces: string): boolean {
   }
   for (let i = 0; i < braces.length; i++) {
     const char = braces[i];
-    if (char in openers) {
+    if (openers.has(char)) {
       stack.push(char);
     }
     if (char in closers) {
