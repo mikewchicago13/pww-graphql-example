@@ -8,10 +8,12 @@ interface Room {
   roomName: string;
 }
 
-export class QueryService {
-  private static readonly _rooms: Set<string> = new Set<string>();
+type RoomName = string;
+type DatePart = string;
 
-  private static readonly _reservationsByDate: any = {};
+export class QueryService {
+  private static readonly _rooms: Set<RoomName> = new Set<RoomName>();
+  private static readonly _reservationsByDate: Map<DatePart, Set<RoomName>> = new Map<DatePart, Set<RoomName>>();
 
   static {
     new Subscriber<RoomBookedEvent>().subscribe({
@@ -37,23 +39,23 @@ export class QueryService {
          i < roomBookedEvent.departureDate;
          i = DateUtilities.nextDay(i)) {
       const date = DateUtilities.datePart(i);
-      if (date in this._reservationsByDate) {
-        this._reservationsByDate[date][roomBookedEvent.roomName] = 1;
+      const reservationsOnDate = this._reservationsByDate.get(date);
+      if (reservationsOnDate) {
+        reservationsOnDate.add(roomBookedEvent.roomName);
       } else {
-        const map: any = {}
-        map[roomBookedEvent.roomName] = 1;
-        this._reservationsByDate[date] = map;
+        this._reservationsByDate.set(date, new Set<RoomName>(roomBookedEvent.roomName));
       }
     }
   }
 
   private static cancelReservation(roomCanceledEvent: RoomCanceledEvent) {
     const date = DateUtilities.datePart(roomCanceledEvent.date);
-    if (this._reservationsByDate[date] && this._reservationsByDate[date][roomCanceledEvent.roomName]) {
-      delete this._reservationsByDate[date][roomCanceledEvent.roomName];
-    }
-    if(Object.keys(this._reservationsByDate[date]).length === 0){
-      delete this._reservationsByDate[date];
+    const reservationsOnDate = this._reservationsByDate.get(date);
+    if(reservationsOnDate){
+      reservationsOnDate.delete(roomCanceledEvent.roomName);
+      if(reservationsOnDate.size === 0){
+        this._reservationsByDate.delete(date);
+      }
     }
   }
 
@@ -61,7 +63,7 @@ export class QueryService {
     const reservedRoomNames = this._reservedRoomNames(arrival, departure);
 
     return Array.from(QueryService._rooms)
-      .filter(roomName => !(roomName in reservedRoomNames))
+      .filter(roomName => !reservedRoomNames.has(roomName))
       .map(roomName => {
         return {
           roomName
@@ -69,15 +71,16 @@ export class QueryService {
       });
   }
 
-  private _reservedRoomNames(arrival: Date, departure: Date): any {
+  private _reservedRoomNames(arrival: Date, departure: Date): Set<RoomName> {
     const arrivalDate = DateUtilities.datePart(arrival);
     const departureDate = DateUtilities.datePart(departure);
-    return Object.keys(QueryService._reservationsByDate)
+    return Array.from(QueryService._reservationsByDate.keys())
       .filter(reservationDate => DateUtilities.isDatePartBetween(reservationDate, arrivalDate, departureDate))
       .reduce((previousValue, reservationDate) => {
-        const roomNamesReservedOnDate = QueryService._reservationsByDate[reservationDate] || {};
-        return {...previousValue, ...roomNamesReservedOnDate};
-      }, {});
+        const roomNamesReservedOnDate = QueryService._reservationsByDate.get(reservationDate) || new Set<RoomName>();
+        roomNamesReservedOnDate.forEach(value => previousValue.add(value))
+        return previousValue;
+      }, new Set<RoomName>());
   }
 
 }
