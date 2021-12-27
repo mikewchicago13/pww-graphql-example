@@ -8,6 +8,8 @@ declare global {
       toBeLessThanAny(x: any): R;
 
       toBeLessThanOrEqualAny(x: any): R;
+
+      toDoubleEqual(x: any): R;
     }
   }
 }

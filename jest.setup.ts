@@ -27,4 +27,11 @@ expect.extend({
       pass
     }
   },
+  toDoubleEqual(received: any, comparison: any) {
+    const pass = received == comparison;
+    return {
+      message: () => `expected ${received}${pass ? " not" : ""} == ${comparison}`,
+      pass
+    }
+  },
 });

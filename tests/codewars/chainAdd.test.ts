@@ -1,19 +1,18 @@
 import add from "../../graphql/codewars/chainAdd";
-import {assert} from "chai";
 import "../jest.d"
 
 describe('solution', () => {
   it('should work when called once', () => {
-    assert.equal(add(1), 1);
+    expect(add(1)).toDoubleEqual(1);
   });
   it('should work when called twice', () => {
-    assert.equal(add(1)(2), 3);
+    expect(add(1)(2)).toDoubleEqual(3);
   });
   it('should work when called three times', () => {
-    assert.equal(add(1)(2)(5), 8);
+    expect(add(1)(2)(5)).toDoubleEqual(8);
   });
   it('should work when called 5 times', () => {
-    assert.equal(add(1)(2)(3)(4)(5), 15);
+    expect(add(1)(2)(3)(4)(5)).toDoubleEqual(15);
   });
 
   it('10 > 2', () => {
@@ -54,16 +53,19 @@ describe('solution', () => {
   describe('should keep function', () => {
     const addTwo = add(2);
     it('be 2', () => {
-      assert.equal(addTwo, 2);
+      expect(addTwo).toDoubleEqual(2);
+    });
+    it('not 3', () => {
+      expect(addTwo).not.toDoubleEqual(3);
     });
     it('allow plus operator', () => {
-      assert.equal(addTwo + 5, 7);
+      expect(addTwo + 5).toDoubleEqual(7);
     });
     it('calling once', () => {
-      assert.equal(addTwo(3), 5);
+      expect(addTwo(3)).toDoubleEqual(5);
     });
     it('calling twice', () => {
-      assert.equal(addTwo(3)(5), 10);
+      expect(addTwo(3)(5)).toDoubleEqual(10);
     });
   });
 });
