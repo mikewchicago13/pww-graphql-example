@@ -59,7 +59,7 @@ class ReservableRoom {
 }
 
 export class CommandService {
-  private static readonly _reservationsByRoom: any = {};
+  private static readonly _reservationsByRoom: Map<RoomName, ReservableRoom> = new Map<RoomName, ReservableRoom>();
 
   bookARoom(booking: Booking): void {
     CommandService._reserve(booking);
@@ -77,29 +77,29 @@ export class CommandService {
   }
 
   private static _reserve(booking: Booking): void {
-    if (!(booking.roomName in CommandService._reservationsByRoom)) {
+    const room = CommandService._reservationsByRoom.get(booking.roomName);
+    if (!room) {
       throw new Error(`Room ${booking.roomName} does not exist`);
     }
-    const room: ReservableRoom = CommandService._reservationsByRoom[booking.roomName];
     room.reserve(booking);
   }
 
   cancelEverything() {
-    for (const roomName in CommandService._reservationsByRoom) {
-      const room: ReservableRoom = CommandService._reservationsByRoom[roomName];
-      room.cancelAllNights((evt: RoomCanceledEvent) => {
-        new Publisher<RoomCanceledEvent>().publish({
-          evt: evt
+    Array.from(CommandService._reservationsByRoom.entries())
+      .forEach(([roomName, room]) => {
+        room.cancelAllNights((evt: RoomCanceledEvent) => {
+          new Publisher<RoomCanceledEvent>().publish({
+            evt: evt
+          });
         });
-      });
-      delete CommandService._reservationsByRoom[roomName];
-    }
+        CommandService._reservationsByRoom.delete(roomName);
+      })
   }
 
-  addRooms(roomNames: string[]): void {
+  addRooms(roomNames: RoomName[]): void {
     roomNames
       .forEach(roomName => {
-        CommandService._reservationsByRoom[roomName] = new ReservableRoom(roomName)
+        CommandService._reservationsByRoom.set(roomName, new ReservableRoom(roomName))
         new Publisher<RoomAddedEvent>().publish({evt: new RoomAddedEvent(roomName)})
       })
   }
