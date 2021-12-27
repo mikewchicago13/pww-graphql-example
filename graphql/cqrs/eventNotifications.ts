@@ -1,20 +1,24 @@
 export interface Event {
 }
 
-const _subscriptions: any = {};
+type CallbackFunction = (evt: any) => void;
+
+const _subscriptions: Map<string, CallbackFunction[]> = new Map<string, CallbackFunction[]>();
 
 interface Subscription<T extends Event> {
   readonly EventType: { new(param: any): T; }
-  readonly callback: (evt: T) => void
+  readonly callback: CallbackFunction
 }
 
 export class Subscriber<T extends Event> {
   subscribe({EventType, callback}: Subscription<T>): void {
     const eventType = new EventType({}).constructor.name;
-    if (!(eventType in _subscriptions)) {
-      _subscriptions[eventType] = []
+    const subscriptionsForEventType = _subscriptions.get(eventType);
+    if (subscriptionsForEventType) {
+      subscriptionsForEventType.push(callback);
+    } else {
+      _subscriptions.set(eventType, [callback]);
     }
-    _subscriptions[eventType].push(callback)
   }
 }
 
@@ -24,6 +28,6 @@ interface Publication<T extends Event> {
 
 export class Publisher<T extends Event> {
   publish({evt}: Publication<T>): void {
-    (_subscriptions[evt.constructor.name] || []).forEach((value: ((evt: T) => void)) => value(evt))
+    (_subscriptions.get(evt.constructor.name) || []).forEach((value: ((evt: T) => void)) => value(evt))
   }
 }
