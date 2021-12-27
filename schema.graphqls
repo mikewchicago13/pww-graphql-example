@@ -5,8 +5,11 @@ type Query {
     authorById ( id: ID ): Author
     bowling ( rolls: [Int]! ): Game
     liveBowling : Game
-    addBook( title: String!, pageCount: Int!, authorId: String! ): Book
     poker( name: String!, cards: [String]! ) : Hand
+}
+
+type Mutation {
+    addBook( title: String!, pageCount: Int!, authorId: String! ): Book
 }
 
 type Hand {

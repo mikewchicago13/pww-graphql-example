@@ -2,7 +2,7 @@ import graphqlClient from "./graphqlClient";
 
 describe('can connect to local graphql', () => {
   const query = /* GraphQL */
-      `{
+      `mutation {
           addBook( title: "A Title", pageCount: 7, authorId: "author-1"){
               id
               author {
@@ -14,11 +14,15 @@ describe('can connect to local graphql', () => {
       }`;
 
   let addBook: any;
+  let errors: any;
   beforeAll(async () => {
     const json = await graphqlClient({query}, {authorization: "secret"});
+    errors = json.errors;
     addBook = json.data.addBook;
   })
-
+  it('should not have errors', () => {
+    expect(errors).toBeFalsy();
+  });
   it('should have id', () => {
     expect(addBook.id).toBeTruthy();
   });

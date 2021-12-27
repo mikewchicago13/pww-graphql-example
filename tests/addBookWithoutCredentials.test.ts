@@ -2,7 +2,7 @@ import {httpGraphqlClient, QueryResult} from "./graphqlClient";
 
 describe('can connect to local graphql', () => {
   const query = /* GraphQL */
-      `{
+      `mutation {
           addBook( title: "a title", pageCount: 7, authorId: "author-1"){
               id
           }

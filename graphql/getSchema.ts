@@ -4,6 +4,7 @@ import Query from "./query";
 import {Book, BookRepository} from "./books/bookRepository";
 import {Author, AuthorRepository} from "./books/authorRepository";
 import getTypeDefs from "./getTypeDefs";
+import Mutation from "./mutation";
 
 function author(book: Book): Author {
   console.log(JSON.stringify(book));
@@ -18,6 +19,7 @@ function books(author: Author): Book[] {
 function getResolvers(): any {
   return {
     Query: Query,
+    Mutation: Mutation,
     Book: {
       author
     },
