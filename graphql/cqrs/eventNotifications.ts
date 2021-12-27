@@ -7,7 +7,7 @@ const _subscriptions: Map<string, CallbackFunction[]> = new Map<string, Callback
 
 interface Subscription<T extends Event> {
   readonly EventType: { new(param: any): T; }
-  readonly callback: CallbackFunction
+  readonly callback: (evt: T) => void
 }
 
 export class Subscriber<T extends Event> {

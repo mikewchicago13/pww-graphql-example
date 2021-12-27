@@ -7,7 +7,7 @@ import {DatePart, RoomName} from "./types";
 
 interface Booking {
   clientId: string;
-  roomName: string;
+  roomName: RoomName;
   arrivalDate: Date;
   departureDate: Date;
 }

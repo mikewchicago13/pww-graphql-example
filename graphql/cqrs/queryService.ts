@@ -6,7 +6,7 @@ import {RoomCanceledEvent} from "./events/roomCanceledEvent";
 import {DatePart, RoomName} from "./types";
 
 interface Room {
-  roomName: string;
+  roomName: RoomName;
 }
 
 export class QueryService {

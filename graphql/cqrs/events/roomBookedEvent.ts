@@ -1,7 +1,8 @@
 import {Event} from "../eventNotifications";
+import {RoomName} from "../types";
 
 export class RoomBookedEvent implements Event {
-  private readonly _roomName: string;
+  private readonly _roomName: RoomName;
   private readonly _arrivalDate: Date;
   private readonly _departureDate: Date;
 
@@ -9,7 +10,7 @@ export class RoomBookedEvent implements Event {
                 roomName,
                 arrivalDate,
                 departureDate
-              }: { roomName: string, arrivalDate: Date, departureDate: Date }) {
+              }: { roomName: RoomName, arrivalDate: Date, departureDate: Date }) {
     this._roomName = roomName;
     this._arrivalDate = arrivalDate;
     this._departureDate = departureDate;
@@ -23,7 +24,7 @@ export class RoomBookedEvent implements Event {
     return this._arrivalDate;
   }
 
-  get roomName(): string {
+  get roomName(): RoomName {
     return this._roomName;
   }
 }

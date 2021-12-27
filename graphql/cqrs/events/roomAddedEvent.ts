@@ -1,13 +1,14 @@
 import {Event} from "../eventNotifications";
+import {RoomName} from "../types";
 
 export class RoomAddedEvent implements Event {
-  private readonly _roomName: string;
+  private readonly _roomName: RoomName;
 
-  constructor(roomName: string) {
+  constructor(roomName: RoomName) {
     this._roomName = roomName;
   }
 
-  get roomName(): string {
+  get roomName(): RoomName {
     return this._roomName;
   }
 }
