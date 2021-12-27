@@ -1,10 +1,10 @@
 export const isPangram = (phrase: string): boolean => {
-  const charactersPresent: any = {};
+  const charactersPresent: Set<string> = new Set<string>();
   const asUpperCase = phrase.toUpperCase();
   for (let i = 0; i < asUpperCase.length; i++) {
-    charactersPresent[asUpperCase[i]] = true;
+    charactersPresent.add(asUpperCase[i]);
   }
-  return Object.keys(charactersPresent)
+  return Array.from(charactersPresent.keys())
     .sort()
     .join("")
     .includes("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
