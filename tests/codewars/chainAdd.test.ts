@@ -15,6 +15,38 @@ describe('solution', () => {
     assert.equal(add(1)(2)(3)(4)(5), 15);
   });
 
+  it('10 > 2', () => {
+    expect(add(10) > add(2)).toBeTruthy();
+  });
+  it('2 < 10', () => {
+    expect(add(2) < add(10)).toBeTruthy();
+  });
+  it('10 < 2', () => {
+    expect(add(10) < add(2)).toBeFalsy();
+  });
+  it('2 > 10', () => {
+    expect(add(2) > add(10)).toBeFalsy();
+  });
+
+  it('1 <= 2', () => {
+    expect(add(1) <= add(2)).toBeTruthy();
+  });
+  it('1 <= 1', () => {
+    expect(add(1) <= add(1)).toBeTruthy();
+  });
+  it('1 >= 2', () => {
+    expect(add(1) >= add(2)).toBeFalsy();
+  });
+  it('2 >= 1', () => {
+    expect(add(2) >= add(1)).toBeTruthy();
+  });
+  it('1 >= 1', () => {
+    expect(add(1) >= add(1)).toBeTruthy();
+  });
+  it('2 <= 1', () => {
+    expect(add(2) <= add(1)).toBeFalsy();
+  });
+
   describe('should keep function', () => {
     const addTwo = add(2);
     it('be 2', () => {
