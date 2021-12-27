@@ -9,7 +9,7 @@ interface Room {
 }
 
 export class QueryService {
-  private static readonly _rooms: any = {};
+  private static readonly _rooms: Set<string> = new Set<string>();
 
   private static readonly _reservationsByDate: any = {};
 
@@ -29,7 +29,7 @@ export class QueryService {
   }
 
   private static addRoom(roomAddedEvent: RoomAddedEvent) {
-    this._rooms[roomAddedEvent.roomName] = 1;
+    this._rooms.add(roomAddedEvent.roomName);
   }
 
   private static logReservation(roomBookedEvent: RoomBookedEvent): void {
@@ -60,7 +60,7 @@ export class QueryService {
   freeRooms(arrival: Date, departure: Date): Room[] {
     const reservedRoomNames = this._reservedRoomNames(arrival, departure);
 
-    return Object.keys(QueryService._rooms)
+    return Array.from(QueryService._rooms)
       .filter(roomName => !(roomName in reservedRoomNames))
       .map(roomName => {
         return {
