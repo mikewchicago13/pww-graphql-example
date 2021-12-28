@@ -25,12 +25,8 @@ export class Subscriber<T extends Event> {
   }
 }
 
-interface Publication<T extends Event> {
-  readonly evt: T
-}
-
 export class Publisher<T extends Event> {
-  publish({evt}: Publication<T>): void {
+  publish(evt: T): void {
     (_subscriptions.get(evt.constructor.name) || []).forEach((value: ((evt: T) => void)) => value(evt))
   }
 }

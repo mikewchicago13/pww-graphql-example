@@ -71,13 +71,13 @@ export class CommandService {
   }
 
   private static _notify(booking: Booking) {
-    new Publisher<RoomBookedEvent>().publish({
-      evt: new RoomBookedEvent({
-        roomName: booking.roomName,
-        arrivalDate: booking.arrivalDate,
-        departureDate: booking.departureDate
-      })
-    })
+    new Publisher<RoomBookedEvent>().publish(new RoomBookedEvent({
+          roomName: booking.roomName,
+          arrivalDate: booking.arrivalDate,
+          departureDate: booking.departureDate
+        }
+      )
+    )
   }
 
   private static _reserve(booking: Booking): void {
@@ -89,15 +89,12 @@ export class CommandService {
   }
 
   cancelEverything() {
-    CommandService._reservationsByRoom
-      .forEach(room => this._cancel(room));
+    CommandService._reservationsByRoom.forEach(CommandService._cancel);
   }
 
-  private _cancel(room: ReservableRoom) {
+  private static _cancel(room: ReservableRoom) {
     room.cancelAllNights((evt: RoomCanceledEvent) => {
-      new Publisher<RoomCanceledEvent>().publish({
-        evt: evt
-      });
+      new Publisher<RoomCanceledEvent>().publish(evt);
     });
     CommandService._reservationsByRoom.delete(room.roomName);
   }
@@ -108,7 +105,7 @@ export class CommandService {
 
   private static addRoom(roomName: RoomName) {
     CommandService._reservationsByRoom.set(roomName, new ReservableRoom(roomName))
-    new Publisher<RoomAddedEvent>().publish({evt: new RoomAddedEvent(roomName)})
+    new Publisher<RoomAddedEvent>().publish(new RoomAddedEvent(roomName))
   }
 }
 
