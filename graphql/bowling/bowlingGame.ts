@@ -2,17 +2,21 @@ import {ScoreSheet} from "./scoreSheet";
 import {FrameUtilities, IGame, IndexedGame} from "./bowlingUtilities";
 
 export class Game implements IndexedGame, IGame {
-  private readonly _rolls: number[] = new Array(21).fill(undefined);
-  private _index = 0;
+  private readonly _rolls;
+  private readonly _index;
 
+  constructor(
+    rolls: number[] = new Array(21).fill(undefined),
+    index: number = 0
+  ) {
+    this._rolls = rolls;
+    this._index = index;
+  }
   roll(pins: number): IGame {
-    this._rolls[this._index] = pins;
-    if (Game._isStrike(pins) && this._isFirstBallOf9thFrameOrEarlier()) {
-      this._index += 2;
-    } else {
-      this._index++;
-    }
-    return this;
+    const rolls = [...this._rolls];
+    rolls[this._index] = pins;
+    const indexIncrement = Game._isStrike(pins) && this._isFirstBallOf9thFrameOrEarlier() ? 2 : 1;
+    return new Game(rolls, this._index + indexIncrement);
   }
 
   private _countPinsFor(roll: number): number {
