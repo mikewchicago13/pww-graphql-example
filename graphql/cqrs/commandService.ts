@@ -21,7 +21,7 @@ class ReservableRoom {
   }
 
   reserve(booking: Booking): (postReservationAction: (b: Booking) => void) => void {
-    return this._validateRoomIsAvailable(booking)(this._bookAllDates.bind(this));
+    return this._reserve(booking, this._validateRoomAvailable.bind(this))(this._bookAllDates.bind(this));
   }
 
   private _bookAllDates(booking: Booking) {
@@ -32,25 +32,29 @@ class ReservableRoom {
     }
   }
 
-  private _validateRoomIsAvailable(booking: Booking):
-    (postValidationAction: (b: Booking) => void) =>
-      (postReservationAction: (b: Booking) => void) =>
+  private _reserve(booking: Booking, validationAction: (b: Booking) => void):
+    (reservationAction: (b: Booking) => void) =>
+      (notificationAction: (b: Booking) => void) =>
         void {
-    return postValidationAction => {
-      return postReservationAction => {
-        const arrivalDate = DateUtilities.datePart(booking.arrivalDate);
-        const departureDate = DateUtilities.datePart(booking.departureDate);
-
-        const doubleBookDates = Array.from(this._datesReserved.keys())
-          .filter(reservationDate => DateUtilities.isDatePartBetween(reservationDate, arrivalDate, departureDate))
-          .join(",");
-
-        if (doubleBookDates) {
-          throw new Error(`Room ${booking.roomName} is already reserved on ${doubleBookDates}`)
-        }
-        postValidationAction(booking);
-        postReservationAction(booking);
+    return reservationAction => {
+      return notificationAction => {
+        validationAction(booking);
+        reservationAction(booking);
+        notificationAction(booking);
       }
+    }
+  }
+
+  private _validateRoomAvailable(booking: Booking) {
+    const arrivalDate = DateUtilities.datePart(booking.arrivalDate);
+    const departureDate = DateUtilities.datePart(booking.departureDate);
+
+    const doubleBookDates = Array.from(this._datesReserved.keys())
+      .filter(reservationDate => DateUtilities.isDatePartBetween(reservationDate, arrivalDate, departureDate))
+      .join(",");
+
+    if (doubleBookDates) {
+      throw new Error(`Room ${booking.roomName} is already reserved on ${doubleBookDates}`)
     }
   }
 
