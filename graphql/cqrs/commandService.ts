@@ -3,9 +3,9 @@ import {DateUtilities} from "./dateUtilities";
 import {RoomAddedEvent} from "./events/roomAddedEvent";
 import {RoomBookedEvent} from "./events/roomBookedEvent";
 import {RoomCanceledEvent} from "./events/roomCanceledEvent";
-import {DatePart, RoomName} from "./types";
+import {DatePart, DateRange, RoomName} from "./types";
 
-interface Booking {
+interface Booking extends DateRange {
   clientId: string;
   roomName: RoomName;
   arrivalDate: Date;
@@ -20,16 +20,12 @@ class ReservableRoom {
     this._roomName = roomName;
   }
 
-  reserve(booking: Booking): (postReservationAction: (b: Booking) => void) => void {
+  reserve(booking: Booking): (notificationAction: (b: Booking) => void) => void {
     return this._reserve(booking, this._validateRoomAvailable.bind(this))(this._bookAllDates.bind(this));
   }
 
   private _bookAllDates(booking: Booking) {
-    for (let i = booking.arrivalDate;
-         i < booking.departureDate;
-         i = DateUtilities.nextDay(i)) {
-      this._datesReserved.add(DateUtilities.datePart(i));
-    }
+    DateUtilities.performOnAllNights(reservationDate => this._datesReserved.add(reservationDate))(booking);
   }
 
   private _reserve(booking: Booking, validationAction: (b: Booking) => void):
@@ -46,11 +42,8 @@ class ReservableRoom {
   }
 
   private _validateRoomAvailable(booking: Booking) {
-    const arrivalDate = DateUtilities.datePart(booking.arrivalDate);
-    const departureDate = DateUtilities.datePart(booking.departureDate);
-
     const doubleBookDates = Array.from(this._datesReserved.keys())
-      .filter(reservationDate => DateUtilities.isDatePartBetween(reservationDate, arrivalDate, departureDate))
+      .filter(reservationDate => DateUtilities.isReservationDateBetween(reservationDate, booking))
       .join(",");
 
     if (doubleBookDates) {

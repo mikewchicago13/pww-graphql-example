@@ -3,7 +3,7 @@ import {DateUtilities} from "./dateUtilities";
 import {RoomAddedEvent} from "./events/roomAddedEvent";
 import {RoomBookedEvent} from "./events/roomBookedEvent";
 import {RoomCanceledEvent} from "./events/roomCanceledEvent";
-import {DatePart, RoomName} from "./types";
+import {DatePart, DateRange, RoomName} from "./types";
 
 interface Room {
   roomName: RoomName;
@@ -18,22 +18,17 @@ export class QueryService {
   }
 
   private static logReservation(roomBookedEvent: RoomBookedEvent): void {
-    for (let date = roomBookedEvent.arrivalDate;
-         date < roomBookedEvent.departureDate;
-         date = DateUtilities.nextDay(date)) {
-      this.recordBookingIn(roomBookedEvent.roomName).on(date);
-    }
+    DateUtilities.performOnAllNights(reservationDate => this.recordBookingIn(roomBookedEvent.roomName).on(reservationDate))(roomBookedEvent);
   }
 
-  private static recordBookingIn(roomName: RoomName): { on: (date: Date) => void } {
+  private static recordBookingIn(roomName: RoomName): { on: (reservationDate: DatePart) => void } {
     return {
-      on: (date: Date) => {
-        const datePart = DateUtilities.datePart(date);
-        const reservationsOnDate = this._reservationsByDate.get(datePart);
+      on: (reservationDate: DatePart) => {
+        const reservationsOnDate = this._reservationsByDate.get(reservationDate);
         if (reservationsOnDate) {
           reservationsOnDate.add(roomName);
         } else {
-          this._reservationsByDate.set(datePart, new Set<RoomName>(roomName));
+          this._reservationsByDate.set(reservationDate, new Set<RoomName>(roomName));
         }
       }
     }
@@ -56,8 +51,8 @@ export class QueryService {
     new Subscriber<RoomAddedEvent>().subscribe(RoomAddedEvent)(this.addRoom.bind(this));
   }
 
-  freeRooms(arrival: Date, departure: Date): Room[] {
-    const reservedRoomNames = this._reservedRoomNames(arrival, departure);
+  freeRooms(arrivalDate: Date, departureDate: Date): Room[] {
+    const reservedRoomNames = this._reservedRoomNames({arrivalDate, departureDate});
 
     return Array.from(QueryService._rooms)
       .filter(roomName => !reservedRoomNames.has(roomName))
@@ -68,11 +63,9 @@ export class QueryService {
       });
   }
 
-  private _reservedRoomNames(arrival: Date, departure: Date): Set<RoomName> {
-    const arrivalDate = DateUtilities.datePart(arrival);
-    const departureDate = DateUtilities.datePart(departure);
+  private _reservedRoomNames(dateRange: DateRange): Set<RoomName> {
     return Array.from(QueryService._reservationsByDate.keys())
-      .filter(reservationDate => DateUtilities.isDatePartBetween(reservationDate, arrivalDate, departureDate))
+      .filter(reservationDate => DateUtilities.isReservationDateBetween(reservationDate, dateRange))
       .reduce((previousValue, reservationDate) => {
         const roomNamesReservedOnDate = QueryService._reservationsByDate.get(reservationDate) || new Set<RoomName>();
         return new Set<RoomName>([...previousValue, ...roomNamesReservedOnDate]);

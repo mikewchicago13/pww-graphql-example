@@ -1,7 +1,7 @@
 import {Event} from "../eventNotifications";
-import {RoomName} from "../types";
+import {DateRange, RoomName} from "../types";
 
-export class RoomBookedEvent implements Event {
+export class RoomBookedEvent implements Event, DateRange {
   private readonly _roomName: RoomName;
   private readonly _arrivalDate: Date;
   private readonly _departureDate: Date;
