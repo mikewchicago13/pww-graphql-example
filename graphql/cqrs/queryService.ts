@@ -18,15 +18,23 @@ export class QueryService {
   }
 
   private static logReservation(roomBookedEvent: RoomBookedEvent): void {
-    for (let i = roomBookedEvent.arrivalDate;
-         i < roomBookedEvent.departureDate;
-         i = DateUtilities.nextDay(i)) {
-      const date = DateUtilities.datePart(i);
-      const reservationsOnDate = this._reservationsByDate.get(date);
-      if (reservationsOnDate) {
-        reservationsOnDate.add(roomBookedEvent.roomName);
-      } else {
-        this._reservationsByDate.set(date, new Set<RoomName>(roomBookedEvent.roomName));
+    for (let date = roomBookedEvent.arrivalDate;
+         date < roomBookedEvent.departureDate;
+         date = DateUtilities.nextDay(date)) {
+      this.recordBookingIn(roomBookedEvent.roomName).on(date);
+    }
+  }
+
+  private static recordBookingIn(roomName: RoomName): { on: (date: Date) => void } {
+    return {
+      on: (date: Date) => {
+        const datePart = DateUtilities.datePart(date);
+        const reservationsOnDate = this._reservationsByDate.get(datePart);
+        if (reservationsOnDate) {
+          reservationsOnDate.add(roomName);
+        } else {
+          this._reservationsByDate.set(datePart, new Set<RoomName>(roomName));
+        }
       }
     }
   }
