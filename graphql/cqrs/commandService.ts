@@ -21,8 +21,7 @@ class ReservableRoom {
   }
 
   reserve(booking: Booking) {
-    this._validateRoomIsAvailable(booking);
-    this._bookAllDates(booking);
+    this._validateRoomIsAvailable(booking)(b => this._bookAllDates(b));
   }
 
   private _bookAllDates(booking: Booking) {
@@ -33,16 +32,20 @@ class ReservableRoom {
     }
   }
 
-  private _validateRoomIsAvailable(booking: Booking) {
-    const arrivalDate = DateUtilities.datePart(booking.arrivalDate);
-    const departureDate = DateUtilities.datePart(booking.departureDate);
+  private _validateRoomIsAvailable(booking: Booking):
+    (postValidationAction: (b: Booking) => void) => void {
+    return (postValidationAction: (b: Booking) => void): void => {
+      const arrivalDate = DateUtilities.datePart(booking.arrivalDate);
+      const departureDate = DateUtilities.datePart(booking.departureDate);
 
-    const doubleBookDates = Array.from(this._datesReserved.keys())
-      .filter(reservationDate => DateUtilities.isDatePartBetween(reservationDate, arrivalDate, departureDate))
-      .join(",");
+      const doubleBookDates = Array.from(this._datesReserved.keys())
+        .filter(reservationDate => DateUtilities.isDatePartBetween(reservationDate, arrivalDate, departureDate))
+        .join(",");
 
-    if (doubleBookDates) {
-      throw new Error(`Room ${booking.roomName} is already reserved on ${doubleBookDates}`)
+      if (doubleBookDates) {
+        throw new Error(`Room ${booking.roomName} is already reserved on ${doubleBookDates}`)
+      }
+      postValidationAction(booking);
     }
   }
 
@@ -81,8 +84,8 @@ export class CommandService {
     )
   }
 
-  private static _reserve(booking: Booking): (notification: (booking: Booking) => void) => void {
-    return (notification: (booking: Booking) => void) => {
+  private static _reserve(booking: Booking): (notification: (b: Booking) => void) => void {
+    return (notification: (b: Booking) => void) => {
       const room = CommandService._reservationsByRoom.get(booking.roomName);
       if (!room) {
         throw new Error(`Room ${booking.roomName} does not exist`);
