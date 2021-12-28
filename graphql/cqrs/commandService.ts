@@ -56,6 +56,10 @@ class ReservableRoom {
         }))
       });
   }
+
+  get roomName(): RoomName {
+    return this._roomName;
+  }
 }
 
 export class CommandService {
@@ -85,15 +89,17 @@ export class CommandService {
   }
 
   cancelEverything() {
-    Array.from(CommandService._reservationsByRoom.entries())
-      .forEach(([roomName, room]) => {
-        room.cancelAllNights((evt: RoomCanceledEvent) => {
-          new Publisher<RoomCanceledEvent>().publish({
-            evt: evt
-          });
-        });
-        CommandService._reservationsByRoom.delete(roomName);
-      })
+    CommandService._reservationsByRoom
+      .forEach(room => this._cancel(room));
+  }
+
+  private _cancel(room: ReservableRoom) {
+    room.cancelAllNights((evt: RoomCanceledEvent) => {
+      new Publisher<RoomCanceledEvent>().publish({
+        evt: evt
+      });
+    });
+    CommandService._reservationsByRoom.delete(room.roomName);
   }
 
   addRooms(roomNames: RoomName[]): void {
