@@ -5,19 +5,22 @@ type CallbackFunction = (evt: any) => void;
 
 const _subscriptions: Map<string, CallbackFunction[]> = new Map<string, CallbackFunction[]>();
 
-interface Subscription<T extends Event> {
-  readonly EventType: { new(param: any): T; }
-  readonly callback: (evt: T) => void
+type EventCallback<T extends Event> = (evt: T) => void;
+
+type FunctionAcceptingCallback<T extends Event> = {
+  (eventCallback: EventCallback<T>): void
 }
 
 export class Subscriber<T extends Event> {
-  subscribe({EventType, callback}: Subscription<T>): void {
+  subscribe(EventType: { new(param: any): T; }): FunctionAcceptingCallback<T> {
     const eventType = new EventType({}).constructor.name;
-    const subscriptionsForEventType = _subscriptions.get(eventType);
-    if (subscriptionsForEventType) {
-      subscriptionsForEventType.push(callback);
-    } else {
-      _subscriptions.set(eventType, [callback]);
+    return (callback: (evt: T) => void): void => {
+      const subscriptionsForEventType = _subscriptions.get(eventType);
+      if (subscriptionsForEventType) {
+        subscriptionsForEventType.push(callback);
+      } else {
+        _subscriptions.set(eventType, [callback]);
+      }
     }
   }
 }

@@ -13,21 +13,6 @@ export class QueryService {
   private static readonly _rooms: Set<RoomName> = new Set<RoomName>();
   private static readonly _reservationsByDate: Map<DatePart, Set<RoomName>> = new Map<DatePart, Set<RoomName>>();
 
-  static {
-    new Subscriber<RoomBookedEvent>().subscribe({
-      EventType: RoomBookedEvent,
-      callback: (roomBookedEvent) => this.logReservation(roomBookedEvent)
-    })
-    new Subscriber<RoomCanceledEvent>().subscribe({
-      EventType: RoomCanceledEvent,
-      callback: (roomCanceledEvent) => this.cancelReservation(roomCanceledEvent)
-    })
-    new Subscriber<RoomAddedEvent>().subscribe({
-      EventType: RoomAddedEvent,
-      callback: (roomAddedEvent) => this.addRoom(roomAddedEvent)
-    })
-  }
-
   private static addRoom(roomAddedEvent: RoomAddedEvent) {
     this._rooms.add(roomAddedEvent.roomName);
   }
@@ -49,12 +34,18 @@ export class QueryService {
   private static cancelReservation(roomCanceledEvent: RoomCanceledEvent) {
     const date = DateUtilities.datePart(roomCanceledEvent.date);
     const reservationsOnDate = this._reservationsByDate.get(date);
-    if(reservationsOnDate){
+    if (reservationsOnDate) {
       reservationsOnDate.delete(roomCanceledEvent.roomName);
-      if(reservationsOnDate.size === 0){
+      if (reservationsOnDate.size === 0) {
         this._reservationsByDate.delete(date);
       }
     }
+  }
+
+  static {
+    new Subscriber<RoomBookedEvent>().subscribe(RoomBookedEvent)(x => this.logReservation(x));
+    new Subscriber<RoomCanceledEvent>().subscribe(RoomCanceledEvent)(x => this.cancelReservation(x));
+    new Subscriber<RoomAddedEvent>().subscribe(RoomAddedEvent)(x => this.addRoom(x));
   }
 
   freeRooms(arrival: Date, departure: Date): Room[] {
