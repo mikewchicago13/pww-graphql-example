@@ -21,7 +21,7 @@ class ReservableRoom {
   }
 
   reserve(booking: Booking) {
-    this._validateRoomIsAvailable(booking)(b => this._bookAllDates(b));
+    this._validateRoomIsAvailable(booking)(this._bookAllDates.bind(this));
   }
 
   private _bookAllDates(booking: Booking) {
@@ -84,7 +84,8 @@ export class CommandService {
     )
   }
 
-  private static _reserve(booking: Booking): (notification: (b: Booking) => void) => void {
+  private static _reserve(booking: Booking):
+    (notification: (b: Booking) => void) => void {
     return (notification: (b: Booking) => void) => {
       const room = CommandService._reservationsByRoom.get(booking.roomName);
       if (!room) {

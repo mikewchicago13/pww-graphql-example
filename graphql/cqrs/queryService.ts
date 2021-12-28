@@ -51,9 +51,9 @@ export class QueryService {
   }
 
   static {
-    new Subscriber<RoomBookedEvent>().subscribe(RoomBookedEvent)(x => this.logReservation(x));
-    new Subscriber<RoomCanceledEvent>().subscribe(RoomCanceledEvent)(x => this.cancelReservation(x));
-    new Subscriber<RoomAddedEvent>().subscribe(RoomAddedEvent)(x => this.addRoom(x));
+    new Subscriber<RoomBookedEvent>().subscribe(RoomBookedEvent)(this.logReservation.bind(this));
+    new Subscriber<RoomCanceledEvent>().subscribe(RoomCanceledEvent)(this.cancelReservation.bind(this));
+    new Subscriber<RoomAddedEvent>().subscribe(RoomAddedEvent)(this.addRoom.bind(this));
   }
 
   freeRooms(arrival: Date, departure: Date): Room[] {
