@@ -103,11 +103,12 @@ export class CommandService {
   }
 
   addRooms(roomNames: RoomName[]): void {
-    roomNames
-      .forEach(roomName => {
-        CommandService._reservationsByRoom.set(roomName, new ReservableRoom(roomName))
-        new Publisher<RoomAddedEvent>().publish({evt: new RoomAddedEvent(roomName)})
-      })
+    roomNames.forEach(CommandService.addRoom)
+  }
+
+  private static addRoom(roomName: RoomName) {
+    CommandService._reservationsByRoom.set(roomName, new ReservableRoom(roomName))
+    new Publisher<RoomAddedEvent>().publish({evt: new RoomAddedEvent(roomName)})
   }
 }
 
