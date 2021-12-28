@@ -47,14 +47,16 @@ class ReservableRoom {
   }
 
   cancelAllNights(eachNightCanceledCallback: (evt: RoomCanceledEvent) => void) {
-    Array.from(this._datesReserved.keys())
-      .forEach(datePart => {
-        this._datesReserved.delete(datePart);
-        eachNightCanceledCallback(new RoomCanceledEvent({
-          date: new Date(datePart),
-          roomName: this._roomName
-        }))
-      });
+    this._datesReserved
+      .forEach(datePart => this.cancelSingleNight(datePart, eachNightCanceledCallback));
+  }
+
+  private cancelSingleNight(datePart: string, eachNightCanceledCallback: (evt: RoomCanceledEvent) => void) {
+    this._datesReserved.delete(datePart);
+    eachNightCanceledCallback(new RoomCanceledEvent({
+      date: new Date(datePart),
+      roomName: this._roomName
+    }))
   }
 
   get roomName(): RoomName {
@@ -66,11 +68,10 @@ export class CommandService {
   private static readonly _reservationsByRoom: Map<RoomName, ReservableRoom> = new Map<RoomName, ReservableRoom>();
 
   bookARoom(booking: Booking): void {
-    CommandService._reserve(booking);
-    CommandService._notify(booking);
+    CommandService._reserve(booking)(CommandService._publishRoomBookedEvent);
   }
 
-  private static _notify(booking: Booking) {
+  private static _publishRoomBookedEvent(booking: Booking) {
     new Publisher<RoomBookedEvent>().publish(new RoomBookedEvent({
           roomName: booking.roomName,
           arrivalDate: booking.arrivalDate,
@@ -80,12 +81,15 @@ export class CommandService {
     )
   }
 
-  private static _reserve(booking: Booking): void {
-    const room = CommandService._reservationsByRoom.get(booking.roomName);
-    if (!room) {
-      throw new Error(`Room ${booking.roomName} does not exist`);
+  private static _reserve(booking: Booking): (notification: (booking: Booking) => void) => void {
+    return (notification: (booking: Booking) => void) => {
+      const room = CommandService._reservationsByRoom.get(booking.roomName);
+      if (!room) {
+        throw new Error(`Room ${booking.roomName} does not exist`);
+      }
+      room.reserve(booking);
+      notification(booking);
     }
-    room.reserve(booking);
   }
 
   cancelEverything() {
