@@ -67,8 +67,7 @@ export class QueryService {
       .filter(reservationDate => DateUtilities.isDatePartBetween(reservationDate, arrivalDate, departureDate))
       .reduce((previousValue, reservationDate) => {
         const roomNamesReservedOnDate = QueryService._reservationsByDate.get(reservationDate) || new Set<RoomName>();
-        roomNamesReservedOnDate.forEach(value => previousValue.add(value))
-        return previousValue;
+        return new Set<RoomName>([...previousValue, ...roomNamesReservedOnDate]);
       }, new Set<RoomName>());
   }
 
