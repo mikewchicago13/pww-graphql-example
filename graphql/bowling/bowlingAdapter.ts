@@ -32,9 +32,10 @@ class GraphQLAdaptedGame implements IGraphQLAdaptedGame {
 
 export class BowlingAdapter {
   static acceptAllRollsAtOnce(_: unknown, {rolls}: { rolls: number[] }): IGraphQLAdaptedGame {
-    console.log("rolls " + rolls);
-    const game = new Game();
-    rolls.forEach(value => game.roll(value));
+    const game = rolls.reduce((previousValue, currentValue) => {
+      return previousValue.roll(currentValue) as Game;
+    }, new Game());
+    console.log("rolls", rolls, "score", game.score);
     return new GraphQLAdaptedGame(game);
   }
 
