@@ -2,35 +2,6 @@ import {v4 as uuidv4} from 'uuid';
 import {CommandService} from "../../graphql/cqrs/commandService";
 import {QueryService} from "../../graphql/cqrs/queryService";
 
-function areAllRoomsAvailableBetween(arrival: string, departure: string) {
-  expect(new QueryService()
-    .freeRooms(new Date(arrival), new Date(departure)))
-    .toHaveLength(10);
-}
-
-function notAvailableBetween(arrival: string, departure: string, roomName: string) {
-  expect(new QueryService()
-    .freeRooms(new Date(arrival), new Date(departure))
-    .map(x => x.roomName))
-    .not.toContain(roomName);
-}
-
-function availableBetween(arrival: string, departure: string, roomName: string) {
-  expect(new QueryService()
-    .freeRooms(new Date(arrival), new Date(departure))
-    .map(x => x.roomName))
-    .toContain(roomName);
-}
-
-function book(roomName: string, arrival: string = "2021-12-24", departure: string = "2021-12-26") {
-  new CommandService().bookARoom({
-    arrivalDate: new Date(arrival),
-    clientId: "short stay " + uuidv4(),
-    departureDate: new Date(departure),
-    roomName
-  })
-}
-
 describe('book hotel room', () => {
   it('should have free rooms', () => {
     areAllRoomsAvailableBetween("2021-12-25", "2021-12-26");
@@ -79,6 +50,35 @@ describe('book hotel room', () => {
     });
   });
 });
+
+function areAllRoomsAvailableBetween(arrival: string, departure: string) {
+  expect(new QueryService()
+    .freeRooms(new Date(arrival), new Date(departure)))
+    .toHaveLength(10);
+}
+
+function notAvailableBetween(arrival: string, departure: string, roomName: string) {
+  expect(new QueryService()
+    .freeRooms(new Date(arrival), new Date(departure))
+    .map(x => x.roomName))
+    .not.toContain(roomName);
+}
+
+function availableBetween(arrival: string, departure: string, roomName: string) {
+  expect(new QueryService()
+    .freeRooms(new Date(arrival), new Date(departure))
+    .map(x => x.roomName))
+    .toContain(roomName);
+}
+
+function book(roomName: string, arrival: string = "2021-12-24", departure: string = "2021-12-26") {
+  new CommandService().bookARoom({
+    arrivalDate: new Date(arrival),
+    clientId: "short stay " + uuidv4(),
+    departureDate: new Date(departure),
+    roomName
+  })
+}
 
 beforeEach(() => {
   new CommandService()
