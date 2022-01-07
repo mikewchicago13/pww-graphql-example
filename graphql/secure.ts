@@ -7,8 +7,10 @@ export function secure(func: Function) {
     }
     if (req && req.res) {
       req.res.status(401);
-      throw new Error("Unauthorized");
+      throw new Error(unauthorized);
     }
-    throw new Error("invalid parameters");
+    throw new Error(invalidParameters);
   }
 }
+const unauthorized = "Unauthorized";
+const invalidParameters = "invalid parameters";
