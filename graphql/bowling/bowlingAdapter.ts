@@ -21,11 +21,7 @@ class GraphQLAdaptedGame implements IGraphQLAdaptedGame {
 
   rollPins({pins}: { pins: number }): IGraphQLAdaptedGame {
     this._rolls.push(pins);
-    const game = this._rolls.reduce((previousValue, currentValue) => {
-      return previousValue.roll(currentValue) as Game;
-    }, new Game());
-    console.log("rolls", this._rolls, "score", game.score);
-    return new GraphQLAdaptedGame(game);
+    return BowlingAdapter.acceptAllRollsAtOnce(undefined, {rolls: this._rolls});
   }
 
   get score(): number {
