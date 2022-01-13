@@ -51,11 +51,9 @@ describe('bowlingGame', () => {
     it('should total 300', () => {
       expect(game.score).toBe(300);
     });
-    for (let i = 0; i < 10; i++) {
-      it('should have 30 per frame ' + (i + 1), () => {
-        expect(game.scoreUpToFrame(i)).toBe((i + 1) * 30);
-      });
-    }
+    it.each(firstNFrames(10))('should have 30 per frame %s', (i) => {
+      expect(game.scoreUpToFrame(i)).toBe((i + 1) * 30);
+    });
   });
   it('should roll a 299', () => {
     const game = new Array(11).fill(1)
