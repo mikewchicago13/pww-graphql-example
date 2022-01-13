@@ -1,10 +1,10 @@
 import {v4 as uuidv4} from 'uuid';
 
 export class Book {
-  private _id: string;
-  private _title: string;
-  private _pageCount: number;
-  private _authorId: string;
+  private readonly _id: string;
+  private readonly _title: string;
+  private readonly _pageCount: number;
+  private readonly _authorId: string;
 
   constructor(
     id: string,
@@ -21,32 +21,16 @@ export class Book {
     return this._id;
   }
 
-  set id(value: string) {
-    this._id = value;
-  }
-
   get title(): string {
     return this._title;
-  }
-
-  set title(value: string) {
-    this._title = value;
   }
 
   get pageCount(): number {
     return this._pageCount;
   }
 
-  set pageCount(value: number) {
-    this._pageCount = value;
-  }
-
   get authorId(): string {
     return this._authorId;
-  }
-
-  set authorId(value: string) {
-    this._authorId = value;
   }
 
   methodOnEntity({param1}: { param1: string }) {
