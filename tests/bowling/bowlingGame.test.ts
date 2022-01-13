@@ -20,11 +20,9 @@ describe('bowlingGame', () => {
     it('should total 20', () => {
       expect(game.score).toBe(20);
     });
-    for (let i = 0; i < 10; i++) {
-      it('should have 2 per frame ' + (i + 1), () => {
-        expect(game.scoreUpToFrame(i)).toBe((i + 1) * 2);
-      });
-    }
+    it.each(firstNFrames(10))('should have 2 per frame %s', (i) => {
+      expect(game.scoreUpToFrame(i)).toBe((i + 1) * 2);
+    })
   });
   describe('should roll 21 straight 5s', () => {
     const game = new Array(21).fill(1)
@@ -97,3 +95,8 @@ describe('bowlingGame', () => {
     expect(game.score).toBe(32);
   });
 });
+
+function firstNFrames(n: number): number[]{
+  return new Array(n).fill(1)
+    .map((_, index) => index);
+}
