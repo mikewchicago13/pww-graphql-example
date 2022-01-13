@@ -9,12 +9,6 @@ export class Comparison {
     this._two = two;
   }
 
-  get debug(): string {
-    return this._one.name + ": " + this._one +
-      "\n" +
-      this._two.name + ": " + this._two;
-  }
-
   static _winner(hand: Hand): string {
     return `${hand.name} wins with ${hand.description}`;
   }
