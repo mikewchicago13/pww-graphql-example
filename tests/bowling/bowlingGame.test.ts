@@ -20,11 +20,9 @@ describe('bowlingGame', () => {
     it('should total 20', () => {
       expect(game.score).toBe(20);
     });
-    for (let i = 0; i < 10; i++) {
-      it('should have 2 per frame ' + (i + 1), () => {
-        expect(game.scoreUpToFrame(i)).toBe((i + 1) * 2);
-      });
-    }
+    it.each(firstNFrames(10))('should have 2 per frame %s', (i) => {
+      expect(game.scoreUpToFrame(i)).toBe((i + 1) * 2);
+    })
   });
   describe('should roll 21 straight 5s', () => {
     const game = new Array(21).fill(1)
@@ -33,11 +31,9 @@ describe('bowlingGame', () => {
       expect(game.score).toBe(150);
     });
 
-    for (let i = 0; i < 10; i++) {
-      it('should have 15 per frame ' + (i + 1), () => {
-        expect(game.scoreUpToFrame(i)).toBe((i + 1) * 15);
-      });
-    }
+    it.each(firstNFrames(10))('should have 15 per frame %s', (i) => {
+      expect(game.scoreUpToFrame(i)).toBe((i + 1) * 15);
+    });
   });
   it('should pick up a spare', () => {
     const game = new Array(3).fill(1)
@@ -55,11 +51,9 @@ describe('bowlingGame', () => {
     it('should total 300', () => {
       expect(game.score).toBe(300);
     });
-    for (let i = 0; i < 10; i++) {
-      it('should have 30 per frame ' + (i + 1), () => {
-        expect(game.scoreUpToFrame(i)).toBe((i + 1) * 30);
-      });
-    }
+    it.each(firstNFrames(10))('should have 30 per frame %s', (i) => {
+      expect(game.scoreUpToFrame(i)).toBe((i + 1) * 30);
+    });
   });
   it('should roll a 299', () => {
     const game = new Array(11).fill(1)
@@ -74,11 +68,9 @@ describe('bowlingGame', () => {
         .reduce((g: Game) => g.roll(0), bowlingGame());
     }
 
-    for (let i = 0; i < 9; i++) {
-      it('should have zeros in frame ' + (i + 1), () => {
-        expect(eighteenGutters().scoreUpToFrame(i)).toBe(0);
-      });
-    }
+    it.each(firstNFrames(9))('should have zeros in frame %s', (i) => {
+      expect(eighteenGutters().scoreUpToFrame(i)).toBe(0);
+    });
     it('should total 30', () => {
       expect(eighteenGutters()
         .roll(10)
@@ -97,3 +89,8 @@ describe('bowlingGame', () => {
     expect(game.score).toBe(32);
   });
 });
+
+function firstNFrames(n: number): number[] {
+  return new Array(n).fill(1)
+    .map((_, index) => index);
+}
