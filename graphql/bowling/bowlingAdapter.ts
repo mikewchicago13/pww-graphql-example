@@ -12,13 +12,20 @@ interface IGraphQLAdaptedGame {
 
 class GraphQLAdaptedGame implements IGraphQLAdaptedGame {
   private readonly _game: IGame;
+  private readonly _rolls: number[];
 
   constructor(game: IGame) {
     this._game = game;
+    this._rolls = [];
   }
 
   rollPins({pins}: { pins: number }): IGraphQLAdaptedGame {
-    return new GraphQLAdaptedGame(this._game.roll(pins));
+    this._rolls.push(pins);
+    const game = this._rolls.reduce((previousValue, currentValue) => {
+      return previousValue.roll(currentValue) as Game;
+    }, new Game());
+    console.log("rolls", this._rolls, "score", game.score);
+    return new GraphQLAdaptedGame(game);
   }
 
   get score(): number {
