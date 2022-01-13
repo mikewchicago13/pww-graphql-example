@@ -1,7 +1,7 @@
 export class Author {
-  private _id: string;
-  private _firstName: string;
-  private _lastName: string;
+  private readonly _id: string;
+  private readonly _firstName: string;
+  private readonly _lastName: string;
 
   constructor(
     id: string,
@@ -16,24 +16,12 @@ export class Author {
     return this._id;
   }
 
-  set id(value: string) {
-    this._id = value;
-  }
-
   get firstName(): string {
     return this._firstName;
   }
 
-  set firstName(value: string) {
-    this._firstName = value;
-  }
-
   get lastName(): string {
     return this._lastName;
-  }
-
-  set lastName(value: string) {
-    this._lastName = value;
   }
 }
 
