@@ -68,11 +68,9 @@ describe('bowlingGame', () => {
         .reduce((g: Game) => g.roll(0), bowlingGame());
     }
 
-    for (let i = 0; i < 9; i++) {
-      it('should have zeros in frame ' + (i + 1), () => {
-        expect(eighteenGutters().scoreUpToFrame(i)).toBe(0);
-      });
-    }
+    it.each(firstNFrames(9))('should have zeros in frame %s', (i) => {
+      expect(eighteenGutters().scoreUpToFrame(i)).toBe(0);
+    });
     it('should total 30', () => {
       expect(eighteenGutters()
         .roll(10)
