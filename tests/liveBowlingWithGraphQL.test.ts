@@ -9,6 +9,7 @@ describe('can connect to local graphql', () => {
       .map((_, index) => {
         return `
               roll${index}: rollPins(pins: 5) {
+                  score
                   scoreSheet {
                       frames {
                           marks
@@ -21,7 +22,7 @@ describe('can connect to local graphql', () => {
   }
 
   const query =
-      `{
+    `{
           liveBowling {` +
     concatenateRolls() +
     `
@@ -40,9 +41,18 @@ describe('can connect to local graphql', () => {
     expect(errors).toBeFalsy();
   });
 
-  it('should print scoreSheets for each roll', () => {
-    for (let i = 0; i < rollsTaken; i++) {
-      ConsoleDisplayFrame.print(liveBowling['roll' + i].scoreSheet.frames);
-    }
+  const rolls = new Array(rollsTaken).fill(1).map((_, index) => index);
+  it.each(rolls)
+  ('should print scoreSheets for each roll %s', (i) => {
+    ConsoleDisplayFrame.print(liveBowling['roll' + i].scoreSheet.frames);
+  });
+
+  it.each([
+    [0, 5],
+    [1, 10],
+    [20, 150],
+  ])
+  ('should keep accumulating score %s', (i, expectedScore) => {
+    expect(liveBowling['roll' + i].score).toBe(expectedScore)
   });
 });
