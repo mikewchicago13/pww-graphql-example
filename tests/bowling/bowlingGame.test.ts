@@ -31,11 +31,9 @@ describe('bowlingGame', () => {
       expect(game.score).toBe(150);
     });
 
-    for (let i = 0; i < 10; i++) {
-      it('should have 15 per frame ' + (i + 1), () => {
-        expect(game.scoreUpToFrame(i)).toBe((i + 1) * 15);
-      });
-    }
+    it.each(firstNFrames(10))('should have 15 per frame %s', (i) => {
+      expect(game.scoreUpToFrame(i)).toBe((i + 1) * 15);
+    });
   });
   it('should pick up a spare', () => {
     const game = new Array(3).fill(1)
@@ -96,7 +94,7 @@ describe('bowlingGame', () => {
   });
 });
 
-function firstNFrames(n: number): number[]{
+function firstNFrames(n: number): number[] {
   return new Array(n).fill(1)
     .map((_, index) => index);
 }
