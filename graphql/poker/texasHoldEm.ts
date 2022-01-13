@@ -9,10 +9,6 @@ export class TexasHoldEm {
     this._winningHand = TexasHoldEm._winner(this._hands);
   }
 
-  static parse(input: string): TexasHoldEm {
-    return new TexasHoldEm(input);
-  }
-
   private static _toHands(input: string): TexasHoldEmHand[] {
     return input.split(EOL)
       .map(x => x.trim())

@@ -48,6 +48,17 @@ describe('book hotel room', () => {
         areAllRoomsAvailableBetween("2021-12-26", "3000-01-01")
       });
     });
+    it('should blow up when booking a room that does not exist', () => {
+      expect(() => book(uuidv4())).toThrow();
+    });
+    it('should allow booking two different rooms on same day', () => {
+      const arrival = "2022-01-01";
+      const departure = "2022-01-02";
+      book("0", arrival, departure)
+      book("1", arrival, departure)
+      notAvailableBetween(arrival, departure, "0");
+      notAvailableBetween(arrival, departure, "1");
+    });
   });
 });
 

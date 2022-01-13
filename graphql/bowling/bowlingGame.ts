@@ -68,10 +68,6 @@ export class Game implements IndexedGame, IGame {
       .slice(0, 2)
       .reduce((a, b) => a + b, 0);
   }
-
-  toString(): string {
-    return JSON.stringify(this);
-  }
 }
 
 function bowlingGame(): Game {

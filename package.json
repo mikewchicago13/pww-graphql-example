@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "build": "mkdir -p ./build && cp *.graphqls ./build && tsc --outDir ./build",
-    "test": "npm run _stop && npm run _inTestMode && wait-on http://localhost:4000 && jest",
+    "test": "npm run _testSetup && jest",
+    "testWithCoverage": "npm run _testSetup && jest --coverage",
     "local": "npm run build && cd build && node ./server.js graphql-example",
+    "_testSetup": "npm run _stop && npm run _inTestMode && wait-on http://localhost:4000",
     "_inTestMode": "npm run local &",
     "_stop": "killall -SIGINT graphql-example || echo Did_not_find_process_to_kill"
   },

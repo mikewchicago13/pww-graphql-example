@@ -120,10 +120,6 @@ class RunningScore {
       return false;
     }
 
-    if (!FrameUtilities.wereAllPinsKnockedDown(ballsThrown)) {
-      return false;
-    }
-
     const fillBall = this._rolls[startRoll + 2];
     return fillBall !== undefined;
   }
