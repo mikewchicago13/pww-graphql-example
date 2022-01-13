@@ -24,8 +24,9 @@ export async function httpGraphqlClient(
   const body = JSON.stringify({
     query
   });
+  const endpointUrl = "http://localhost:4000/graphql";
   const response = await fetch(
-    "http://localhost:4000/graphql",
+    endpointUrl,
     {
       method: "post",
       headers: {
