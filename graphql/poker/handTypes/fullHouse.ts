@@ -16,15 +16,11 @@ export class FullHouse implements HandType {
       groupsOfCardsToCompare
     } = new ThreeOfAKind().parse(cards);
     const {doesMatch: hasPair} = new Pair().parse(cards);
-    const isFullHouse = hasThreeOfAKind && hasPair;
-
     return HandMatchResultFactory.create({
-      doesMatch: isFullHouse,
+      doesMatch: hasThreeOfAKind && hasPair,
       groupsOfCardsToCompare: groupsOfCardsToCompare,
       description: (x: Card[][]) =>
-        isFullHouse ?
           MultipleOfSameCardNumber.join(x[0], x[1], " over ")
-          : x + ""
     });
   }
 }
