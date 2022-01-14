@@ -1,4 +1,3 @@
-import {HandType} from "../handType";
 import {Card} from "../card";
 import {
   HandMatchResult,
@@ -6,7 +5,7 @@ import {
 } from "../handMatchResult";
 import {Cards} from "../cards";
 
-export class MultipleOfSameCardNumber implements HandType {
+export class MultipleOfSameCardNumber {
   private readonly _numberOfSameCardNumber: number;
 
   constructor(numberOfSameCardNumber: number) {
@@ -44,9 +43,5 @@ export class MultipleOfSameCardNumber implements HandType {
     }
 
     return HandMatchResultFactory.noMatchDetected();
-  }
-
-  toString(): string {
-    throw new Error("not applicable");
   }
 }
