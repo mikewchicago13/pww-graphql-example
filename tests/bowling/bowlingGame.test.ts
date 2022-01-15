@@ -20,7 +20,7 @@ describe('bowlingGame', () => {
     it('should total 20', () => {
       expect(game.score).toBe(20);
     });
-    it.each(firstNFrames(10))('should have 2 per frame %s', (i) => {
+    it.each(arrayWithLengthAndIndexAsValue(10))('should have 2 per frame %s', (i) => {
       expect(game.scoreUpToFrame(i)).toBe((i + 1) * 2);
     })
   });
@@ -31,7 +31,7 @@ describe('bowlingGame', () => {
       expect(game.score).toBe(150);
     });
 
-    it.each(firstNFrames(10))('should have 15 per frame %s', (i) => {
+    it.each(arrayWithLengthAndIndexAsValue(10))('should have 15 per frame %s', (i) => {
       expect(game.scoreUpToFrame(i)).toBe((i + 1) * 15);
     });
   });
@@ -51,7 +51,7 @@ describe('bowlingGame', () => {
     it('should total 300', () => {
       expect(game.score).toBe(300);
     });
-    it.each(firstNFrames(10))('should have 30 per frame %s', (i) => {
+    it.each(arrayWithLengthAndIndexAsValue(10))('should have 30 per frame %s', (i) => {
       expect(game.scoreUpToFrame(i)).toBe((i + 1) * 30);
     });
   });
@@ -68,7 +68,7 @@ describe('bowlingGame', () => {
         .reduce((g: Game) => g.roll(0), bowlingGame());
     }
 
-    it.each(firstNFrames(9))('should have zeros in frame %s', (i) => {
+    it.each(arrayWithLengthAndIndexAsValue(9))('should have zeros in frame %s', (i) => {
       expect(eighteenGutters().scoreUpToFrame(i)).toBe(0);
     });
     it('should total 30', () => {
@@ -90,7 +90,7 @@ describe('bowlingGame', () => {
   });
 });
 
-function firstNFrames(n: number): number[] {
+function arrayWithLengthAndIndexAsValue(n: number): number[] {
   return new Array(n).fill(1)
     .map((_, index) => index);
 }
