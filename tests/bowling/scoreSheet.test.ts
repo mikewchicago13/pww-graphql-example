@@ -6,14 +6,14 @@ describe('scoreSheet', () => {
     it('should have ten frames', () => {
       expect(bowlingGame().scoreSheet.frames).toHaveLength(10);
     });
-    for (let i = 0; i < 9; i++) {
+    describe.each(arrayWithLengthAndIndexAsValue(9))('first 9 frames', (i) => {
       it('frame ' + (i + 1) + ' should have zero balls thrown', () => {
         expect(bowlingGame().scoreSheet.frames[i].marks).toStrictEqual([undefined, undefined]);
       });
       it('frame ' + (i + 1) + ' should have running score of undefined', () => {
         expect(bowlingGame().scoreSheet.frames[i].runningScore).toBeUndefined();
       });
-    }
+    });
 
     it('frame 10 should have three undefined balls thrown', () => {
       expect(bowlingGame().scoreSheet.frames[9].marks).toStrictEqual([undefined, undefined, undefined]);
@@ -26,14 +26,14 @@ describe('scoreSheet', () => {
   describe('all zeros', () => {
     const game = new Array(20).fill(1)
       .reduce((g: IGame) => g.roll(0), bowlingGame())
-    for (let i = 0; i < 9; i++) {
+    describe.each(arrayWithLengthAndIndexAsValue(9))('first 9 frames', (i) => {
       it('frame ' + (i + 1) + ' should have two balls thrown', () => {
         expect(game.scoreSheet.frames[i].marks).toStrictEqual(["-", "-"]);
       });
       it('frame ' + (i + 1) + ' should have running score of 0', () => {
         expect(game.scoreSheet.frames[i].runningScore).toBe(0);
       });
-    }
+    })
 
     it('frame 10 should have two balls thrown', () => {
       expect(game.scoreSheet.frames[9].marks).toStrictEqual(["-", "-", undefined]);
@@ -59,14 +59,14 @@ describe('scoreSheet', () => {
       expect(perfectGame().scoreSheet.frames[8].runningScore).toBe(270);
     });
 
-    for (let i = 0; i < 9; i++) {
+    describe.each(arrayWithLengthAndIndexAsValue(9))('first 9 frames', (i) => {
       it('frame ' + (i + 1) + ' should have one strike and empty fill', () => {
         expect(perfectGame().scoreSheet.frames[i].marks).toStrictEqual(["X", undefined]);
       });
       it('frame ' + (i + 1) + ' should have running score of 30 per frame', () => {
         expect(perfectGame().scoreSheet.frames[i].runningScore).toBe((i + 1) * 30);
       });
-    }
+    })
 
     it('frame 10 should have three strikes', () => {
       expect(perfectGame().scoreSheet.frames[9].marks).toStrictEqual(["X", "X", "X"]);
@@ -113,14 +113,14 @@ describe('scoreSheet', () => {
         .reduce((g: IGame) => g.roll(5), bowlingGame())
     }
 
-    for (let i = 0; i < 9; i++) {
+    describe.each(arrayWithLengthAndIndexAsValue(9))('first 9 frames', (i) => {
       it('frame ' + (i + 1) + ' should have "5 /"', () => {
         expect(allFives().scoreSheet.frames[i].marks).toStrictEqual(["5", "/"]);
       });
       it('frame ' + (i + 1) + ' should have running score of 15 per frame', () => {
         expect(allFives().scoreSheet.frames[i].runningScore).toBe((i + 1) * 15);
       });
-    }
+    })
 
     it('frame 10 should have "5 / 5"', () => {
       expect(allFives().scoreSheet.frames[9].marks).toStrictEqual(["5", "/", "5"]);
@@ -136,21 +136,26 @@ describe('scoreSheet', () => {
         .reduce((g: IGame) => g.roll(0), bowlingGame())
     }
 
-    it('frame 10 should have be undefined because not done counting', () => {
+    it('ball 1 should have be undefined because not done counting', () => {
       expect(eighteenGutters().roll(10).scoreSheet.frames[9].runningScore).toBeUndefined();
     });
-    it('frame 10 should have be undefined because not done counting', () => {
+    it('ball 2 should have be undefined because not done counting', () => {
       expect(eighteenGutters().roll(10).roll(5).scoreSheet.frames[9].runningScore).toBeUndefined();
     });
-    it('frame 10 should have be 20 because done counting', () => {
+    it('ball 3 should have be 20 because done counting', () => {
       expect(eighteenGutters().roll(10).roll(5).roll(5).scoreSheet.frames[9].runningScore)
         .toBe(20);
     });
-    it('frame 10 should have "X 5 /"', () => {
+    it('marks should have "X 5 /"', () => {
       expect(eighteenGutters().roll(10).roll(5).roll(5).scoreSheet.frames[9].marks)
         .toStrictEqual(["X", "5", "/"]);
     });
 
   });
 });
+
+function arrayWithLengthAndIndexAsValue(n: number): number[] {
+  return new Array(n).fill(1)
+    .map((_, index) => index);
+}
 
